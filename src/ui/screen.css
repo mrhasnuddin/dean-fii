@@ -16,7 +16,7 @@
 .sc-saver { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; padding: 38px 18px 0; background: var(--paper); }
 .sc-saver[hidden] { display: none; }
 .screen .ek-view { display: flex; min-height: 0; }
-.screen .ek-list li { cursor: pointer; }
+.screen :is(.ek-list li, .ek-ab [data-key], .ek-ab [data-softkey]) { cursor: pointer; }
 
 .sc-center { align-items: center; justify-content: center; text-align: center; }
 .sc-logo { width: 150px; height: 150px; fill: var(--ink); }
@@ -33,6 +33,16 @@
 .sc-portrait { width: 104px; height: 130px; image-rendering: pixelated; mix-blend-mode: multiply; border: 1.5px solid var(--ink); }
 .sc-chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .sc-chips span { border: 1.5px solid var(--ink); padding: 1px 7px; font-size: 13px; }
+
+/* Touch: the screen shows at about two-thirds size on a phone (244 px wide), so rows, the key labels
+   and the softkeys grow to ~30 px tall there. The image well gives up 26 px and one row goes. The
+   softkeys keep their look; an invisible margin takes the taps. */
+@media (pointer: coarse) {
+  .sc-well { height: 124px; }
+  .sc-rows li { padding-block: 12px; }
+  .ek-ab span { padding-block: 15px; }
+  .ek-soft span::after { content: ''; position: absolute; inset: -9px -10px; }
+}
 
 /* Contact "reading" bar: stepped clip-path reveal (no layout property). */
 .screen .sc-reading .ek-bar i { clip-path: inset(0 100% 0 0); transition: clip-path 750ms steps(8); }

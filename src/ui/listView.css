@@ -52,6 +52,9 @@
 }
 @media (max-width: 760px) {
   .list-view { padding-top: 96px; }
+  /* Section links: four equal columns, like the Console's tab bar (they wrapped 3 + 1). */
+  .lv-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .lv-nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 6px; font-size: 13px; }
   .lv-pair { grid-template-columns: 1fr; gap: 72px; }
   .lv-rows a { grid-template-columns: 1fr; gap: 4px; }
   .lv-about-body { grid-template-columns: 1fr; }

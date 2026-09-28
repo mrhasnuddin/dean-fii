@@ -59,6 +59,9 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
   // Console: facing you, tipped back a little so the numbered tabs read from the front.
   const HERO: Pose = { x: 0, y: -0.04, z: 0, rx: 0.3, ry: 0.52, rz: -0.12 };
   const CONSOLE: Pose = { x: 0, y: -0.06, z: 0, rx: 0.14, ry: 0, rz: 0 }; // lower: the tipped-back top rises
+  // Phones: the Hero's copy is taller than the Console's, so the wallet starts a little smaller there
+  // (its keychain clears the title) and comes up to full size on the way into the Console.
+  const HERO_SCALE_PORTRAIT = 0.9;
 
   function computeCard() {
     const portrait = stage.portrait();
@@ -88,6 +91,7 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
     const k = progress;
     rig.position.set(HERO.x + (CONSOLE.x - HERO.x) * k, HERO.y + (CONSOLE.y - HERO.y) * k, 0);
     rig.rotation.set(HERO.rx + (CONSOLE.rx - HERO.rx) * k, HERO.ry + (CONSOLE.ry - HERO.ry) * k, HERO.rz + (CONSOLE.rz - HERO.rz) * k);
+    rig.scale.setScalar(stage.portrait() ? HERO_SCALE_PORTRAIT + (1 - HERO_SCALE_PORTRAIT) * k : 1);
   };
   let trigger: ScrollTrigger | null = null;
   function build() {

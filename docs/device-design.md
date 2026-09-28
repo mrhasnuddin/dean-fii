@@ -222,3 +222,17 @@ Invisible hit boxes parented to the small controls give those areas; the nearest
 ## 12. List view layout (2026-09-28, Dean's review)
 
 About and Get in touch share one row, 60 / 40 (About left, the contact card right, keeping its card look): the contact details are three lines, and a full-width band left most of it empty. At 1440 the two columns are 482 and 449 px tall and the page is ~500 px shorter. Below 1180 px the portrait sits above the bio inside the 60 % column; below 760 px the two stack. Section numbers (01–04) were removed from the list view's headings and section links. The Console's tab bar keeps them, because they match the numerals engraved on the wallet's top keys.
+
+## 13. Phone pass (2026-09-28, Dean's review on a real phone)
+
+**Found at 375 × 812:** the wallet's top keys sat under the header buttons; the Console tab bar covered the bottom of the ✓ and Back keys; the Back key was 36 px; the keychain hung over the tab bar and title; an 86 px gap sat under the title (every panel reserved the About bio's height); keyboard hints showed on touch; the screen's rows were 21 px and its "‹ Back" / "Open ✓" labels could not be tapped.
+
+**Framing (stage.ts):** portrait is laid out in pixels. The top keys start under the header, and the body plus the keychain end above the Console copy (phones: 78 px top, 196 px copy; portrait tablets: 92 / 280). Short phones keep the wallet at least 62 % of the width (up to 240 px), and there the coin tucks behind the title. On phones the Hero wallet starts at 90 % and grows to full size on the way into the Console, because the Hero's copy is taller.
+
+**Header (phones):** the brand, then Device/List + Sound + Motion in one capsule, then "Work with Dean", all 40 px tall.
+
+**Console (phones and portrait tablets):** the title, then the text, then the tab bar last, where the thumb is. The tab bar never moves; the text above it takes the active section's height. Tabs are 44 px. On phones About shows the bio's second line with "Read about Dean" inline (the first line is close to the Hero's), and Contact shows its first sentence with "Contact me" and "Share" as a matched pair of 45 px buttons. Keyboard hints are hidden on touch. The detail sheet's backdrop is darker on phones.
+
+**Touch targets on the wallet:** tab hit boxes 0.16 W (≥ 44 px), a 0.17 W ball around the Back key (49 × 57 px), the side switch's box grows outward. On touch screens the device screen shows 5 taller rows (28 px; the image well gives up 26 px), 30 px key labels, and softkeys with an invisible tap margin. "‹ Back" and "Open ✓" along the screen's bottom edge now press their keys. While the idle logo is up, the first tap wakes the screen (it covers the list, so the tap has nothing to act on).
+
+**Measured after:** 375 × 812: keys start at y 69 (header ends 54), keychain ends 17 px above the title. 430 × 932: tabs 58 × 60 px. 768 × 1024: keychain ends 36 px above the title. 1440 × 900: unchanged.

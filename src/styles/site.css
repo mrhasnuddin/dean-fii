@@ -166,27 +166,53 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   .section-copy { flex-direction: column; align-items: flex-start; gap: 18px; }
   .copy-main { max-width: 70vw; }
   .copy-side { width: min(30rem, 70vw); }
+  /* Console: the title, the text, then the tab bar last, where the thumb is; it never moves. The text
+     above it takes the active section's height (inactive panels leave the flow), so a short section
+     leaves no gap under its title. */
+  #console .section-copy { display: grid; justify-items: start; grid-template-areas: 'title' 'panel' 'tabs'; align-items: end; gap: 0; }
+  #console .copy-main { display: contents; }
+  #console .titles { grid-area: title; margin-bottom: 8px; }
+  #console .panels { grid-area: panel; display: block; position: relative; }
+  #console .panel { position: absolute; left: 0; right: 0; bottom: 0; }
+  #console .panel[data-active] { position: relative; }
+  #console .tabbar { grid-area: tabs; margin: 18px 0 0; }
 }
+
+/* Keyboard hints mean nothing on a touch screen (the wallet's own screen labels its keys). */
+@media (pointer: coarse) { .hint { display: none; } }
 
 /* Phones: wallet in the upper part, copy at the bottom, preferences move up beside the brand. */
 @media (max-width: 760px) {
-  :root { --copy-bottom: 28px; }
+  :root { --copy-bottom: max(24px, calc(env(safe-area-inset-bottom) + 12px)); } /* clear the home indicator */
   .site-header { padding: 14px var(--gutter); }
   .brand { padding: 9px; }
   .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .header-cta { gap: 10px; }
   .share { width: 40px; height: 40px; justify-content: center; border: 1px solid var(--line); border-radius: 50%; padding: 0; }
   .share-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .cta-head { padding: 12px 16px; font-size: 14px; }
-  /* Header: brand + view switch + sound + motion on the left, the primary action on the right.
-     Share moves beside the Contact button here. */
+  /* Header, all 40 px tall: the brand, then Device/List + Sound + Motion as one capsule beside it, and
+     the primary action on the right. Share moves beside the Contact button here. */
+  .cta-head { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; font-size: 14px; }
   .share { display: none; }
-  .share-inline { display: inline-block; }
-  .prefs { top: 14px; bottom: auto; right: auto; left: calc(var(--gutter) + 50px); gap: 8px; }
-  .view-switch { padding: 8px 0; }
+  .prefs { top: 14px; bottom: auto; right: auto; left: calc(var(--gutter) + 52px); height: 40px; gap: 0; padding: 0 3px; border: 1px solid var(--line); border-radius: 999px; background: rgb(22 23 28 / 0.6); backdrop-filter: blur(10px); }
+  .prefs .icon-btn { width: 38px; height: 38px; border: 0; background: none; backdrop-filter: none; }
+  .view-switch { height: 38px; padding: 0 8px 0 9px; }
   .vs-opt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .tabbar { flex-wrap: nowrap; gap: 5px; }
-  .tabbar [role='tab'] { flex: 1; justify-content: center; padding: 11px 6px; font-size: 12px; min-height: 40px; }
+  .vs-track { width: 34px; height: 20px; }
+  .vs-track i { width: 12px; height: 12px; }
+  .view-switch[aria-checked='true'] .vs-track i { transform: translateX(14px); }
+  #console .section-copy { justify-items: stretch; } /* the tab bar spans the width */
+  .tabbar { flex-wrap: nowrap; gap: 6px; }
+  .tabbar [role='tab'] { flex: 1; justify-content: center; padding: 0 6px; font-size: 12px; min-height: 44px; }
+  /* About: the bio's second line with the link to the rest running on after it (inline padding makes
+     the link 44 px tall to a thumb without adding height). Contact: the first sentence only. */
+  #panel-about .bio-lead { display: none; }
+  #panel-about .lede, #panel-about .focus-list, #panel-about .focus-list li { display: inline; }
+  #panel-about .focus-list { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0; padding: 0; border: 0; background: none; columns: auto; }
+  #panel-about .focus-list a { display: inline; padding: 11px 0; color: var(--champagne); font-weight: 500; white-space: nowrap; }
+  .lede-more { display: none; }
+  .panel-actions { gap: 10px; margin-top: 12px; }
+  .share-inline { display: inline-flex; align-items: center; height: 45px; padding: 0 20px; border: 1px solid var(--line); border-radius: 999px; }
   .panel-title { font-size: clamp(42px, 12vw, 62px); }
   .copy-main, .copy-side { max-width: none; width: 100%; }
   .section h1 { font-size: clamp(52px, 15vw, 76px); }
@@ -194,7 +220,7 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   /* The keychain can hang behind the title here: a soft dark halo keeps the type crisp over it. */
   .section :is(h1, h2) { text-shadow: 0 2px 22px rgb(15 16 20 / 0.85); }
   .lede { font-size: 15px; }
-  .scroll-cue { margin-top: 16px; font-size: 12px; }
+  .scroll-cue { display: none; } /* the wallet's screen says "Scroll ↓" right above it */
   /* The key card comes forward over the copy: keep only the button readable. */
   #console .section-copy :is(.titles, .panel .lede) { transition: opacity 200ms ease; }
   #console:is([data-card='running'], [data-card='ready']) .section-copy :is(.titles, .panel .lede) { opacity: 0.08; }

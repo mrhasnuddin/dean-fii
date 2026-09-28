@@ -81,6 +81,8 @@
   .detail { width: 100vw; height: 88dvh; inset: auto 0 0 0; transform: translateY(32px); }
   @starting-style { .detail[open] { opacity: 0; transform: translateY(32px); } }
   .dt-panel { border-right: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; }
+  /* The sheet leaves the header showing above it: dim it further so it doesn't read as live. */
+  .detail[open]::backdrop { background: rgb(8 8 10 / 0.62); }
   .dt-head, .dt-scroll { padding-left: 18px; padding-right: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {

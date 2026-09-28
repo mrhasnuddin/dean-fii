@@ -28,6 +28,8 @@ export interface Controls {
   wheelConsumed(): boolean;
   /** Knob up = device view, down = list view. */
   setViewSwitch(list: boolean): void;
+  /** Press a face key as if tapped (its label on the screen was tapped). */
+  pressKey(id: 'key-confirm' | 'key-back'): void;
 }
 
 export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: ControlHandlers): Controls {
@@ -59,8 +61,17 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     p.visible = false;
     mesh.add(p);
   };
-  for (const id of ['tab-01', 'tab-02', 'tab-03', 'tab-04']) proxy(id, [0.15, 0.15, 0.13], [0, 0.03, 0]);
-  proxy('switch-view', [0.1, 0.22, 0.14], [0.03, 0, 0]);
+  // Tabs: 0.16 W square (their pitch is 0.165 W), 44 px on a phone where the wallet is ~280 px wide.
+  for (const id of ['tab-01', 'tab-02', 'tab-03', 'tab-04']) proxy(id, [0.16, 0.16, 0.13], [0, 0.03, 0]);
+  proxy('switch-view', [0.15, 0.24, 0.14], [0.055, 0, 0]); // grows outward, off the body edge
+  // Back key: 0.12 W across (36 px on a phone); a 0.17 W ball around it. A ball needs no knowledge of
+  // the key's local axes.
+  if (meshes['key-back']) {
+    const p = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 8), proxyMat);
+    p.name = 'key-back-hit';
+    p.visible = false;
+    meshes['key-back'].add(p);
+  }
   // The roller disc is Y-up in its mesh frame (the node turns it to face ±Z); a slightly larger disc.
   if (meshes['roller']) {
     const p = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.12, 24), proxyMat);
@@ -162,14 +173,8 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         break;
       }
       case 'key-confirm':
-        press('key-confirm', 'z', 0.004);
-        sfx.play('key');
-        h.confirm();
-        break;
       case 'key-back':
-        press('key-back', 'z', 0.003);
-        sfx.play('key', { rate: 0.82 }); // same mechanism as ✓, pitched down: going back sounds like it
-        h.back();
+        pressKey(hit.id);
         break;
       case 'switch-view':
         h.toggleView();
@@ -181,6 +186,19 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         break;
     }
   });
+
+  // The two face keys: tapped on the wallet, or through their labels along the screen's bottom edge.
+  function pressKey(id: 'key-confirm' | 'key-back') {
+    if (id === 'key-confirm') {
+      press('key-confirm', 'z', 0.004);
+      sfx.play('key');
+      h.confirm();
+    } else {
+      press('key-back', 'z', 0.003);
+      sfx.play('key', { rate: 0.82 }); // same mechanism as ✓, pitched down: going back sounds like it
+      h.back();
+    }
+  }
 
   function endDrag(e: PointerEvent) {
     if (!drag || drag.id !== e.pointerId) return;
@@ -285,5 +303,6 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
       if (!knob) return;
       gsap.to(knob.position, { y: knobUp - (list ? 0.09 : 0), duration: motion.reduced() ? 0 : 0.18, ease: 'power2.out' });
     },
+    pressKey,
   };
 }

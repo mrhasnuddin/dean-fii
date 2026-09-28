@@ -37,7 +37,14 @@ const announce = (msg: string) => {
 };
 
 // ---------------------------------------------------------------- page content (DOM twins of the screen)
-document.querySelector('[data-bio]')!.textContent = profile.bio.join(' '); // both lines: the Hero already says the roles
+// About: both lines (the Hero already says the roles). Phones show only the second: the first is
+// close to the Hero's own line, which sits one scroll above.
+{
+  const lead = document.createElement('span');
+  lead.className = 'bio-lead';
+  lead.textContent = `${profile.bio[0]} `;
+  document.querySelector('[data-bio]')!.append(lead, profile.bio.slice(1).join(' '));
+}
 document.querySelector('[data-list="works"]')!.innerHTML = projects.map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
 document.querySelector('[data-list="chronicle"]')!.innerHTML = events.map((e) => `<li><a href="#/stage/${e.id}">${e.place}: ${e.title}</a></li>`).join('');
 
@@ -311,6 +318,7 @@ if (!webglAvailable()) {
         chor.flip.reset(true);
         return contactSeq.run();
       case 'tab': return selectTab(i.tab);
+      case 'key': return controls?.pressKey(i.key === 'back' ? 'key-back' : 'key-confirm');
       case 'channel':
         sfx.play('open');
         if (i.channel === 'email') location.href = mailtoHref();

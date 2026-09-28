@@ -39,5 +39,7 @@ function reviewCapture(): Plugin {
 export default defineConfig({
   plugins: [reviewCapture()],
   server: { port: 5180, strictPort: true },
-  preview: { port: 5181, strictPort: true },
+  // Preview (the production build) may be shared through a Cloudflare quick tunnel. The dev server
+  // is never tunnelled: its /__capture endpoint writes files.
+  preview: { port: 5181, strictPort: true, allowedHosts: ['.trycloudflare.com'] },
 });

@@ -21,6 +21,8 @@ export type ScreenIntent =
   | { type: 'contact' }
   | { type: 'channel'; channel: 'email' | 'whatsapp' | 'linkedin' }
   | { type: 'tab'; tab: 'works' | 'chronicle' | 'about' | 'contact' }
+  /** A face-key label on the bottom edge was tapped: press that key. */
+  | { type: 'key'; key: 'back' | 'confirm' }
   | { type: 'none' };
 
 export interface Screen {
@@ -47,7 +49,9 @@ const CHANNELS = [
   { id: 'whatsapp', name: 'WhatsApp', detail: phoneDisplay() },
   { id: 'linkedin', name: 'LinkedIn', detail: contact.linkedin.label },
 ] as const;
-const VISIBLE_ROWS = 6;
+// Touch screens get taller rows (screen.css, same query), so one fewer fits.
+const COARSE = matchMedia('(pointer: coarse)');
+const visibleRows = () => (COARSE.matches ? 5 : 6);
 // Softkey labels: the top row sits directly under the wallet's four top tabs (x in W from the spec's
 // TABS_X; the screen is 0.795 W = 360 px wide), so each label names the tab above it.
 const SOFTKEYS = [
@@ -138,8 +142,9 @@ export function createScreen(): Screen {
   const listKey = () => (current === 'works' || current === 'chronicle' || current === 'contact' ? current : null);
 
   function windowed<T>(items: readonly T[], sel: number): { item: T; i: number }[] {
-    const start = Math.max(0, Math.min(sel - Math.floor(VISIBLE_ROWS / 2), items.length - VISIBLE_ROWS));
-    return items.slice(start, start + VISIBLE_ROWS).map((item, k) => ({ item, i: start + k }));
+    const rows = visibleRows();
+    const start = Math.max(0, Math.min(sel - Math.floor(rows / 2), items.length - rows));
+    return items.slice(start, start + rows).map((item, k) => ({ item, i: start + k }));
   }
 
   function softkeys() {
@@ -149,8 +154,11 @@ export function createScreen(): Screen {
     }).join('')}</header>`;
   }
 
+  // Bottom edge: labels for the two face keys under it (‹ Back, ✓). They are tappable too: on a phone the
+  // label is the bigger target, and it is what people try first.
   function footer(left: string, mid: string, right: string) {
-    return `<footer class="ek-ab"><span>${left}</span><span>${mid}</span><span class="ek-hold">${right}</span></footer>`;
+    const ok = right === '…' ? '' : ' data-key="confirm"';
+    return `<footer class="ek-ab"><span data-key="back">${left}</span><span>${mid}</span><span class="ek-hold"${ok}>${right}</span></footer>`;
   }
 
   function render() {
@@ -165,7 +173,7 @@ export function createScreen(): Screen {
         break;
       case 'hello': // home screen: the pixel D-star idles here (status bar only: no section yet)
         html = `${sb()}<section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>
-          ${footer('01 Works', 'Scroll ↓', '04 Contact')}`;
+          <footer class="ek-ab"><span data-softkey="works">01 Works</span><span>Scroll ↓</span><span class="ek-hold" data-softkey="contact">04 Contact</span></footer>`;
         break;
       case 'works': {
         const sel = index.works;
@@ -235,6 +243,8 @@ export function createScreen(): Screen {
   }
 
   el.addEventListener('click', (e) => {
+    const faceKey = (e.target as HTMLElement).closest<HTMLElement>('[data-key]');
+    if (faceKey) return intentCb({ type: 'key', key: faceKey.dataset.key as 'back' | 'confirm' });
     const soft = (e.target as HTMLElement).closest<HTMLElement>('[data-softkey]');
     if (soft) return intentCb({ type: 'tab', tab: soft.dataset.softkey as (typeof SOFTKEYS)[number]['tab'] });
     const row = (e.target as HTMLElement).closest<HTMLElement>('[data-index]');
@@ -253,6 +263,7 @@ export function createScreen(): Screen {
   });
 
   render();
+  COARSE.addEventListener('change', render); // a hybrid device switching between touch and mouse
   return {
     el,
     mode: () => current,

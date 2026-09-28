@@ -159,8 +159,17 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
 
   // Framing: the wallet (1 × 1.5 W) is the hero, centred. Landscape: its body fills 66 % of the
   // height, centred 40 % from the top, so the keychain (≈0.5 W below the slot) still hangs inside
-  // the frame with a margin. Portrait: ~80 % of the width, capped at 55 % of the height, 36 % from the top, so
-  // the copy has the bottom.
+  // the frame with a margin. Portrait (phones) is laid out in pixels instead: the top keys start
+  // under the header, and the body plus the hanging keychain end above the page copy, so neither the
+  // header nor the tab bar covers a key. Short phones keep the wallet at least 62 % of the width (up
+  // to 240 px) and let the coin tuck behind the title. Portrait tablets use the desktop header and
+  // the taller stacked copy.
+  const PORTRAIT = {
+    above: 0.83, // W: top keys above the body centre, as posed in the Console
+    below: 1.1, // W: keychain coin below the body centre
+    phone: { top: 78, copy: 196 }, // px: header (68) + a gap; Console copy (title, text, tab bar) + a gap
+    tablet: { top: 92, copy: 280 }, // header 83; title, text, hint and the preferences row
+  };
   function resize() {
     const w = innerWidth;
     const h = innerHeight;
@@ -168,12 +177,18 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
     css.setSize(w, h);
     const aspect = w / h;
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    const portrait = isPortrait();
-    const dist = portrait
-      ? Math.max(1.25 / (2 * t * aspect), 1.5 / 0.55 / (2 * t))
-      : Math.max(1.5 / 0.66 / (2 * t), 1.25 / (2 * t * aspect));
-    const viewH = 2 * t * dist;
-    const y = viewH * ((portrait ? 0.36 : 0.4) - 0.5); // world y = 0 lands that far from the top
+    let dist: number;
+    let y: number;
+    if (isPortrait()) {
+      const { top, copy } = w <= 760 ? PORTRAIT.phone : PORTRAIT.tablet; // 760: the CSS phone breakpoint
+      const fit = (h - top - copy) / (PORTRAIT.above + PORTRAIT.below);
+      const px = Math.min(w / 1.25, Math.max(Math.min(w * 0.62, 240), fit)); // px per W
+      dist = h / px / (2 * t);
+      y = (top + PORTRAIT.above * px - h / 2) / px; // world y = 0 lands there, px from the top
+    } else {
+      dist = Math.max(1.5 / 0.66 / (2 * t), 1.25 / (2 * t * aspect));
+      y = 2 * t * dist * (0.4 - 0.5); // world y = 0 lands 40 % from the top
+    }
     camera.aspect = aspect;
     camera.position.set(0, y, dist);
     camera.lookAt(0, y, 0);
