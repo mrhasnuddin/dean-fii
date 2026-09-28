@@ -93,7 +93,7 @@ startLenis();
 // ---------------------------------------------------------------- loader (index.html)
 // Lifts once the page is usable and the mark has drawn. Never traps the page: 8 s cap.
 const loader = document.getElementById('loader')!;
-const LOADER_MIN_MS = 1350; // the D has risen and the sparkle has appeared
+const LOADER_MIN_MS = 1350; // the mark has faded in (450 ms) and the sparkle has twinkled once (900 ms)
 function liftLoader(ready: Promise<unknown>, then: () => void) {
   const min = motion.reduced() ? 0 : Math.max(0, LOADER_MIN_MS - performance.now());
   const settled = Promise.race([Promise.all([ready, document.fonts.ready]), new Promise((r) => setTimeout(r, 8000))]);
@@ -329,8 +329,8 @@ if (!webglAvailable()) {
   screen.onIntent(handleIntent);
   screen.onSelect(() => sfx.play('tick')); // roller, arrow keys or a row tap: one detent per step
 
-  // The coin swinging into the wallet: a clink as loud as the hit. Resting contact under gravity
-  // registers ≈0.2 W/s, so only real swings pass the floor.
+  // The coin swinging into the wallet: a clink as loud as the hit. Only a hit from a free swing counts
+  // (keychain.ts), only real swings pass the floor, and clinks are at least 300 ms apart (sfx.ts).
   const CLINK_MIN = 0.45;
   stage.onFrame(() => {
     const v = stage.keychain.takeImpact();

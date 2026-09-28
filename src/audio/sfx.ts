@@ -20,7 +20,7 @@ const KEY = 'dean-sound';
 const MASTER = 0.8;
 const SRC = ['/audio/sfx.webm', '/audio/sfx.mp3'];
 // Minimum gap between repeats (ms): the roller, the coin and the e-ink panel can fire in bursts.
-const THROTTLE: Partial<Record<SfxName, number>> = { tick: 45, tab: 60, eink: 90, clink: 110, jingle: 300, swish: 150, write: 20 };
+const THROTTLE: Partial<Record<SfxName, number>> = { tick: 45, tab: 60, eink: 90, clink: 300, jingle: 300, swish: 150, write: 20 };
 // Random pitch spread so repeats never sound machine-gunned.
 const SPREAD: Partial<Record<SfxName, number>> = { tick: 0.04, clink: 0.06, jingle: 0.05, write: 0.05, key: 0.03, tap: 0.02, tab: 0.015 };
 

@@ -133,6 +133,7 @@ const DAMPING = 0.9965;
 const MAX_BEND = THREE.MathUtils.degToRad(70);
 const BAR_SIDE_SWING = THREE.MathUtils.degToRad(45); // slot width lets link 0 tilt along the bar
 const BAR_FWD_SWING = THREE.MathUtils.degToRad(15); // and a little front/back (slot is 0.08 W deep in Z)
+const FRESH_HIT = 0.15; // s the coin must have been off the body for a touch to count as a hit (a clink)
 
 export class Keychain {
   readonly group = new THREE.Group();
@@ -155,6 +156,16 @@ export class Keychain {
   private psi = 0; // coin twist heading (lags the device heading)
   private psiV = 0;
   private impact = 0; // strongest coin-into-body approach speed since the last takeImpact() (W/s)
+  private coinFree = 1; // s since the coin last touched the body
+  private coinTouched = false; // during the current step
+  // The body's pose at the end of the last frame: sub-steps move it from there to where it is now,
+  // as they do the anchor. Jumping it to the new pose for every sub-step made a long (janky) frame
+  // read as the body slamming into the chain: hard push-outs and false, loud hits.
+  private readonly colPos = new THREE.Vector3();
+  private readonly colQuat = new THREE.Quaternion();
+  private readonly colScale = new THREE.Vector3(1, 1, 1);
+  private colValid = false;
+  private readonly colMatrix = new THREE.Matrix4(); // the body pose for the current sub-step
 
   constructor(opts: KeychainOptions) {
     this.anchor = opts.anchor;
@@ -193,6 +204,7 @@ export class Keychain {
       this.prev[i].copy(p);
     });
     this.lastTop = top.clone();
+    this.colValid = false;
     this.heading = this.rawHeading = this.readHeading();
     this.psi = this.heading;
     this.psiV = 0;
@@ -238,12 +250,34 @@ export class Keychain {
     this.heading += Math.atan2(Math.sin(dh), Math.cos(dh));
     this.rawHeading = h;
 
-    if (this.collider) _inv.copy(this.collider.object.matrixWorld).invert();
+    const col = this.collider?.object;
+    if (col) {
+      col.updateWorldMatrix(true, false);
+      col.matrixWorld.decompose(_cp, _cq, _cs);
+      if (!this.colValid) {
+        this.colPos.copy(_cp);
+        this.colQuat.copy(_cq);
+        this.colScale.copy(_cs);
+        this.colValid = true;
+      }
+    }
     for (let s = 0; s < steps; s++) {
-      _p0.lerpVectors(this.lastTop, top, (s + 1) / steps);
+      const k = (s + 1) / steps;
+      _p0.lerpVectors(this.lastTop, top, k);
+      if (col) {
+        this.colMatrix.compose(_ip.lerpVectors(this.colPos, _cp, k), _iq2.slerpQuaternions(this.colQuat, _cq, k), _is.lerpVectors(this.colScale, _cs, k));
+        _inv.copy(this.colMatrix).invert();
+      }
       this.step(STEP, _p0, q);
     }
-    if (steps > 0) this.lastTop.copy(top);
+    if (steps > 0) {
+      this.lastTop.copy(top);
+      if (col) {
+        this.colPos.copy(_cp);
+        this.colQuat.copy(_cq);
+        this.colScale.copy(_cs);
+      }
+    }
     this.sync(q);
   }
 
@@ -259,12 +293,14 @@ export class Keychain {
     pos[0].copy(p0);
     prev[0].copy(p0);
 
+    this.coinTouched = false;
     for (let it = 0; it < 10; it++) {
       for (let i = 0; i < this.segLen.length; i++) this.solveDistance(i, i + 1, this.segLen[i]);
       this.limitBend();
       this.clampFirstLink(q);
       this.collide();
     }
+    this.coinFree = this.coinTouched ? 0 : this.coinFree + dt;
 
     // Torsion: the coin's heading springs toward the device heading, underdamped.
     const acc = TWIST_K * (this.heading - this.psi) - TWIST_C * this.psiV;
@@ -325,20 +361,28 @@ export class Keychain {
     // L along the bottom face.
     for (let i = 2; i < this.pos.length; i++) {
       const r = this.radius[i];
-      const p = _v2.copy(this.pos[i]).applyMatrix4(_inv); // inverse computed once per frame
+      const p = _v2.copy(this.pos[i]).applyMatrix4(_inv); // body pose for this sub-step (update())
       const ox = he.x + r - Math.abs(p.x);
       const oy = he.y + r - Math.abs(p.y);
       const oz = he.z + r - Math.abs(p.z);
       if (ox <= 0 || oy <= 0 || oz <= 0) continue;
       const axis = ox < oy && ox < oz ? 'x' : oy < oz ? 'y' : 'z';
       const side = Math.sign(p[axis] || 1);
+      const was = _v3.copy(this.prev[i]).applyMatrix4(_inv); // body frame, so the body's own motion counts
       if (i === coin) {
-        // Inward speed along the push-out axis, measured in the body's frame so its own motion counts.
-        const was = _v3.copy(this.prev[i]).applyMatrix4(_inv);
-        this.impact = Math.max(this.impact, (-(p[axis] - was[axis]) * side) / STEP);
+        // A hit is the coin arriving from a free swing. Contact that persists (resting on the body, or
+        // pressed there while the wallet turns) never counts, however it jitters: that is what repeated
+        // the clink on phones.
+        if (this.coinFree > FRESH_HIT) this.impact = Math.max(this.impact, (-(p[axis] - was[axis]) * side) / STEP);
+        this.coinTouched = true;
       }
       p[axis] = side * (he[axis] + r);
-      this.pos[i].copy(p.applyMatrix4(c.object.matrixWorld));
+      // Inelastic contact: take the speed into the face away along with the overlap. Moving only the
+      // position left the push-out as outward speed (Verlet velocity = pos − prev), so a node resting on
+      // the body bounced off, was pulled back in by the chain and chattered there.
+      was[axis] = p[axis];
+      this.prev[i].copy(was.applyMatrix4(this.colMatrix));
+      this.pos[i].copy(p.applyMatrix4(this.colMatrix));
     }
   }
 
@@ -413,6 +457,12 @@ const _q = new THREE.Quaternion();
 const _q2 = new THREE.Quaternion();
 const _iq = new THREE.Quaternion();
 const _inv = new THREE.Matrix4();
+const _cp = new THREE.Vector3();
+const _cq = new THREE.Quaternion();
+const _cs = new THREE.Vector3();
+const _ip = new THREE.Vector3();
+const _iq2 = new THREE.Quaternion();
+const _is = new THREE.Vector3();
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
 const _v3 = new THREE.Vector3();
