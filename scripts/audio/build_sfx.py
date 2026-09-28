@@ -1,19 +1,15 @@
-"""Build the site's sound sprite from code. No samples: every sound is synthesised here.
+"""Build the site's sounds from code. No samples: every sound is synthesised here.
 
-Each sound is modelled on the part that makes it (docs/device-design.md §7):
-- polymer tabs and keys: short modal clicks over a dome thump
-- champagne roller: a tiny metal detent tick
-- e-ink panel: a faint crackle and swish
-- key card: an air whoosh, then a hard tap on the back plate
-- D-star coin: an inharmonic plate ring (free circular plate mode ratios), chain links: tiny ticks
-Only the device's own feedback (open, verified, sound-on) is tonal. It uses D major pentatonic, so
-every chime agrees with the tab pitches (01-04 = D E F# A).
+Set 2 (docs/device-design.md §15), after studying how Contra uses sound: few sounds, one family.
+Interaction sounds are 10-60 ms and not pitched (a hover tick, a press, a detent, a thock), pitch is
+kept for one reward (a D6 + D7 bell), and a quiet low drone in D sits under everything so the short
+clicks feel like one place. Measured targets, not copies: none of Contra's audio is used.
 
 Outputs
-  public/audio/sfx.webm   Opus, the main file
-  public/audio/sfx.mp3    fallback for browsers without WebM Opus
-  src/audio/sprite.json   {name: [offsetMs, durationMs]} for Howler
-  .cache/sfx/             one WAV per sound + sheet.png (waveform and spectrogram) with --sheet
+  public/audio/sfx.webm|mp3   the interaction sprite (Opus, mp3 fallback)
+  public/audio/bed.webm|mp3   the ambient bed: a seamless 24 s loop between LOOP_IN and LOOP_IN + 24 s
+  src/audio/sprite.json       {name: [offsetMs, durationMs]} for Howler, plus "bed": [in, 24000, true]
+  .cache/sfx/                 one WAV per sound + sheet.png (waveform and spectrogram) with --sheet
 
 Run: python scripts/audio/build_sfx.py [--sheet]
 Needs numpy + scipy, and ffmpeg (on PATH, in $FFMPEG, or the winget Gyan.FFmpeg install).
@@ -37,8 +33,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / ".cache" / "sfx"
 rng = np.random.default_rng(20260928)  # fixed seed: rebuilds are byte-identical before encoding
 
-# Pitches (Hz), D major pentatonic.
-D5, D6, E6, FS6, A6, D7 = 587.33, 1174.66, 1318.51, 1479.98, 1760.0, 2349.32
+# The site's key is D: the bell and the bed use it.
+D6, D7 = 1174.66, 2349.32
 # Free circular plate mode ratios (approx.): what makes a coin ring, not beep.
 PLATE = [1.0, 1.594, 2.136, 2.296, 2.653, 2.918, 3.156, 3.501]
 
@@ -141,16 +137,6 @@ def click(spec, dur, tr=(0.0015, 2500, 9000), tr_amp=0.6, thump=None):
     return edges(x)
 
 
-def tone(f, dur, tau, attack=0.006, bright=1.0):
-    """Soft struck tone: fundamental + fast-decaying 2nd and 4th partials + a tiny felt 'tok'."""
-    t = tt(dur)
-    x = np.sin(2 * np.pi * f * t)
-    x += 0.12 * bright * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t / (tau * 0.45))
-    x += 0.04 * bright * np.sin(2 * np.pi * 4.0 * f * t) * np.exp(-t / (tau * 0.2))
-    atk = np.sin(np.pi / 2 * np.minimum(t / attack, 1.0)) ** 2
-    x *= atk * np.exp(-t / tau)
-    place(x, lp(transient(0.002, 300, 6000), 3000), 0, 0.08)
-    return edges(x, fin=0.0, fout=0.02)
 
 
 def coin_hit(base, ring=1.0, dur=0.6):
@@ -159,201 +145,132 @@ def coin_hit(base, ring=1.0, dur=0.6):
     return click(spec, dur, tr=(0.001, 4000, 16000), tr_amp=0.45)
 
 
-def link_tick():
-    return click([(rng.uniform(5600, 7800), 0.018, 1.0), (rng.uniform(8600, 10800), 0.011, 0.55)], 0.07,
-                 tr=(0.0008, 5000, 16000), tr_amp=0.7)
 
 
 # ---------------------------------------------------------------- the sounds
-def s_tick():  # roller detent: metal knurl over a detent spring
-    return click([(3200, 0.004, 1.0), (5100, 0.003, 0.6), (7400, 0.002, 0.35), (900, 0.005, 0.3)], 0.045,
-                 tr=(0.0015, 3000, 12000), tr_amp=0.7)
+def glide(f0, f1, tau_f, tau, dur, amp=1.0):
+    """A sine whose pitch falls from f0 to f1 (time constant tau_f) as it decays: a soft body's thump."""
+    t = tt(dur)
+    f = f1 + (f0 - f1) * np.exp(-t / tau_f)
+    return amp * np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / tau)
 
 
-def s_tab():  # polymer tab on a metal dome; the site shifts its pitch 01 -> 04
-    return click([(1650, 0.008, 1.0), (2900, 0.006, 0.55), (4300, 0.004, 0.35)], 0.09,
-                 tr=(0.002, 2000, 9000), tr_amp=0.8, thump=(220, 0.012, 0.6))
+def s_hover():  # pointer arrives on a control: a tiny tick you feel more than hear
+    return click([(2950, 0.0035, 1.0), (5900, 0.0015, 0.3)], 0.02, tr=(0.0006, 3000, 9000), tr_amp=0.35)
 
 
-def s_key():  # round chin key: press, then a softer release as it springs back
-    x = zeros(0.2)
-    place(x, click([(1200, 0.009, 1.0), (2400, 0.006, 0.5), (3700, 0.004, 0.3)], 0.12,
-                   tr=(0.0025, 1500, 8000), tr_amp=0.7, thump=(160, 0.015, 0.7)), 0)
-    place(x, click([(1400, 0.006, 1.0), (2800, 0.004, 0.4)], 0.08, tr=(0.0015, 2500, 9000), tr_amp=0.5), 0.09, 0.35)
+def s_press():  # any press: a crisp snap and a mid knock over a small low body, over in ~50 ms
+    x = glide(150, 100, 0.008, 0.01, 0.06, amp=0.16)
+    x += norm(mode(780, 0.007, 0.06, 0.45) + mode(1650, 0.008, 0.06, 1.0) + mode(3400, 0.006, 0.06, 1.0) + mode(5200, 0.005, 0.06, 1.0) + mode(7100, 0.003, 0.06, 0.5)) * 0.8
+    place(x, transient(0.003, 2500, 12000), 0, 1.0)
     return edges(x)
 
 
-def s_bump():  # roller at its end stop: dull and low, with enough 400-900 Hz to survive phone speakers
-    return edges(lp(click([(180, 0.025, 1.0), (420, 0.014, 0.8), (900, 0.008, 0.6)], 0.1,
-                          tr=(0.003, 200, 1400), tr_amp=0.5), 3000))
+def s_detent():  # one step of a list or the roller: a bright, dry tick
+    return click([(6900, 0.0025, 1.0), (3650, 0.003, 0.35)], 0.024, tr=(0.0008, 5000, 16000), tr_amp=0.6)
 
 
-def s_switch():  # slide switch: a little friction, then the detent snap
-    x = zeros(0.12)
-    fr = bp(noise(0.03), 1500, 4500) * (tt(0.03) / 0.03) ** 1.5
-    place(x, norm(fr), 0, 0.22)
-    place(x, click([(2200, 0.005, 1.0), (3800, 0.003, 0.6), (6000, 0.002, 0.4)], 0.09,
-                   tr=(0.0015, 3000, 12000), tr_amp=0.8, thump=(300, 0.008, 0.5)), 0.028)
-    return edges(x)
+def s_toggle():  # a switch, an end stop, a card seating: a soft low thock (with enough mid for phones)
+    x = glide(200, 165, 0.01, 0.014, 0.07)
+    x += mode(90, 0.018, 0.07, 0.5, phase=0) + mode(520, 0.01, 0.07, 1.0)
+    place(x, lp(transient(0.001, 600, 3000), 3000), 0, 0.25)
+    return edges(lp(x, 3200))
 
 
-def s_eink():  # full refresh: two faint swishes (matching the screen's double flash) + crackle
-    d = 0.23
-    x = zeros(d)
-    for at, ln in [(0.0, 0.07), (0.12, 0.06)]:
-        t = tt(ln)
-        env = np.minimum(t / 0.006, 1) * np.exp(-t / 0.02)
-        place(x, norm(bp(noise(ln), 4000, 9000) * env), at)
-    crackle = np.zeros(n_(d))
-    hits = rng.random(n_(d)) < 260 / SR
-    crackle[hits] = rng.uniform(-1, 1, hits.sum())
-    x += 0.35 * norm(hp(crackle, 5000)) * np.exp(-tt(d) / 0.12)
-    return edges(x)
-
-
-def s_write():  # one line written on the key card: a printhead step
-    return click([(8500, 0.0015, 1.0), (6200, 0.002, 0.5)], 0.03, tr=(0.001, 5000, 14000), tr_amp=0.9)
-
-
-def s_open():  # panel opens: D6 -> A6
-    x = zeros(0.5)
-    place(x, tone(D6, 0.43, 0.15), 0)
-    place(x, tone(A6, 0.43, 0.19), 0.07, 0.9)
-    return x
-
-
-def s_close():  # panel closes: soft low click + a falling breath of air
-    d = 0.22
-    x = zeros(d)
-    place(x, click([(420, 0.01, 1.0), (900, 0.006, 0.4)], 0.06, tr=(0.0015, 400, 3000), tr_amp=0.4), 0)
-    t = tt(0.18)
-    air = svf_bp(noise(0.18), 2800 * (700 / 2800) ** (t / 0.18), 0.9) * np.minimum(t / 0.01, 1) * np.exp(-t / 0.06)
-    place(x, norm(air), 0.005, 0.6)
-    return edges(x)
-
-
-def air(speed: np.ndarray, q=1.4):
-    """Moving-air noise driven by a speed curve (0..1): louder and brighter as the card goes faster."""
-    d = len(speed) / SR
+def s_process():  # the reader writing the key: a faint high shimmer that flutters, then fades
+    d = 0.9
     t = tt(d)
-    fc = 400 + 1800 * speed
-    a = norm(svf_bp(noise(d), fc, q)) * speed**1.5
-    paper = norm(hp(noise(d), 3000)) * speed**1.5 * (1 + 0.5 * np.sin(2 * np.pi * 23 * t)) * 0.15
-    return a + paper
-
-
-def s_whoosh():
-    """Key card entrance. Follows contactSequence.ts: power3.out over 0.56 s (fastest as it enters),
-    then power2.in for 0.14 s into the tap at 0.70 s. The tap sound covers the cut."""
-    d = 0.7
-    t = tt(d)
-    approach = 3 * np.clip(1 - t / 0.56, 0, 1) ** 2  # d/dt of power3.out
-    impact = np.where(t > 0.56, 2 * (t - 0.56) / 0.14, 0) * 0.25  # d/dt of power2.in, shorter travel
-    speed = np.maximum(approach / 3, impact)
-    speed *= np.minimum(t / 0.025, 1)  # it enters from off-screen, not from nothing
-    return edges(air(speed), fin=0.002, fout=0.004)
-
-
-def s_swish():  # card swinging out or being put away: power2.out, fastest first
-    d = 0.4
-    t = tt(d)
-    speed = (1 - t / d) ** 1.4 * np.minimum(t / 0.02, 1)
-    return edges(air(speed, q=1.2))
-
-
-def s_insert():  # key card pushed into the side reader: card-stock friction rising, then the latch
-    d = 0.42
     x = zeros(d)
-    t = tt(0.3)
-    fr = bp(noise(0.3), 1800, 6500) * (0.25 + 0.75 * (t / 0.3) ** 1.3) * (1 + 0.3 * np.sin(2 * np.pi * 31 * t))
-    place(x, edges(norm(fr), fin=0.01, fout=0.008), 0, 0.45)
-    latch = click([(2800, 0.006, 1.0), (4500, 0.004, 0.6), (1300, 0.012, 0.5)], 0.1, tr=(0.0015, 2500, 12000), tr_amp=0.9, thump=(260, 0.012, 0.6))
-    place(x, latch, 0.3)
-    return edges(x)
+    for k, f in enumerate([8800, 10100, 11500, 12800, 14200]):
+        rate = rng.uniform(11, 27)
+        flutter = 0.5 + 0.5 * np.sin(2 * np.pi * rate * t + rng.uniform(0, 2 * np.pi))
+        x += np.sin(2 * np.pi * f * t + rng.uniform(0, 2 * np.pi)) * flutter * 0.85**k
+    env = np.minimum(t / 0.08, 1) * np.clip((d - t) / 0.25, 0, 1) ** 2
+    return edges(x * env, fin=0.002, fout=0.01)
 
 
-def s_eject():  # reader spring pushes the written key back out: a soft thunk, then a short slide
-    d = 0.4
-    x = zeros(d)
-    place(x, click([(320, 0.02, 1.0), (1200, 0.01, 0.5), (2600, 0.005, 0.3)], 0.12, tr=(0.002, 400, 5000), tr_amp=0.5), 0)
-    t = tt(0.3)
-    fr = bp(noise(0.3), 1600, 6000) * (1 - t / 0.3) ** 1.6
-    place(x, edges(norm(fr), fin=0.004, fout=0.01), 0.02, 0.35)
-    return edges(x)
-
-
-def s_peel():  # sticker adhesive letting go: dense tiny crackles over a soft tearing hiss
-    d = 0.26
+def s_success():  # the one pitched sound: a soft-struck bell, D6 under a brighter D7
+    d = 1.3
     t = tt(d)
-    env = np.minimum(t / 0.02, 1) * np.exp(-t / 0.09)
-    hiss = norm(bp(noise(d), 2500, 9000)) * env * 0.35
+    atk = np.sin(np.pi / 2 * np.minimum(t / 0.05, 1)) ** 2
+    x = 0.63 * np.sin(2 * np.pi * D6 * t) * np.exp(-t / 0.38)
+    x += 1.0 * np.sin(2 * np.pi * D7 * t) * np.exp(-t / 0.26)
+    x += 0.05 * np.sin(2 * np.pi * D7 * 2.76 * t) * np.exp(-t / 0.06)  # a glassy strike partial
+    return edges(x * atk, fin=0.0, fout=0.04)
+
+
+def s_power():  # sound switched on: a warm swell in D that rises, breathes and settles
+    d = 1.8
+    t = tt(d)
+    swell = np.where(t < 0.7, np.sin(np.pi / 2 * t / 0.7) ** 2, np.cos(np.pi / 2 * np.clip((t - 0.7) / 1.1, 0, 1)) ** 2)
+    x = sum(a * np.sin(2 * np.pi * f * t) for f, a in [(146.83, 0.5), (220.0, 0.3), (293.66, 0.22), (440.0, 0.06)])
+    return edges(lp(x, 900) * swell, fin=0.0, fout=0.02)
+
+
+def s_air():  # something moves past: a short soft swish, fastest first
+    d = 0.28
+    t = tt(d)
+    speed = np.sin(np.pi * np.clip(t / d, 0, 1) ** 0.6) ** 2
+    return edges(norm(svf_bp(noise(d), 900 + 1700 * speed, 1.2)) * speed, fin=0.002, fout=0.01)
+
+
+def s_coin():  # the D-star coin: a short metal tick with a little ring
+    return coin_hit(2600, ring=0.35, dur=0.14)
+
+
+def s_peel():  # sticker adhesive letting go: a short soft crackle
+    d = 0.18
+    t = tt(d)
+    env = np.minimum(t / 0.015, 1) * np.exp(-t / 0.06)
+    hiss = norm(bp(noise(d), 2500, 8000)) * env * 0.25
     crack = np.zeros(n_(d))
-    hits = rng.random(n_(d)) < (900 / SR) * env
+    hits = rng.random(n_(d)) < (700 / SR) * env
     crack[hits] = rng.uniform(-1, 1, hits.sum())
-    crack = norm(hp(crack, 3500)) * 0.9
-    return edges(hiss + crack, fin=0.002, fout=0.02)
+    return edges(hiss + norm(hp(crack, 3500)) * 0.7, fin=0.002, fout=0.015)
 
 
-def s_stick():  # sticker lands back flat: a soft pat and a last tiny crackle
-    x = zeros(0.12)
-    place(x, click([(190, 0.018, 1.0), (520, 0.008, 0.4)], 0.1, tr=(0.003, 300, 2500), tr_amp=0.6), 0)
-    crack = np.zeros(n_(0.05))
-    hits = rng.random(n_(0.05)) < 500 / SR
-    crack[hits] = rng.uniform(-1, 1, hits.sum())
-    place(x, norm(hp(crack, 4000)) * np.exp(-tt(0.05) / 0.02), 0.008, 0.25)
-    return edges(x)
-
-
-def s_tap():  # card meets the back plate: metal shell ring + card thump
-    return click([(1350, 0.035, 1.0), (2700, 0.022, 0.6), (4100, 0.014, 0.45), (5600, 0.009, 0.3)], 0.22,
-                 tr=(0.0015, 1200, 12000), tr_amp=1.0, thump=(240, 0.018, 0.9))
-
-
-def s_verified():  # key read: D6 F#6 A6, with a D7 sparkle on the last note
-    x = zeros(0.8)
-    place(x, tone(D6, 0.5, 0.13), 0)
-    place(x, tone(FS6, 0.5, 0.15), 0.055, 0.9)
-    place(x, tone(A6, 0.65, 0.3), 0.11, 0.95)
-    place(x, tone(D7, 0.5, 0.25, bright=0.5), 0.11, 0.25)
-    return x
-
-
-def s_jingle():  # coin tapped: coin rings, chain links rattle, dying away
-    x = zeros(0.75)
-    base = 3400 * rng.uniform(0.97, 1.03)
-    for at, amp, kind in [(0, 1, "c"), (0.045, 0.7, "l"), (0.095, 0.55, "c"), (0.16, 0.4, "l"), (0.25, 0.3, "c"), (0.33, 0.18, "l")]:
-        hit = coin_hit(base * rng.uniform(0.98, 1.02)) if kind == "c" else link_tick()
-        place(x, norm(hit), at + rng.uniform(-0.008, 0.008) if at else 0, amp)
-    return edges(x)
-
-
-def s_clink():  # coin swings into the wallet: one coin hit + a short shell tick
-    x = zeros(0.45)
-    place(x, norm(coin_hit(3400, ring=0.8, dur=0.45)), 0)
-    place(x, click([(1350, 0.012, 1.0), (2700, 0.008, 0.5)], 0.05, tr=(0.001, 1500, 9000), tr_amp=0.6), 0, 0.5)
-    return edges(x)
-
-
-def s_boot():  # sound switched on: the panel wakes (crackle), then D5 -> D6
-    x = zeros(0.95)
-    place(x, s_eink(), 0, 0.5)
-    place(x, tone(D5, 0.9, 0.35, attack=0.06), 0.02, 0.8)
-    place(x, tone(D6, 0.75, 0.3, attack=0.01), 0.16, 0.55)
-    return edges(x, fout=0.05)
-
-
-# name -> (builder, peak dBFS). Levels are the mix: quiet for frequent sounds, louder for payoffs.
+# name -> (builder, peak dBFS). Levels are the mix: the frequent ones quietest.
 SOUNDS = {
-    "tick": (s_tick, -21), "tab": (s_tab, -15), "key": (s_key, -14), "bump": (s_bump, -13),
-    "switch": (s_switch, -15), "eink": (s_eink, -26), "write": (s_write, -22), "open": (s_open, -17),
-    "close": (s_close, -20), "whoosh": (s_whoosh, -15), "swish": (s_swish, -18), "tap": (s_tap, -9),
-    "insert": (s_insert, -13), "eject": (s_eject, -14), "peel": (s_peel, -19), "stick": (s_stick, -17),
-    "verified": (s_verified, -14),
-    "jingle": (s_jingle, -12), "clink": (s_clink, -12), "boot": (s_boot, -14),
+    "hover": (s_hover, -21), "press": (s_press, -11), "detent": (s_detent, -15), "toggle": (s_toggle, -16),
+    "process": (s_process, -27), "success": (s_success, -14), "power": (s_power, -19), "air": (s_air, -24),
+    "coin": (s_coin, -17), "peel": (s_peel, -23),
 }
+
+
 LEAD = 0.05  # silence before the first sound (absorbs codec priming)
 GAP = 0.12  # silence between sounds: no bleed at any playback rate the site uses
 TAIL = 0.04  # extra ms in each sprite entry past the sound's end
+
+
+# ---------------------------------------------------------------- the bed
+BED_T = 24.0  # loop length (s): every frequency and every slow movement repeats exactly in it
+LOOP_IN = 0.1  # the loop starts this far into the file (a lead-in absorbs codec priming)
+
+
+def periodic(f):
+    """Nearest frequency that repeats a whole number of times in BED_T, so the loop has no seam."""
+    return round(f * BED_T) / BED_T
+
+
+def s_bed():
+    """A quiet, warm drone in D: a sub root and fifth, a soft D3, and faint F#4 A4 E5 colour that
+    swell in and out on their own slow cycles. Two detuned copies of each partial give it air."""
+    t = tt(BED_T)
+    x = zeros(BED_T)
+    lfo = lambda cycles, ph=0.0: 0.5 + 0.5 * np.sin(2 * np.pi * cycles * t / BED_T + ph)
+    parts = [(73.42, 1.0, 1, 0.15), (110.0, 0.45, 2, 0.25), (146.83, 0.3, 3, 0.5),
+             (369.99, 0.05, 1, 1.0), (440.0, 0.045, 2, 1.0), (659.26, 0.035, 3, 1.0)]
+    for f, a, cyc, depth in parts:
+        ph = rng.uniform(0, 2 * np.pi)
+        swell = 1 - depth + depth * lfo(cyc, ph)
+        for df in (0.0, 2 / BED_T):  # a slow 12 s beat between the pair
+            x += a * swell * np.sin(2 * np.pi * periodic(f + df) * t + rng.uniform(0, 2 * np.pi))
+    # A breath of band-limited air, made periodic by shaping white noise in the frequency domain.
+    spec = np.fft.rfft(rng.standard_normal(len(t)))
+    fr = np.fft.rfftfreq(len(t), 1 / SR)
+    spec *= np.exp(-0.5 * (np.log(np.maximum(fr, 1) / 500) / 0.6) ** 2)
+    x += norm(np.fft.irfft(spec, len(t))) * 0.04 * lfo(2, 1.0)
+    return x
 
 
 # ---------------------------------------------------------------- output
@@ -436,9 +353,19 @@ def main():
     ff = find_ffmpeg()
     out = ROOT / "public" / "audio"
     out.mkdir(parents=True, exist_ok=True)
-    run = lambda *a: subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-i", str(master), *a], check=True)
-    run("-ac", "1", "-c:a", "libopus", "-b:a", "48k", "-application", "audio", str(out / "sfx.webm"))
-    run("-ac", "1", "-ar", "44100", "-c:a", "libmp3lame", "-b:a", "64k", str(out / "sfx.mp3"))
+    enc = lambda src, *a: subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-i", str(src), *a], check=True)
+    enc(master, "-ac", "1", "-c:a", "libopus", "-b:a", "48k", "-application", "audio", str(out / "sfx.webm"))
+    enc(master, "-ac", "1", "-ar", "44100", "-c:a", "libmp3lame", "-b:a", "64k", str(out / "sfx.mp3"))
+
+    # Bed: one loop with LOOP_IN s of its own end before it and 0.5 s of its start after it, so the
+    # loop window [LOOP_IN, LOOP_IN + BED_T] is seamless whatever the codec does at the file's edges.
+    loop = norm(s_bed(), 10 ** (-9 / 20))
+    bed = np.concatenate([loop[-n_(LOOP_IN):], loop, loop[: n_(0.5)]])
+    bed_wav = CACHE / "bed.wav"
+    write_wav(bed_wav, bed)
+    enc(bed_wav, "-ac", "1", "-c:a", "libopus", "-b:a", "40k", "-application", "audio", str(out / "bed.webm"))
+    enc(bed_wav, "-ac", "1", "-ar", "44100", "-c:a", "libmp3lame", "-b:a", "64k", str(out / "bed.mp3"))
+    sprite["bed"] = [round(LOOP_IN * 1000, 1), round(BED_T * 1000, 1), True]
     (ROOT / "src" / "audio").mkdir(parents=True, exist_ok=True)
     (ROOT / "src" / "audio" / "sprite.json").write_text(json.dumps(sprite, indent=2) + "\n", encoding="utf-8")
 
@@ -449,7 +376,9 @@ def main():
 
     kb = lambda p: (out / p).stat().st_size / 1024
     print(f"{len(clips)} sounds, {total:.2f} s  ->  sfx.webm {kb('sfx.webm'):.1f} KB, sfx.mp3 {kb('sfx.mp3'):.1f} KB")
-    for name, (o, d) in sprite.items():
+    print(f"bed {BED_T:.0f} s loop  ->  bed.webm {kb('bed.webm'):.1f} KB, bed.mp3 {kb('bed.mp3'):.1f} KB, "
+          f"rms {20 * np.log10(np.sqrt(np.mean(loop**2))):.1f} dBFS")
+    for name, (o, d) in ((k, v[:2]) for k, v in sprite.items() if k != "bed"):
         print(f"  {name:9s} {o:8.1f} ms  {d:6.1f} ms  peak {20 * np.log10(np.max(np.abs(clips[name]))):6.1f} dBFS")
 
 

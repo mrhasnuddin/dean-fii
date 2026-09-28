@@ -89,7 +89,7 @@ The page scroll is **never** captured. The roller only responds to wheel input w
 |---|---|---|---|
 | Email | `mr.hasn…@gmail.com` (name shortened, domain kept) | `mailto:` (same tab) | **Copy button** copies the full address, then shows ✓ plus "Email copied" (or a failure message) for 1.8 s |
 | LinkedIn | `in/hasnuddin` | https://www.linkedin.com/in/hasnuddin/ (new tab) | |
-| WhatsApp | `+60 12-*** 3743` (middle masked) | `https://wa.me/…` (number in `src/content/contact.ts`) (new tab) | Added by Dean on 2026-09-27; it isn't in REVAMP-HANDOFF.md |
+| WhatsApp | `@0xDeann` (username) | `https://wa.me/0xDeann` (new tab) | Added by Dean on 2026-09-27; switched from the phone number to the WhatsApp username on 2026-09-28, so no number is published |
 
 - **Scraper protection:** email and phone are stored in parts (`src/content/contact.ts`). The real `mailto:`/`wa.me` hrefs are filled in on first hover, focus or touch, so the static HTML contains neither full value (verified). Anyone who clicks still gets a normal link. A determined scraper running a real browser can still get them; the goal is to stop bulk harvesting.
 - **Accessibility:** hidden prefixes make the accessible names "Email: …", "LinkedIn: … (opens in a new tab)" and "WhatsApp: … (opens in a new tab)". They match the visible text, so voice control works. Tap targets are ≥32 px. Focus rings are champagne.
@@ -103,6 +103,8 @@ The page scroll is **never** captured. The roller only responds to wheel input w
 - The About screen's portrait frame is 4:5.
 
 ## 7. Sound design (Howler.js; built 2026-09-28, audition at `lab/sound.html`)
+
+**Superseded by set 2 (§15), 2026-09-28.** The library, on/off, unlock and build pipeline below still hold; the sound list does not.
 
 **Library:** Howler.js 2.2.x, the same library Contra uses. It handles sprites, Web Audio with an HTML5 fallback, mobile unlock and codec fallback. It is split into its own chunk (9.6 KB gzipped) and only imported on the visitor's first click, tap or key press, so no AudioContext exists before then.
 
@@ -242,3 +244,37 @@ About and Get in touch share one row, 60 / 40 (About left, the contact card righ
 **Loader:** it now plays the wallet screen's idle animation, smooth instead of in e-ink steps. The mark fades in (450 ms). Then, every 3.2 s, the sparkle turns a quarter while it breathes in to 58 % and back, and four glints flash on its diagonals (0.9 s), then it rests. The curves are the idle's (turn easeInOutCubic, breath sine), and the values match it frame for frame. The old loader had a rising D, a pop and a 1.8 s turn with a stop at 45°: CSS restarts a keyframe's easing at every stop, so the turn halted halfway. Turn, breath and glints are now separate elements with one curve per phase. The minimum loader time (1.35 s) is the fade-in plus one full twinkle.
 
 **Keychain on phones:** the coin could chatter against the body and clink over and over. Collision pushed a node out of the body but kept its speed into it (Verlet velocity = pos − prev), so it bounced off, the chain pulled it back and it hit again. Janky phone frames made it worse: every sub-step of a long frame used the body's end pose, so the body seemed to slam into the chain. Now contact is inelastic (the speed into the face goes too), the body moves through the sub-steps like the anchor does, a clink needs the coin to have been off the body for 0.15 s, and clinks are at least 300 ms apart. Replayed with phone-like frame times, a coin resting on the body went from 177 hits in 8 s to 2, and the About spin from 27 to 6 (one per swing).
+
+## 15. Sound set 2: fewer, shorter, one family (2026-09-28, Dean: "just like Contra's")
+
+**What Contra does (measured from its sprite and code, for reference only; none of its audio is used):** eight sounds. Interaction sounds are 10–45 ms and not pitched: a hover tick (~3.2 kHz, mouse only), a press click (low body plus a broadband snap), a bright ratchet for list steps and the dial, and a low thock for toggles and errors. Pitch is kept for one reward, a bell ping an octave apart with a soft 80 ms attack. Two long textures (a screen power-up hum, a faint high "calculating" shimmer) mark processes, and a warm low drone loops under everything at 30 % volume. Set 1 had twenty sounds, pitched tabs and chimes, and interaction sounds of 40–700 ms, which is where it felt busy.
+
+**Set 2 (`scripts/audio/build_sfx.py`, all synthesised, in D):**
+
+| Sound | Character | Plays when |
+|---|---|---|
+| `hover` | 15 ms tick, ~3 kHz | the mouse arrives on a wallet control or a tab-bar tab (never on touch) |
+| `press` | ~30 ms click: small low body, knock and snap | tabs (wallet, tab bar, keys 1–4), ✓, a panel opening, a contact channel; Back and a panel closing at rate 0.85 |
+| `detent` | 10 ms bright tick | one list step (roller, wheel, ↑/↓, row tap, pager); email or link copied |
+| `toggle` | 60 ms soft thock | Device/List and Motion switches; card seats (rate 1) and ejects (1.25); sticker lands; end stop and failed copy (0.8) |
+| `process` | 0.9 s faint high shimmer | the reader writing the key |
+| `success` | 1.3 s bell, D6 under a brighter D7, 50 ms attack | the key comes back written: the only pitched sound |
+| `power` | 1.8 s warm swell in D | sound switched on |
+| `air` | 0.28 s soft swish | the card flying in or out; the wallet settling after a hand turn |
+| `coin` | 0.14 s short metal tick | the coin clicked; the coin swinging into the wallet (quieter, follows the hit) |
+| `peel` | 0.18 s soft crackle | peeling a sticker |
+| `bed` | 24 s seamless loop: D2 and A2 sub, a soft D3, faint F♯4 A4 E5 on slow swells | under everything once sound is allowed; fades in over 1.5 s to 28 %, fades out when switched off, pauses in a hidden tab |
+
+The e-ink refresh is silent now (the press that caused it already sounded). A press arriving twice for one action (the key, then the panel it opens) is played once (70 ms throttle).
+
+**Size:** `sfx.webm` 34 KB (was 52 KB), `bed.webm` 129 KB, loaded separately so it never delays the clicks. The bed's loop window is [0.1 s, 24.1 s]; every frequency and slow movement in it repeats exactly in 24 s, and the decoded Opus file joins with a step 0.97× its normal largest step (no click).
+
+**Audition:** `lab/sound.html` (every sound, where it plays, and the contact sequence at its real timing; the bed runs underneath).
+
+## 16. Local time on the screen (2026-09-28, Dean's request)
+
+The screen's status bar shows Dean's local time, 24-hour, with the zone: "18:33 GMT+8" beside the battery (Malaysia, `Asia/Kuala_Lumpur`, no daylight saving). It is on the Hello screen and on Standby, the idle overlay that covers any section after 25 s without input, so it reads like a phone's lock screen. It changes in place on the minute, with no refresh flash. The section screens keep their softkey row instead of a status bar.
+
+## 17. Addresses (2026-09-28)
+
+The address bar stays the plain site address. In-page links (the logo, the skip link, List view's section links) scroll without writing `#hello`, `#console` or `#lv-…` into it, and section links from outside (`…/#/contact`, `#/work`, `#/stage`) open their section and then tidy back to the plain address. Only an open detail panel shows a hash (`#/work/eni`, `#/stage/…`, `#/about`): it makes the panel shareable, and Back closes it. Links to panels that don't exist are tidied away. Share always copies the plain address.

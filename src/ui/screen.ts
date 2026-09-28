@@ -7,9 +7,8 @@ import './einkScreen.css';
 import './screen.css';
 import { LOGO_PATHS } from '../brand/logo';
 import { createPixelLogo } from './pixelLogo';
-import { contact, emailDisplay, phoneDisplay } from '../content/contact';
+import { contact, emailDisplay, whatsappDisplay } from '../content/contact';
 import { countries, events, profile, projects, toolNames } from '../content/portfolio';
-import { sfx } from '../audio/sfx';
 import { motion } from '../motion';
 
 export type ScreenMode = 'boot' | 'hello' | 'works' | 'chronicle' | 'about' | 'contact';
@@ -46,7 +45,7 @@ const LABEL: Record<ScreenMode, string> = {
 };
 const CHANNELS = [
   { id: 'email', name: 'Email', detail: emailDisplay() },
-  { id: 'whatsapp', name: 'WhatsApp', detail: phoneDisplay() },
+  { id: 'whatsapp', name: 'WhatsApp', detail: whatsappDisplay() },
   { id: 'linkedin', name: 'LinkedIn', detail: contact.linkedin.label },
 ] as const;
 // Touch screens get taller rows (screen.css, same query), so one fewer fits.
@@ -62,6 +61,11 @@ const SOFTKEYS = [
 ] as const;
 const PX_PER_W = 360 / 0.795;
 const IDLE_MS = 25_000;
+// Dean's local time, 24-hour, in the status bar like a phone's: Malaysia (GMT+8, no daylight saving).
+const LOCAL_TIME = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+const clockNow = () => LOCAL_TIME.format(new Date());
+const statusRight = () =>
+  `<span class="ek-sb-r"><span class="ek-clock"><b>${clockNow()}</b> GMT+8</span><span class="ek-bat" aria-hidden="true"></span></span>`;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 // Card reader glyph: the wallet in profile with the key half inserted in its side slot; the arrow
@@ -82,7 +86,9 @@ export function createScreen(): Screen {
   const saver = document.createElement('div');
   saver.className = 'sc-saver';
   saver.hidden = true;
-  saver.innerHTML = `<div class="sc-mark"></div><p class="sc-caption">Dean Studio</p>`;
+  // Standby (lock screen): the status bar with the clock, then the idle mark.
+  saver.innerHTML = `<header class="ek-sb"><span>Standby</span>${statusRight()}</header>
+    <section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>`;
   const index: Record<'works' | 'chronicle' | 'contact', number> = { works: 0, chronicle: 0, contact: 0 };
   let intentCb: (i: ScreenIntent) => void = () => {};
   let selectCb: (i: number) => void = () => {};
@@ -100,12 +106,9 @@ export function createScreen(): Screen {
       }, 50);
     }, 70);
   };
-  // Full refresh (mode or contact state change): the double flash plus its faint e-ink swish.
-  // Sound isn't motion, so the swish stays when motion is reduced.
-  const refresh = () => {
-    sfx.play('eink');
-    flash();
-  };
+  // Full refresh (mode or contact state change): the double flash. Silent: the press that caused it
+  // already sounded.
+  const refresh = () => flash();
 
   // One pixel logo, mounted wherever the idle mark is showing (Hello, or the idle overlay).
   function mountLogo() {
@@ -162,8 +165,7 @@ export function createScreen(): Screen {
   }
 
   function render() {
-    const sb = (right = '<span class="ek-bat" aria-hidden="true"></span>') =>
-      `<header class="ek-sb"><span>${LABEL[current]}</span>${right}</header>`;
+    const sb = (right = statusRight()) => `<header class="ek-sb"><span>${LABEL[current]}</span>${right}</header>`;
     let html = '';
     switch (current) {
       case 'boot': // under the page loader: a still mark until the wallet arrives
@@ -263,7 +265,14 @@ export function createScreen(): Screen {
   });
 
   render();
-  COARSE.addEventListener('change', render); // a hybrid device switching between touch and mouse
+  COARSE.addEventListener('change', render);
+  // The clock changes in place on the minute, without a refresh flash.
+  const tickClock = () => {
+    const now = clockNow();
+    el.querySelectorAll('.ek-clock b').forEach((b) => (b.textContent = now));
+    setTimeout(tickClock, 60_000 - (Date.now() % 60_000) + 50);
+  };
+  tickClock(); // a hybrid device switching between touch and mouse
   return {
     el,
     mode: () => current,

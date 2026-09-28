@@ -62,9 +62,11 @@ gsap.ticker.add((t) => lenis?.raf(t * 1000));
 gsap.ticker.lagSmoothing(0);
 // `force`: a panel may be closing in the same click (Invite, Work with Dean) with Lenis still stopped.
 function scrollToEl(el: HTMLElement | number, done?: () => void, immediate = false) {
-  if (lenis) lenis.scrollTo(el, { duration: 1.1, force: true, immediate, onComplete: () => done?.() });
+  // Honour scroll-margin-top (List view sections clear the fixed header with it); Lenis ignores it.
+  const margin = typeof el === 'number' ? 0 : parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+  if (lenis) lenis.scrollTo(el, { offset: -margin, duration: 1.1, force: true, immediate, onComplete: () => done?.() });
   else {
-    const y = typeof el === 'number' ? el : el.getBoundingClientRect().top + scrollY;
+    const y = typeof el === 'number' ? el : el.getBoundingClientRect().top + scrollY - margin;
     scrollTo({ top: y, behavior: immediate || motion.reduced() ? 'auto' : 'smooth' });
     if (done) setTimeout(done, immediate || motion.reduced() ? 0 : 900);
   }
@@ -118,7 +120,7 @@ function share(label: Element | null) {
       return;
     }
     const ok = await copyText(url);
-    sfx.play(ok ? 'write' : 'bump');
+    sfx.play(ok ? 'detent' : 'toggle', ok ? {} : { rate: 0.8 });
     announce(ok ? 'Link copied' : 'Couldn’t copy the link');
     if (!label) return;
     label.textContent = ok ? 'Link copied' : 'Couldn’t copy';
@@ -144,6 +146,8 @@ function showTab(tab: TabId) {
 let selectTab: (tab: TabId) => void = (tab) => showTab(tab);
 tabButtons.forEach((b, i) => {
   b.addEventListener('click', () => selectTab(b.dataset.tab as TabId));
+  // Mouse only, like the wallet's own keys: a tiny tick as the pointer arrives (never on touch).
+  b.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && b.getAttribute('aria-selected') !== 'true' && sfx.play('hover'));
   // Tabs pattern: arrows move between tabs (and select them), Home/End jump to the ends.
   b.addEventListener('keydown', (e) => {
     const n = tabButtons.length;
@@ -162,7 +166,7 @@ const hashFor = (t: DetailTarget) => (t.kind === 'project' ? `#/work/${t.id}` : 
 const TAB_FOR: Record<DetailTarget['kind'], TabId> = { project: 'works', event: 'chronicle', about: 'about' };
 let onDetailOpen: (t: DetailTarget) => void = () => {};
 function openDetail(t: DetailTarget, push = true) {
-  sfx.play(detail.isOpen() ? 'tick' : 'open');
+  sfx.play(detail.isOpen() ? 'detent' : 'press');
   lenis?.stop(); // the page behind the panel stays put; the panel scrolls natively (data-lenis-prevent)
   detail.open(t);
   onDetailOpen(t);
@@ -170,7 +174,7 @@ function openDetail(t: DetailTarget, push = true) {
 }
 const isDetailHash = () => /^#\/(work|stage)\/[\w-]+$|^#\/(about|tools)$/.test(location.hash);
 detail.onClose(() => {
-  sfx.play('close');
+  sfx.play('press', { rate: 0.85 });
   lenis?.start();
   if (!isDetailHash()) return; // closed by navigation already
   if (openedFromLoad) history.replaceState(null, '', location.pathname + location.search);
@@ -178,14 +182,14 @@ detail.onClose(() => {
   openedFromLoad = false;
 });
 detail.onNavigate((t) => {
-  sfx.play('tick');
+  sfx.play('detent');
   detail.open(t);
   onDetailOpen(t);
   history.replaceState(null, '', hashFor(t));
 });
 detail.onInvite(() => selectTab('contact'));
 
-function route(initial = false) {
+function route() {
   const h = location.hash;
   let m: RegExpMatchArray | null;
   if ((m = h.match(/^#\/work\/([\w-]+)$/)) && projects.some((p) => p.id === m![1])) return openDetail({ kind: 'project', id: m[1] }, false);
@@ -193,11 +197,29 @@ function route(initial = false) {
   if (h === '#/about' || h === '#/tools') return openDetail({ kind: 'about' }, false);
   detail.close();
   const jump: Record<string, TabId> = { '#/work': 'works', '#/stage': 'chronicle', '#/contact': 'contact' };
+  // Section links (…/#/contact) are ways in, not places to stay: once the section is showing, the
+  // address goes back to the plain site address. Only an open detail panel keeps a hash (it is
+  // shareable, and Back closes it). A link to a panel that doesn't exist is tidied away too.
   if (h in jump) selectTab(jump[h]);
   else if (h === '#hello') scrollToEl(0);
-  else if (initial && h && h !== '#/') history.replaceState(null, '', location.pathname + location.search);
+  if (h) history.replaceState(null, '', location.pathname + location.search); // valid panel links returned above
 }
 addEventListener('hashchange', () => route());
+
+// In-page links (the logo, the skip link, List view's section links) scroll without writing their
+// target into the address bar: "…/#hello" told a visitor nothing and followed every copied link.
+document.addEventListener('click', (e) => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+  const id = a?.getAttribute('href')!.slice(1);
+  if (!a || !id || id.startsWith('/')) return; // "#/…" links are routes: route() handles them
+  const target = id === 'hello' ? null : document.getElementById(id);
+  if (id !== 'hello' && !target) return;
+  e.preventDefault();
+  scrollToEl(target ?? 0);
+  // The skip link hands keyboard focus on, as the browser does for a followed "#" link.
+  if (id === 'console') tabButtons.find((b) => b.getAttribute('aria-selected') === 'true')?.focus({ preventScroll: true });
+});
 
 // ---------------------------------------------------------------- preferences
 const motionBtn = document.getElementById('motion-toggle') as HTMLButtonElement;
@@ -208,7 +230,7 @@ function updateMotionUi() {
   document.documentElement.classList.toggle('motion-off', reduced);
 }
 motionBtn.addEventListener('click', () => {
-  sfx.play('switch');
+  sfx.play('toggle');
   motion.set(!motion.userOn());
 });
 const soundBtn = document.getElementById('sound-toggle') as HTMLButtonElement;
@@ -248,7 +270,7 @@ function setView(v: ViewMode, persist = true) {
   ScrollTrigger.refresh();
 }
 viewBtn.addEventListener('click', () => {
-  sfx.play('switch');
+  sfx.play('toggle');
   setView(view === 'list' ? 'device' : 'list');
   announce(view === 'list' ? 'List view' : 'Device view');
 });
@@ -320,21 +342,21 @@ if (!webglAvailable()) {
       case 'tab': return selectTab(i.tab);
       case 'key': return controls?.pressKey(i.key === 'back' ? 'key-back' : 'key-confirm');
       case 'channel':
-        sfx.play('open');
+        sfx.play('press');
         if (i.channel === 'email') location.href = mailtoHref();
         else window.open(i.channel === 'whatsapp' ? whatsappHref() : contact.linkedin.url, '_blank', 'noopener,noreferrer');
         return;
     }
   }
   screen.onIntent(handleIntent);
-  screen.onSelect(() => sfx.play('tick')); // roller, arrow keys or a row tap: one detent per step
+  screen.onSelect(() => sfx.play('detent')); // roller, arrow keys or a row tap: one detent per step
 
-  // The coin swinging into the wallet: a clink as loud as the hit. Only a hit from a free swing counts
+  // The coin swinging into the wallet: a coin tick as loud as the hit (quieter than a tap on it). Only a hit from a free swing counts
   // (keychain.ts), only real swings pass the floor, and clinks are at least 300 ms apart (sfx.ts).
   const CLINK_MIN = 0.45;
   stage.onFrame(() => {
     const v = stage.keychain.takeImpact();
-    if (v > CLINK_MIN) sfx.play('clink', { volume: Math.min(1, 0.25 + (v - CLINK_MIN) / 2) });
+    if (v > CLINK_MIN) sfx.play('coin', { volume: Math.min(0.7, 0.2 + (v - CLINK_MIN) / 3) });
   });
 
   controls = createControls(stage, document.getElementById('webgl') as HTMLCanvasElement, {
@@ -353,7 +375,7 @@ if (!webglAvailable()) {
     },
     // The side switch: the knob visibly slides first, then the page changes view.
     toggleView: () => {
-      sfx.play('switch');
+      sfx.play('toggle');
       controls?.setViewSwitch(true);
       setTimeout(() => setView('list'), motion.reduced() ? 0 : 220);
     },
@@ -401,4 +423,4 @@ if (!webglAvailable()) {
 }
 
 openedFromLoad = isDetailHash();
-route(true);
+route();

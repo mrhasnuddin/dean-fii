@@ -42,8 +42,6 @@ export function createContactSequence(
     cbs.forEach((cb) => cb(s));
   };
   let tl: gsap.core.Timeline | null = null;
-  const timers: number[] = [];
-  const later = (ms: number, f: () => void) => timers.push(window.setTimeout(f, ms));
 
   function slerpTo(obj: THREE.Object3D, to: THREE.Quaternion, duration: number, ease: string) {
     const from = new THREE.Quaternion();
@@ -92,7 +90,7 @@ export function createContactSequence(
       card.group.position.copy(layout.cardFinal);
       card.group.rotation.copy(FINAL_ROT);
       screen.setContactState('verified');
-      sfx.play('verified');
+      sfx.play('success');
       showDetails();
       return ready();
     }
@@ -100,7 +98,7 @@ export function createContactSequence(
     card.labelAnchor.visible = false; // CSS3D would draw the (blank) label through the wallet body
     card.group.position.copy(layout.cardEntry);
     card.group.rotation.copy(ENTRY_ROT);
-    sfx.play('whoosh');
+    sfx.play('air');
     const IN = 0.55; // card lined up at the mouth
     const LATCH = IN + 0.28; // pushed home: fast in, slowed by the slot's friction; the recoil is the latch
     tl = gsap.timeline();
@@ -111,14 +109,13 @@ export function createContactSequence(
       wallet.root.attach(card.group); // from here it moves with the wallet
       card.group.position.set(OUTSIDE_X, SLOT_Y, 0);
       card.group.quaternion.identity();
-      sfx.play('insert'); // slide friction, then the latch at ≈0.3 s
     }, [], IN);
     tl.to(card.group.position, { x: INSIDE_X, duration: LATCH - IN, ease: 'power3.out' }, IN);
     tl.call(() => {
       keychain.nudge(0.5);
       screen.setContactState('reading');
-      // Printhead steps while the screen writes (its stepped bar runs 750 ms).
-      [120, 300, 480, 660].forEach((ms) => later(ms, () => state === 'running' && sfx.play('write')));
+      sfx.play('toggle'); // the card seats
+      sfx.play('process'); // and the reader writes (the screen's stepped bar runs 750 ms)
     }, [], LATCH);
     tl.to(actor.rotation, { z: 0.02, duration: 0.06, ease: 'power1.out' }, LATCH);
     tl.to(actor.rotation, { z: 0, duration: 0.3, ease: 'back.out(2.5)' }, LATCH + 0.06);
@@ -129,14 +126,14 @@ export function createContactSequence(
     const EJECT = LATCH + 1.0;
     tl.call(() => {
       screen.setContactState('verified');
-      sfx.play('eject');
+      sfx.play('toggle', { rate: 1.25 }); // the reader's spring: a lighter thock
     }, [], EJECT);
     tl.to(card.group.position, { x: OUTSIDE_X + 0.04, duration: 0.34, ease: 'back.out(1.6)' }, EJECT);
     tl.to(wallet.led, { emissiveIntensity: 0.6, duration: 0.4, ease: 'power2.out' }, EJECT);
     tl.call(() => {
       scene.attach(card.group);
-      sfx.play('verified');
-      sfx.play('swish', { volume: 0.7 });
+      sfx.play('success');
+      sfx.play('air', { volume: 0.7 });
       const out = gsap.timeline({ onComplete: ready });
       const f = layout.cardFinal;
       out.to(card.group.position, { x: f.x, y: f.y, z: f.z, duration: 0.6, ease: 'power3.out' }, 0);
@@ -150,7 +147,6 @@ export function createContactSequence(
     if (state === 'idle') return;
     tl?.kill();
     tl = null;
-    timers.splice(0).forEach(clearTimeout);
     if (card.group.parent !== scene) scene.attach(card.group);
     setContactCardWritten(label, false);
     screen.setContactState('prompt');
@@ -166,7 +162,7 @@ export function createContactSequence(
       return done();
     }
     set('running');
-    sfx.play('swish'); // 0.4 s power2.out, like the motion
+    sfx.play('air');
     const out = gsap.timeline({ onComplete: done });
     const e = layout.cardEntry;
     out.to(card.group.position, { x: e.x, y: e.y, z: e.z, duration: 0.4, ease: 'power2.out' }, 0);

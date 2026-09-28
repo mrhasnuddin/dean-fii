@@ -2,7 +2,7 @@
 // the 3D card. All details are real links; email and WhatsApp hrefs are filled in on first intent.
 import './contactCard.css';
 import { LOGO_PATHS } from '../brand/logo';
-import { contact, emailAddress, emailDisplay, mailtoHref, phoneDisplay, whatsappHref } from '../content/contact';
+import { contact, emailAddress, emailDisplay, mailtoHref, whatsappDisplay, whatsappHref } from '../content/contact';
 import { copyText } from './clipboard';
 import { sfx } from '../audio/sfx';
 
@@ -53,7 +53,7 @@ export function createContactCard(variant: ContactCardVariant = 'card'): HTMLEle
       </li>
       <li class="cc-write" style="--i:4">
         <a class="cc-link" data-href="whatsapp" href="#contact" target="_blank" rel="noopener noreferrer">
-          ${svg(icon.chat)}<span><span class="cc-sr">WhatsApp: </span>${phoneDisplay()}<span class="cc-sr"> (opens in a new tab)</span></span>
+          ${svg(icon.chat)}<span><span class="cc-sr">WhatsApp: </span>${whatsappDisplay()}<span class="cc-sr"> (opens in a new tab)</span></span>
         </a>
       </li>
     </ul>
@@ -77,7 +77,7 @@ export function createContactCard(variant: ContactCardVariant = 'card'): HTMLEle
   let timer = 0;
   copyBtn.addEventListener('click', async () => {
     const ok = await copyText(emailAddress());
-    sfx.play(ok ? 'write' : 'bump');
+    sfx.play(ok ? 'detent' : 'toggle', ok ? {} : { rate: 0.8 });
     copyBtn.innerHTML = svg(ok ? icon.check : icon.copy);
     copyBtn.dataset.state = ok ? 'done' : 'fail';
     status.textContent = ok ? 'Email copied' : 'Couldn’t copy. Use the email link instead.';

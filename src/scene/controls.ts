@@ -169,7 +169,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         // Upper half of the exposed rim steps back, lower half steps forward. At a list end the
         // roller hits its stop (the detent tick itself comes from the screen's selection change).
         const local = roller!.worldToLocal(hit.point.clone());
-        if (!roll(local.y > 0 ? -1 : 1)) sfx.play('bump');
+        if (!roll(local.y > 0 ? -1 : 1)) sfx.play('toggle', { rate: 0.8 });
         break;
       }
       case 'key-confirm':
@@ -181,7 +181,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         break;
       case 'coin':
         keychain.nudge(1.2);
-        sfx.play('jingle');
+        sfx.play('coin');
         h.toTop();
         break;
     }
@@ -191,11 +191,11 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
   function pressKey(id: 'key-confirm' | 'key-back') {
     if (id === 'key-confirm') {
       press('key-confirm', 'z', 0.004);
-      sfx.play('key');
+      sfx.play('press');
       h.confirm();
     } else {
       press('key-back', 'z', 0.003);
-      sfx.play('key', { rate: 0.82 }); // same mechanism as ✓, pitched down: going back sounds like it
+      sfx.play('press', { rate: 0.85 }); // the same press, pitched down: going back sounds like it
       h.back();
     }
   }
@@ -205,10 +205,10 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     if (drag.kind === 'peel') {
       const s = drag.sticker;
       // It lays back down: a soft pat when it lands.
-      s.release(() => sfx.play('stick'), motion.reduced());
+      s.release(() => sfx.play('toggle', { volume: 0.5 }), motion.reduced());
     } else if (drag.turning) {
       h.flip.release();
-      sfx.play('swish', { volume: 0.35 });
+      sfx.play('air', { volume: 0.5 });
     }
     if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
     drag = null;
@@ -248,8 +248,16 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     // Controls say "press"; the body and stickers say "grab" (turn it over, peel).
     canvas.style.cursor = !t ? '' : t.kind === 'part' ? 'pointer' : 'grab';
     stage.hold(!!t);
+    // A tiny tick as the mouse arrives on a control (Contra's device buttons do this; never on touch).
+    const part = t?.kind === 'part' ? t.id : null;
+    if (part && part !== hovered && e.pointerType === 'mouse') sfx.play('hover');
+    hovered = part;
   });
-  canvas.addEventListener('pointerleave', () => stage.hold(false));
+  let hovered: string | null = null;
+  canvas.addEventListener('pointerleave', () => {
+    stage.hold(false);
+    hovered = null;
+  });
   stage.screen.el.addEventListener('pointerenter', () => stage.hold(true));
   stage.screen.el.addEventListener('pointerleave', () => stage.hold(false));
 

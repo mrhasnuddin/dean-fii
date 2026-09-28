@@ -1,7 +1,7 @@
 // E-ink screen UI (360 × 480 CSS px), mounted on the wallet display via CSS3DRenderer.
 // E-ink doesn't fade: states swap instantly behind a double-invert refresh flash, like real panels.
 import './einkScreen.css';
-import { emailDisplay, phoneDisplay, contact } from '../content/contact';
+import { emailDisplay, whatsappDisplay, contact } from '../content/contact';
 
 export type ContactScreenState = 'prompt' | 'reading' | 'verified';
 
@@ -41,7 +41,7 @@ export function createEinkScreen(): EinkScreen {
       <p class="ek-grp">SEND VIA</p>
       <ul class="ek-list">
         <li class="sel"><span>Email</span><small>${emailDisplay()}</small></li>
-        <li><span>WhatsApp</span><small>${phoneDisplay()}</small></li>
+        <li><span>WhatsApp</span><small>${whatsappDisplay()}</small></li>
         <li><span>LinkedIn</span><small>${contact.linkedin.label}</small></li>
       </ul>
     </section>

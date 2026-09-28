@@ -13,7 +13,12 @@
 .sc-home { align-items: center; justify-content: flex-end; padding-bottom: 0; }
 .sc-mark { flex: 1; display: grid; place-items: center; }
 .sc-caption { width: 100%; border-top: 1px dashed var(--rule); padding: 12px 0 14px; text-align: center; font-size: 14px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
-.sc-saver { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; padding: 38px 18px 0; background: var(--paper); }
+.sc-saver { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; background: var(--paper); }
+.sc-saver .sc-home { flex: 1; }
+/* Status bar right side: Dean's local time (24 h, GMT+8), then the battery. */
+.ek-sb-r { display: flex; align-items: center; gap: 10px; }
+.ek-clock { font-weight: 500; letter-spacing: 0.06em; }
+.ek-clock b { font-weight: 700; }
 .sc-saver[hidden] { display: none; }
 .screen .ek-view { display: flex; min-height: 0; }
 .screen :is(.ek-list li, .ek-ab [data-key], .ek-ab [data-softkey]) { cursor: pointer; }

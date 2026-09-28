@@ -1,13 +1,15 @@
-// Interaction sounds: one Howler sprite (public/audio/sfx.webm, mp3 fallback), synthesised from code
-// by scripts/audio/build_sfx.py (no samples). Like Contra, sound is on by default with a header
-// toggle; the choice is saved in localStorage['dean-sound'].
+// Sound: one Howler sprite of short interaction sounds (public/audio/sfx.webm, mp3 fallback) and a
+// quiet looping bed (public/audio/bed.webm), all synthesised from code by scripts/audio/build_sfx.py
+// (no samples; docs/device-design.md §15). Like Contra, sound is on by default with a header toggle;
+// the choice is saved in localStorage['dean-sound'].
 //
 // Browsers block audio until the visitor's first click, tap or key press. Sounds requested before
 // then are dropped, not queued (a queue would fire all at once on unlock). Howler itself is only
 // imported on that first gesture, so no AudioContext exists before it. Nothing plays in a hidden tab.
 import type { Howl } from 'howler';
-import sprite from './sprite.json';
+import spriteAll from './sprite.json';
 
+const { bed: BED, ...sprite } = spriteAll;
 export type SfxName = keyof typeof sprite;
 export interface PlayOptions {
   /** Playback rate (pitch). */
@@ -19,10 +21,13 @@ export interface PlayOptions {
 const KEY = 'dean-sound';
 const MASTER = 0.8;
 const SRC = ['/audio/sfx.webm', '/audio/sfx.mp3'];
-// Minimum gap between repeats (ms): the roller, the coin and the e-ink panel can fire in bursts.
-const THROTTLE: Partial<Record<SfxName, number>> = { tick: 45, tab: 60, eink: 90, clink: 300, jingle: 300, swish: 150, write: 20 };
+const BED_SRC = ['/audio/bed.webm', '/audio/bed.mp3'];
+const BED_VOLUME = 0.28; // under everything: felt more than heard (Contra's bed plays at 0.3)
+// Minimum gap between repeats (ms). A press often arrives twice for one action (the key, then the
+// panel it opens): the second is dropped. The roller and the coin can fire in bursts.
+const THROTTLE: Partial<Record<SfxName, number>> = { hover: 60, press: 70, detent: 45, toggle: 90, coin: 300, air: 150, peel: 100 };
 // Random pitch spread so repeats never sound machine-gunned.
-const SPREAD: Partial<Record<SfxName, number>> = { tick: 0.04, clink: 0.06, jingle: 0.05, write: 0.05, key: 0.03, tap: 0.02, tab: 0.015 };
+const SPREAD: Partial<Record<SfxName, number>> = { hover: 0.03, press: 0.02, detent: 0.04, toggle: 0.02, coin: 0.06 };
 
 function stored(): string | null {
   try {
@@ -74,9 +79,49 @@ function start(name: SfxName, { rate = 1, volume = 1 }: PlayOptions) {
   playSubs.forEach((cb) => cb(name));
 }
 
+// The bed: its own Howl (a 24 s loop decodes to ~5 MB, so it never delays the interaction sounds).
+// It fades in once sound is allowed, fades out when switched off, and pauses in a hidden tab.
+let bed: Howl | null = null;
+let bedId: number | null = null;
+let bedLoading = false;
+function loadBed() {
+  if (bedLoading) return;
+  bedLoading = true;
+  void import('howler').then(({ Howl }) => {
+    const h: Howl = new Howl({
+      src: BED_SRC,
+      sprite: { bed: BED as unknown as [number, number, boolean] },
+      volume: 1,
+      onload: () => {
+        bed = h;
+        syncBed();
+      },
+      onloaderror: () => {}, // no bed; the interaction sounds are unaffected
+    });
+  });
+}
+function syncBed() {
+  if (!bed) return;
+  const want = on && !document.hidden && activated();
+  if (want) {
+    if (bedId === null) {
+      bedId = bed.play('bed');
+      bed.volume(0, bedId);
+    } else if (!bed.playing(bedId)) bed.play(bedId);
+    bed.fade(bed.volume(bedId) as number, BED_VOLUME * MASTER, 1500, bedId);
+  } else if (bedId !== null && bed.playing(bedId)) {
+    const id = bedId;
+    bed.fade(bed.volume(id) as number, 0, 400, id);
+    bed.once('fade', () => void (!(on && !document.hidden) && bed?.pause(id)), id);
+  }
+}
+
 function onGesture() {
   gestured = true;
-  if (on) void load();
+  if (on) {
+    void load();
+    loadBed();
+  }
   for (const t of GESTURES) removeEventListener(t, onGesture, true);
 }
 const GESTURES = ['pointerdown', 'keydown', 'touchend'] as const;
@@ -84,6 +129,7 @@ for (const t of GESTURES) addEventListener(t, onGesture, { capture: true, passiv
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) howl?.stop();
+  syncBed();
 });
 
 export const sfx = {
@@ -110,8 +156,12 @@ export const sfx = {
     }
     if (!value) howl?.stop();
     subs.forEach((cb) => cb(value));
-    // Called from a click, so audio is allowed: confirm with the power-on sound, however long the load.
-    if (value) void load().then((h) => h && on && !document.hidden && start('boot', {}));
+    // Called from a click, so audio is allowed: the power swell confirms it, and the bed comes up.
+    if (value) {
+      void load().then((h) => h && on && !document.hidden && start('power', {}));
+      loadBed();
+    }
+    syncBed();
   },
   subscribe(cb: (on: boolean) => void) {
     subs.push(cb);
