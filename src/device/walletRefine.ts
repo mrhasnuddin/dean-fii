@@ -408,6 +408,15 @@ export function applyRestState(root: THREE.Object3D): void {
   const { nodes } = runtimeOf(root);
   const card = nodes['contact-card'];
   if (card) card.visible = false;
+  // three.js raycasts ignore `visible`, so hidden generator stand-ins (the inserted key card sticks
+  // 0.36 W out of the right side; the card-slot, port and lanyard planes; the repetition clusters)
+  // would still catch clicks. Only visible parts, and the deliberate hit areas added by controls.ts,
+  // take pointer input.
+  root.traverse((o) => {
+    let hidden = false;
+    o.traverseAncestors((a) => (hidden ||= !a.visible));
+    if ((hidden || !o.visible) && (o as THREE.Mesh).isMesh) o.raycast = () => {};
+  });
 }
 
 /** White-on-black text mask sized to the plane's aspect (w:h), for alphaMap decals. */

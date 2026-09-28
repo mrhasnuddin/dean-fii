@@ -33,6 +33,19 @@ export interface Choreography {
   setTab(tab: TabId): void;
   onTab(cb: (tab: TabId) => void): void;
   onPlace(cb: (place: Place) => void): void;
+  /** Turn the wallet over by hand (drag its body sideways): see the back and its stickers. */
+  flip: {
+    /** Start a drag: stops any settle in progress. */
+    begin(): void;
+    /** Drag: turn by `delta` radians from where the drag began. */
+    to(delta: number): void;
+    /** Let go: settle face-up or face-down, whichever is nearer. */
+    release(): void;
+    /** Back to face-up (section change, scroll, Contact). `instant` skips the turn. */
+    reset(instant?: boolean): void;
+    /** True while the back faces the visitor. */
+    isBack(): boolean;
+  };
   /** Contact layout (world space): where the card flies in from and where the written card settles. */
   cardEntry: THREE.Vector3;
   cardFinal: THREE.Vector3;
@@ -100,12 +113,44 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
   // Yaw eases toward the section's value (interruptible: gsap retargets from the current angle);
   // the About spin is a separate channel so a quick tab change can cut it short cleanly. Both fade
   // in with the scroll progress, so the Hero pose is never offset by the last section.
-  const move = { yaw: 0, spin: 0 };
+  const move = { yaw: 0, spin: 0, flip: 0 };
   let spinTween: gsap.core.Tween | null = null;
   // The About spin is a first-visit delight: once per page view. Repeating it (tab, key 3) would hide
   // the About screen behind 0.8 s of spin every time the visitor asks for it.
   let aboutSpun = false;
-  stage.onFrame(() => pose.rotation.set(0, move.yaw * progress + move.spin, 0));
+  stage.onFrame(() => pose.rotation.set(0, move.yaw * progress + move.spin + move.flip, 0));
+
+  // Hand turn: 1:1 with the drag while held; on release it settles to the nearer face (a quick
+  // ease-out, like setting a phone down). Anything that changes the view turns it face-up again.
+  let flipTween: gsap.core.Tween | null = null;
+  let flipStart = 0;
+  const settleFlip = (to: number, instant = false) => {
+    flipTween?.kill();
+    flipTween = gsap.to(move, {
+      flip: to,
+      duration: instant || motion.reduced() ? 0 : 0.5,
+      ease: 'power3.out',
+      // Keep the angle small so the next turn starts from a clean 0 or π.
+      onComplete: () => void (move.flip = ((move.flip % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)),
+    });
+  };
+  const flip = {
+    begin() {
+      flipTween?.kill();
+      flipStart = move.flip;
+    },
+    to(delta: number) {
+      move.flip = flipStart + delta;
+    },
+    release() {
+      settleFlip(Math.round(move.flip / Math.PI) * Math.PI);
+    },
+    reset(instant = false) {
+      if (move.flip === 0 && !flipTween?.isActive()) return;
+      settleFlip(Math.round(move.flip / (Math.PI * 2)) * Math.PI * 2, instant);
+    },
+    isBack: () => Math.abs(((move.flip % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2) - Math.PI) < Math.PI / 2,
+  };
   function moveTo(tab: TabId) {
     const reduced = motion.reduced();
     gsap.to(move, { yaw: TAB_YAW[tab], duration: reduced ? 0 : 0.55, ease: 'power3.out', overwrite: 'auto' });
@@ -142,6 +187,7 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
   function setPlace(p: Place) {
     if (p === place) return;
     place = p;
+    flip.reset();
     if (p === 'console') {
       pressTab(tab);
       screen.setMode(tab);
@@ -165,6 +211,7 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
   function setTab(next: TabId) {
     if (next === tab) return;
     tab = next;
+    flip.reset();
     if (place === 'console') {
       pressTab(tab);
       screen.setMode(tab);
@@ -195,6 +242,7 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
     setTab,
     onTab: (cb) => tabCbs.push(cb),
     onPlace: (cb) => placeCbs.push(cb),
+    flip,
     cardEntry,
     cardFinal,
   };

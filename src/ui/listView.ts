@@ -34,12 +34,12 @@ export function buildListView(root: HTMLElement): void {
       <h1 class="lv-title"><span class="h-sans">Dean</span> <span class="h-serif">Studio.</span></h1>
       <p class="lv-lede">UI/UX designer, frontend developer and creative designer, focused on making complex Web3 products understandable through interfaces, landing pages and frontend implementation.</p>
       <nav class="lv-nav" aria-label="Sections">
-        <a href="#lv-works"><b>01</b> Works</a><a href="#lv-chronicle"><b>02</b> Chronicle</a><a href="#lv-about"><b>03</b> About</a><a href="#lv-contact"><b>04</b> Contact</a>
+        <a href="#lv-works">Works</a><a href="#lv-chronicle">Chronicle</a><a href="#lv-about">About</a><a href="#lv-contact">Contact</a>
       </nav>
     </header>
 
     <section class="lv-sec" id="lv-works" aria-labelledby="lv-works-h">
-      <h2 id="lv-works-h"><b>01</b> Selected works</h2>
+      <h2 id="lv-works-h">Selected works</h2>
       <ul class="lv-grid">${projects
         .map((p) => `<li><a href="#/work/${p.id}">
           <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
@@ -50,7 +50,7 @@ export function buildListView(root: HTMLElement): void {
     </section>
 
     <section class="lv-sec" id="lv-chronicle" aria-labelledby="lv-chronicle-h">
-      <h2 id="lv-chronicle-h"><b>02</b> The chronicle</h2>
+      <h2 id="lv-chronicle-h">The chronicle</h2>
       <ul class="lv-rows">${events
         .map((e) => `<li><a href="#/stage/${e.id}">
           <span class="lv-meta">${esc(e.place)}, ${esc(countries[e.country] ?? e.country)}</span>
@@ -59,8 +59,11 @@ export function buildListView(root: HTMLElement): void {
         .join('')}</ul>
     </section>
 
+    <!-- About and Get in touch share one row (60 / 40): the contact details are short, so a
+         full-width band left most of it empty. -->
+    <div class="lv-pair">
     <section class="lv-sec lv-about" id="lv-about" aria-labelledby="lv-about-h">
-      <h2 id="lv-about-h"><b>03</b> About Dean</h2>
+      <h2 id="lv-about-h">About Dean</h2>
       <div class="lv-about-body">
         <img class="lv-portrait" src="${profile.portrait.color}" alt="Dean on stage, speaking" loading="lazy" width="400" height="500">
         <div>
@@ -74,9 +77,11 @@ export function buildListView(root: HTMLElement): void {
       </div>
     </section>
 
-    <section class="lv-sec" id="lv-contact" aria-labelledby="lv-contact-h">
-      <h2 id="lv-contact-h"><b>04</b> Get in touch</h2>
+    <section class="lv-sec lv-contact" id="lv-contact" aria-labelledby="lv-contact-h">
+      <h2 id="lv-contact-h">Get in touch</h2>
+      <p class="lv-contact-lede">Email, LinkedIn or WhatsApp.</p>
       <div class="lv-card"></div>
-    </section>`;
+    </section>
+    </div>`;
   root.querySelector('.lv-card')!.append(createContactCard('card'));
 }

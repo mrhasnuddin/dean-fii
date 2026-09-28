@@ -282,6 +282,28 @@ def s_eject():  # reader spring pushes the written key back out: a soft thunk, t
     return edges(x)
 
 
+def s_peel():  # sticker adhesive letting go: dense tiny crackles over a soft tearing hiss
+    d = 0.26
+    t = tt(d)
+    env = np.minimum(t / 0.02, 1) * np.exp(-t / 0.09)
+    hiss = norm(bp(noise(d), 2500, 9000)) * env * 0.35
+    crack = np.zeros(n_(d))
+    hits = rng.random(n_(d)) < (900 / SR) * env
+    crack[hits] = rng.uniform(-1, 1, hits.sum())
+    crack = norm(hp(crack, 3500)) * 0.9
+    return edges(hiss + crack, fin=0.002, fout=0.02)
+
+
+def s_stick():  # sticker lands back flat: a soft pat and a last tiny crackle
+    x = zeros(0.12)
+    place(x, click([(190, 0.018, 1.0), (520, 0.008, 0.4)], 0.1, tr=(0.003, 300, 2500), tr_amp=0.6), 0)
+    crack = np.zeros(n_(0.05))
+    hits = rng.random(n_(0.05)) < 500 / SR
+    crack[hits] = rng.uniform(-1, 1, hits.sum())
+    place(x, norm(hp(crack, 4000)) * np.exp(-tt(0.05) / 0.02), 0.008, 0.25)
+    return edges(x)
+
+
 def s_tap():  # card meets the back plate: metal shell ring + card thump
     return click([(1350, 0.035, 1.0), (2700, 0.022, 0.6), (4100, 0.014, 0.45), (5600, 0.009, 0.3)], 0.22,
                  tr=(0.0015, 1200, 12000), tr_amp=1.0, thump=(240, 0.018, 0.9))
@@ -325,7 +347,7 @@ SOUNDS = {
     "tick": (s_tick, -21), "tab": (s_tab, -15), "key": (s_key, -14), "bump": (s_bump, -13),
     "switch": (s_switch, -15), "eink": (s_eink, -26), "write": (s_write, -22), "open": (s_open, -17),
     "close": (s_close, -20), "whoosh": (s_whoosh, -15), "swish": (s_swish, -18), "tap": (s_tap, -9),
-    "insert": (s_insert, -13), "eject": (s_eject, -14),
+    "insert": (s_insert, -13), "eject": (s_eject, -14), "peel": (s_peel, -19), "stick": (s_stick, -17),
     "verified": (s_verified, -14),
     "jingle": (s_jingle, -12), "clink": (s_clink, -12), "boot": (s_boot, -14),
 }

@@ -8,10 +8,9 @@
 .lv-lede { margin: 22px 0 0; max-width: 56ch; color: #d8d3c9; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.5; }
 .lv-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
 .lv-nav a { color: var(--ink-light); text-decoration: none; font: 500 14px/1 var(--font-ui); border: 1px solid var(--line); border-radius: 999px; padding: 10px 14px; }
-.lv-nav b, .lv-sec h2 b { color: var(--champagne); font: 500 12px/1 var(--font-mono); margin-right: 4px; }
 
 .lv-sec { margin-top: 88px; scroll-margin-top: 96px; }
-.lv-sec h2 { display: flex; align-items: baseline; gap: 10px; margin: 0 0 28px; font: 400 clamp(36px, 4vw, 64px)/1 var(--font-display); letter-spacing: -0.015em; }
+.lv-sec h2 { margin: 0 0 28px; font: 400 clamp(36px, 4vw, 64px)/1 var(--font-display); letter-spacing: -0.015em; }
 .lv-meta { font: 500 12px/1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .lv-sub { color: #b9b5ad; font-size: 14px; }
 
@@ -34,14 +33,26 @@
 .lv-chips img { object-fit: contain; border-radius: 2px; }
 .lv-card { max-width: 420px; }
 
+/* About (60) and Get in touch (40) side by side. */
+.lv-pair { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 56px; align-items: start; margin-top: 88px; }
+.lv-pair .lv-sec { margin-top: 0; }
+.lv-pair .lv-about-body { grid-template-columns: minmax(180px, 260px) 1fr; gap: 32px; }
+.lv-contact-lede { margin: 0 0 20px; color: #d8d3c9; }
+
 .list-view a { transition: color 160ms ease, border-color 160ms ease; }
 .list-view a:focus-visible { outline: 2px solid var(--champagne); outline-offset: 4px; border-radius: 8px; }
 @media (hover: hover) and (pointer: fine) {
   .lv-grid a:hover strong, .lv-rows a:hover strong { color: var(--champagne-light); }
   .lv-nav a:hover { border-color: var(--champagne); }
 }
+/* Narrower laptops: the portrait sits above the bio so the 60 % column keeps a readable line. */
+@media (max-width: 1180px) {
+  .lv-pair .lv-about-body { grid-template-columns: 1fr; gap: 20px; }
+  .lv-pair .lv-portrait { max-width: 240px; }
+}
 @media (max-width: 760px) {
   .list-view { padding-top: 96px; }
+  .lv-pair { grid-template-columns: 1fr; gap: 72px; }
   .lv-rows a { grid-template-columns: 1fr; gap: 4px; }
   .lv-about-body { grid-template-columns: 1fr; }
   .lv-portrait { max-width: 280px; }

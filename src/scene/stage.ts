@@ -10,6 +10,7 @@ import { createStudioEnvironment } from '../device/studioEnvironment';
 import { Keychain } from '../device/keychain';
 import { CARD, createKeyCard, type KeyCard } from '../device/keyCard';
 import type { GpuTier } from '../device/walletRefine';
+import { createStickers, type Sticker } from '../device/stickers';
 import { createScreen, type Screen } from '../ui/screen';
 import { createContactCard, setContactCardWritten } from '../ui/contactCard';
 import { motion } from '../motion';
@@ -39,6 +40,8 @@ export interface Stage {
   card: KeyCard;
   screen: Screen;
   label: HTMLElement;
+  /** Back-plate stickers (easter egg); filled once built, after the first frame. */
+  stickers: Sticker[];
   /** Viewport half-width at depth z (world units), for layout. */
   halfWidthAt(z: number): number;
   onFrame(cb: (dt: number) => void): void;
@@ -256,8 +259,27 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
     clock.getDelta();
   });
 
+  // Stickers (easter egg): built from the SVGs after the first frame and compiled in the background,
+  // so the loader never waits for them; then stuck to the back plate's outer face.
+  const stickers: Sticker[] = [];
+  ready
+    .then(async () => {
+      const plate = wallet.runtime.meshes['back-plate'];
+      if (!plate) return;
+      wallet.root.updateMatrixWorld(true);
+      plate.geometry.computeBoundingBox();
+      const toRoot = new THREE.Matrix4().copy(wallet.root.matrixWorld).invert().multiply(plate.matrixWorld);
+      const backZ = plate.geometry.boundingBox!.clone().applyMatrix4(toRoot).min.z;
+      const made = await createStickers(backZ, env);
+      await renderer.compileAsync(made.group, camera, scene).catch(() => {});
+      wallet.root.add(made.group);
+      stickers.push(...made.stickers);
+    })
+    .catch(() => {});
+  frameCbs.push((dt) => stickers.forEach((s) => s.update(dt)));
+
   const stage: Stage = {
-    renderer, scene, camera, rig, pose, tilt, actor, wallet, keychain, card, screen, label, intro, ready,
+    renderer, scene, camera, rig, pose, tilt, actor, wallet, keychain, card, screen, label, intro, ready, stickers,
     follow: (on) => (followOn = on),
     hold: (on) => (held = on),
     setActive(on) {

@@ -307,7 +307,9 @@ if (!webglAvailable()) {
       case 'project': return openDetail({ kind: 'project', id: i.id });
       case 'event': return openDetail({ kind: 'event', id: i.id });
       case 'about': return openDetail({ kind: 'about' });
-      case 'contact': return contactSeq.run();
+      case 'contact':
+        chor.flip.reset(true);
+        return contactSeq.run();
       case 'tab': return selectTab(i.tab);
       case 'channel':
         sfx.play('open');
@@ -338,6 +340,7 @@ if (!webglAvailable()) {
     confirm: () => handleIntent(screen.confirm()),
     back: () => {
       if (detail.isOpen()) detail.close();
+      else if (chor.flip.isBack()) chor.flip.reset();
       else if (contactSeq.state() === 'ready') contactSeq.putAway();
     },
     // The side switch: the knob visibly slides first, then the page changes view.
@@ -347,6 +350,7 @@ if (!webglAvailable()) {
       setTimeout(() => setView('list'), motion.reduced() ? 0 : 220);
     },
     toTop: () => scrollToEl(0),
+    flip: chor.flip,
   });
   onViewChange = (v) => {
     stage.setActive(v === 'device');
@@ -355,13 +359,18 @@ if (!webglAvailable()) {
   };
 
   // Contact: the panel's CTA runs or ends the card reader; the primary action goes there from anywhere.
-  cta.addEventListener('click', () => (contactSeq.state() === 'ready' ? contactSeq.putAway() : contactSeq.run()));
+  cta.addEventListener('click', () => {
+    if (contactSeq.state() === 'ready') return contactSeq.putAway();
+    chor.flip.reset(true); // the reader is on the front-facing wallet's side
+    contactSeq.run();
+  });
   const goContact = (e: Event) => {
     e.preventDefault();
     detail.close();
     if (view === 'list') return selectTab('contact');
     chor.setTab('contact');
     showTab('contact');
+    chor.flip.reset(true);
     scrollToEl(consoleEl, () => contactSeq.state() === 'idle' && contactSeq.run());
   };
   hire.addEventListener('click', goContact);

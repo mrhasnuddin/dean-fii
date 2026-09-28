@@ -1,11 +1,13 @@
 // Physical controls on the wallet + keyboard. Every control maps to one job (docs/device-design.md §2, §10):
 // tabs 01–04 → sections · roller → browse · ✓ → open · Back → close · side switch → Device / List view ·
-// coin → top.
+// coin → top. Two hand gestures: drag the wallet's body sideways to turn it over, and on the back,
+// drag a sticker to peel it (an easter egg, §11).
 // The wheel turns the roller only while the pointer is over the wallet and the list can still move;
 // at a list end the wheel scrolls the page (no scroll trap).
 import * as THREE from 'three';
 import gsap from 'gsap';
 import type { Stage } from './stage';
+import type { Sticker } from '../device/stickers';
 import { motion } from '../motion';
 import { sfx } from '../audio/sfx';
 
@@ -17,6 +19,8 @@ export interface ControlHandlers {
   back(): void;
   toggleView(): void;
   toTop(): void;
+  /** Hand turn (choreography.flip). */
+  flip: { begin(): void; to(delta: number): void; release(): void };
 }
 
 export interface Controls {
@@ -67,15 +71,19 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
 
   // Raycast the whole wallet + keychain and take the NEAREST hit, then walk up to a part: the roller
   // disc sits mostly inside the body, so testing parts alone would let clicks on the screen hit it.
-  function pick(e: PointerEvent | WheelEvent) {
+  // What was hit: a control, a sticker (only reachable when the back faces you), or the body itself.
+  type Target = { kind: 'part'; id: string; point: THREE.Vector3 } | { kind: 'sticker'; sticker: Sticker; point: THREE.Vector3 } | { kind: 'body' };
+  function target(e: PointerEvent | WheelEvent): Target | null {
     ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
     ray.setFromCamera(ndc, camera);
     const hits = ray.intersectObjects([wallet.root, keychain.group], true);
     if (!hits.length) return null;
+    const sticker = hits[0].object.userData.sticker as Sticker | undefined;
+    if (sticker) return { kind: 'sticker', sticker, point: hits[0].point };
     let o: THREE.Object3D | null = hits[0].object;
     while (o && !parts.some((p) => p.obj === o)) o = o.parent;
     const part = parts.find((p) => p.obj === o);
-    return part ? { id: part.id, point: hits[0].point } : null;
+    return part ? { kind: 'part', id: part.id, point: hits[0].point } : { kind: 'body' };
   }
   const overWallet = (e: PointerEvent | WheelEvent) => {
     ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
@@ -109,9 +117,39 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     return moved;
   }
 
+  // Hand gestures. A drag starts on press; a turn only once the pointer has clearly moved sideways
+  // (so a tap on the body does nothing and vertical touch drags still scroll the page).
+  type Drag =
+    | { kind: 'peel'; id: number; sticker: Sticker; lastF: number; lastSound: number }
+    | { kind: 'turn'; id: number; x0: number; y0: number; turning: boolean };
+  let drag: Drag | null = null;
+  const TURN_PER_PX = Math.PI / 260; // ~260 px of drag turns it over
+  // Capture keeps the drag alive when the pointer leaves the canvas. It throws for a pointer the
+  // browser no longer tracks (already lifted, or synthetic); the drag still works without it.
+  const capture = (id: number) => {
+    try {
+      canvas.setPointerCapture(id);
+    } catch {
+      /* not capturable */
+    }
+  };
+
   canvas.addEventListener('pointerdown', (e) => {
-    const hit = pick(e);
+    const hit = target(e);
     if (!hit) return;
+    if (hit.kind === 'sticker') {
+      drag = { kind: 'peel', id: e.pointerId, sticker: hit.sticker, lastF: 0, lastSound: 0 };
+      hit.sticker.beginPeel(hit.point);
+      capture(e.pointerId);
+      canvas.style.cursor = 'grabbing';
+      sfx.play('peel', { volume: 0.5 });
+      return;
+    }
+    if (hit.kind === 'body') {
+      drag = { kind: 'turn', id: e.pointerId, x0: e.clientX, y0: e.clientY, turning: false };
+      capture(e.pointerId);
+      return;
+    }
     switch (hit.id) {
       case 'tab-01': case 'tab-02': case 'tab-03': case 'tab-04':
         h.selectTab(Number(hit.id.slice(-1)));
@@ -143,11 +181,55 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         break;
     }
   });
+
+  function endDrag(e: PointerEvent) {
+    if (!drag || drag.id !== e.pointerId) return;
+    if (drag.kind === 'peel') {
+      const s = drag.sticker;
+      // It lays back down: a soft pat when it lands.
+      s.release(() => sfx.play('stick'), motion.reduced());
+    } else if (drag.turning) {
+      h.flip.release();
+      sfx.play('swish', { volume: 0.35 });
+    }
+    if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+    drag = null;
+    canvas.style.cursor = '';
+  }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
   // The wallet stops following the cursor once the pointer is on it (or its screen), so a key never
   // drifts from under the pointer while the tilt settles; it resumes in the open space around it.
   canvas.addEventListener('pointermove', (e) => {
-    canvas.style.cursor = pick(e) ? 'pointer' : '';
-    stage.hold(ray.intersectObjects([wallet.root, keychain.group], true).length > 0);
+    if (drag?.id === e.pointerId) {
+      if (drag.kind === 'peel') {
+        ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+        ray.setFromCamera(ndc, camera);
+        const f = drag.sticker.drag(ray.ray);
+        // Adhesive crackle while it lifts, louder for a faster pull; silent once it stops giving.
+        const now = performance.now();
+        if (f - drag.lastF > 0.07 && now - drag.lastSound > 120 && f < 0.97) {
+          sfx.play('peel', { volume: Math.min(1, 0.35 + (f - drag.lastF) * 3) });
+          drag.lastSound = now;
+          drag.lastF = f;
+        } else if (f < drag.lastF) drag.lastF = f;
+        return;
+      }
+      const dx = e.clientX - drag.x0;
+      const dy = e.clientY - drag.y0;
+      if (!drag.turning && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
+        drag.turning = true;
+        h.flip.begin();
+        canvas.style.cursor = 'grabbing';
+      }
+      if (drag.turning) h.flip.to(dx * TURN_PER_PX);
+      return;
+    }
+    const t = target(e);
+    // Controls say "press"; the body and stickers say "grab" (turn it over, peel).
+    canvas.style.cursor = !t ? '' : t.kind === 'part' ? 'pointer' : 'grab';
+    stage.hold(!!t);
   });
   canvas.addEventListener('pointerleave', () => stage.hold(false));
   stage.screen.el.addEventListener('pointerenter', () => stage.hold(true));

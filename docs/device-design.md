@@ -208,3 +208,17 @@ Invisible hit boxes parented to the small controls give those areas; the nearest
 **img2threejs:** DC-2 is recorded in the spec (author_spec.py constants, card-slot component, switch-view, detail inventory, per-part surfaceDetail) and built as the surface pass (`src/device/generated/walletSurfacePass.ts` + walletRefine). Review recorded as request-input: Tier-1 IoU 0.9475, scale 0.012, multi-angle clean; aspect delta 0.052 > 0.05 is the approved taller tabs, and the per-part colour limit is the one already accepted on the material pass. The generator's radial repetition stand-ins are hidden (one showed as a block mid-rail).
 
 **Copy (2026-09-28):** the About bio is Dean's own text, lightly edited for flow with nothing added: "UI/UX designer, frontend developer (vibe coding) and creative designer, focused on user interfaces, landing pages and frontend builds that are easy to understand." / "An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics." Site copy refers to Dean by name, never by pronoun.
+
+## 11. Back stickers, a peelable easter egg (2026-09-28, Dean's request)
+
+**What:** the three partner marks (`/OC.svg`, `/aseanlabs.svg`, `/mydac.svg`) are die-cut vinyl stickers on the wallet's back plate. Turn the wallet over by dragging its body sideways, then pull a sticker's corner. Built at runtime in `src/device/stickers.ts`; they are not part of the img2threejs spec (like the key card, they are props on the model, not the model).
+
+**Random each visit:** position and tilt are random, with no overlap (a rotated-box test) and keep-out areas around the embossed D mark and the DEAN STUDIO line. A sticker shrinks to 90 % or 80 % to fit and is left off rather than overlapped. One random sticker rests with a corner already lifted: that is the hint.
+
+**Look:** each sticker is cut from its SVG with a white or dark vinyl border (whichever contrasts with the print), and the outline is a holographic foil (iridescence + metal, driven by a packed map: R iridescence, G roughness, B metalness). A laminate clearcoat, fine grain, raised ink and two or three trapped air bubbles sit in a bump map. The back is a pale adhesive.
+
+**Peel:** a page curl on a 48 × 48 grid. The corner nearest the grab lifts and rolls back over the sticker (it passes vertical as soon as it is pulled, so the adhesive side faces you; at 90° it would be edge-on and disappear), and the fold line follows the pointer at about half the pull, which keeps the tip near the finger. It stops at 70 % of the sticker, with resistance building toward the limit (rubber band). A soft shadow under the flap darkens with its height. Let go and it lays back down in 0.28 s (ease-out; instant under reduced motion) with a soft pat. Sounds: peel crackle while pulling, stick on landing. On touch, sideways pulls peel; vertical drags still scroll the page.
+
+## 12. List view layout (2026-09-28, Dean's review)
+
+About and Get in touch share one row, 60 / 40 (About left, the contact card right, keeping its card look): the contact details are three lines, and a full-width band left most of it empty. At 1440 the two columns are 482 and 449 px tall and the page is ~500 px shorter. Below 1180 px the portrait sits above the bio inside the 60 % column; below 760 px the two stack. Section numbers (01–04) were removed from the list view's headings and section links. The Console's tab bar keeps them, because they match the numerals engraved on the wallet's top keys.
