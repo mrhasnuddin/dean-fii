@@ -1,0 +1,14 @@
+{
+  "admitted": true,
+  "reasons": [],
+  "provenance": {
+    "viewpoint": "front-three-quarter",
+    "sourcePath": "D:\\Web3 Work\\Vibe Code\\DeanFi3\\references\\wallet\\1.png",
+    "width": 379,
+    "height": 493,
+    "foregroundCoverage": 0.4237,
+    "largestComponentFraction": 1.0,
+    "pHash": 18367500791900839940,
+    "duplicateOfHash": null
+  }
+}

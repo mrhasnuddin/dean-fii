@@ -1,0 +1,26 @@
+{
+  "referenceAreaFraction": 0.4514669756538772,
+  "angles": [
+    {
+      "path": ".img2threejs\\renders\\form-refinement-three-quarter.png",
+      "areaFraction": 0.256755,
+      "ratio": 0.5687126940528302,
+      "degenerate": false
+    },
+    {
+      "path": ".img2threejs\\renders\\form-refinement-rear.png",
+      "areaFraction": 0.28746875,
+      "ratio": 0.6367436944499602,
+      "degenerate": false
+    },
+    {
+      "path": ".img2threejs\\renders\\form-refinement-underside.png",
+      "areaFraction": 0.577465,
+      "ratio": 1.2790858050328817,
+      "degenerate": false
+    }
+  ],
+  "degenerate": false,
+  "collapseRatio": 0.15,
+  "note": "deterministic; zero token; a flat-plane-faking-a-volume collapses in silhouette area when orbited"
+}

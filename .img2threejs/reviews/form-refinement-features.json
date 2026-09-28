@@ -1,0 +1,5 @@
+[
+  {"id": "control-set", "score": 0.86, "tier": "critical", "notes": "Chamfered 96-seg lathe keys; Confirm cap engraved D-star (coin maps), Back cap engraved chevron; roller 72-ridge knurl reads at the -X edge; rounded tabs/switch; roller + switch slot recesses inside the flat side band (|z| <= 0.045 W)."},
+  {"id": "overall-silhouette", "score": 0.88, "tier": "critical", "notes": "0.03 W bevelled roll-off (6 segments) now gives the rim highlight; IoU 0.947. Reference bumper edge is softer (~0.05 W); ours is intentionally slimmer."},
+  {"id": "underside-details", "score": 0.8, "tier": "important", "notes": "USB-C stadium + tongue centred on the bottom; lanyard slot with lip at x -0.30; back D-star emboss reads correctly from behind (180 deg X then Y rotation, winding preserved); DEAN STUDIO engraved at y -0.64."}
+]

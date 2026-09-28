@@ -1,0 +1,4 @@
+[
+  {"id": "face-layout", "score": 0.82, "tier": "critical", "notes": "Unchanged from blockout (bezel 0.106 / screen 0.80 / chin 0.337 W); screen corners still square."},
+  {"id": "control-set", "score": 0.82, "tier": "critical", "notes": "All 8 controls present and placed per blueprint v0.3: Confirm (0.30,-0.59) with LED ring, Back (-0.32,-0.59), roller rim out of the -X edge at y 0.29, tabs 01-04 on top (01 pressed, champagne), switch on +X at y 0.475, port + lanyard slot underneath. Attached cylinders show 16-segment faceting; no slot recesses around roller/switch yet."}
+]

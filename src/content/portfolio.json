@@ -1,0 +1,411 @@
+{
+  "projects": [
+    {
+      "id": "eni",
+      "title": "ENI Network",
+      "category": "Modular L1 Blockchain",
+      "roles": [
+        "UI/UX Designer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "figma",
+        "gemini"
+      ],
+      "stack": [
+        "Next.js",
+        "React"
+      ],
+      "tags": [
+        "L1 Network",
+        "Brand Site"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://eni.top/",
+      "description": "ENI is a modular Layer 1 blockchain built for commercial adoption. I led the visual design, bringing its Mainnet, Hub and AppChains into a clear network dashboard and Matrix architecture diagram. The site also explains how institutions participate in the ecosystem.",
+      "images": [
+        "/media/projects/eni-1.webp",
+        "/media/projects/eni-2.webp"
+      ],
+      "eink": "/media/eink/eni.png"
+    },
+    {
+      "id": "aseanlabs",
+      "title": "ASEAN Labs",
+      "category": "Web3 Execution Layer",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "claude",
+        "gemini",
+        "figma"
+      ],
+      "stack": [
+        "Next.js",
+        "React"
+      ],
+      "tags": [
+        "Incubator",
+        "Narrative Site"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://aseanlabs.io/",
+      "description": "ASEAN Labs helps Web3 projects build on ENI across Southeast Asia. I developed a narrative-led website with animated metrics and distinct paths for builders, ecosystems and enterprise clients, making the incubator’s role easier to understand.",
+      "images": [
+        "/media/projects/aseanlabs-1.webp",
+        "/media/projects/aseanlabs-2.webp"
+      ],
+      "eink": "/media/eink/aseanlabs.png"
+    },
+    {
+      "id": "kairma",
+      "title": "Kairma",
+      "category": "AI Workforce Platform",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "claude",
+        "gemini"
+      ],
+      "stack": [
+        "Next.js",
+        "React",
+        "Turbopack"
+      ],
+      "tags": [
+        "AI Platform",
+        "Landing Page"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://www.kairma.ai/",
+      "description": "Kairma deploys AI employees on an on-premise appliance, keeping brand data local. I designed and built an interface inspired by an operating-system boot sequence, with a command deck, live model pricing and localisation for six regions.",
+      "images": [
+        "/media/projects/kairma-1.webp",
+        "/media/projects/kairma-2.webp"
+      ],
+      "eink": "/media/eink/kairma.png"
+    },
+    {
+      "id": "paygo",
+      "title": "PayGo",
+      "category": "Machine-Native Payments",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "gemini"
+      ],
+      "stack": [
+        "React",
+        "Vite"
+      ],
+      "tags": [
+        "Payments",
+        "Developer Site"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://www.paygo.ac/",
+      "description": "PayGo lets APIs and AI agents pay per request through x402 on ENI Mainnet. I designed a developer-focused website with an interactive protocol walkthrough and accurate terminal examples, explaining the payment flow without relying on API keys or subscriptions.",
+      "images": [
+        "/media/projects/paygo-1.webp",
+        "/media/projects/paygo-2.webp"
+      ],
+      "eink": "/media/eink/paygo.png"
+    },
+    {
+      "id": "eniaclabs",
+      "title": "Eniac Labs",
+      "category": "Institutional Web3",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "gemini"
+      ],
+      "stack": [
+        "Next.js",
+        "React",
+        "Turbopack"
+      ],
+      "tags": [
+        "Institutional",
+        "Corporate Site"
+      ],
+      "status": "Shipped",
+      "link": "https://eniaclabs.vercel.app/",
+      "description": "Eniac Labs helps enterprises and governments move on-chain. The website presents its strategy, compliance, tokenisation and capital services through layered reveals and an interactive view of the ENI Matrix architecture.",
+      "images": [
+        "/media/projects/eniaclabs-1.webp",
+        "/media/projects/eniaclabs-2.webp"
+      ],
+      "eink": "/media/eink/eniaclabs.png"
+    },
+    {
+      "id": "fortuna",
+      "title": "Fortuna HK",
+      "category": "Professional Services",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "figma",
+        "gemini",
+        "photoshop"
+      ],
+      "stack": [
+        "Next.js",
+        "React",
+        "Turbopack"
+      ],
+      "tags": [
+        "Corporate",
+        "Multilingual"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://www.fortunahkholding.com/",
+      "description": "Fortuna HK provides cross-border education, wealth management and corporate services. I designed a multilingual editorial website, pairing a calligraphic opening with expandable service sections and a world-clock footer for its international audience.",
+      "images": [
+        "/media/projects/fortuna-1.webp",
+        "/media/projects/fortuna-2.webp"
+      ],
+      "eink": "/media/eink/fortuna.png"
+    },
+    {
+      "id": "nikola",
+      "title": "Nikola",
+      "category": "AI Coordination Layer",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "gemini"
+      ],
+      "stack": [
+        "React",
+        "Vite"
+      ],
+      "tags": [
+        "Web4",
+        "Hero Site"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://www.nikola.network/",
+      "description": "Nikola coordinates AI governance, protocol structure and capital for projects on ENI. I designed a focused, single-viewport website with atmospheric visuals and precise typography, giving the platform a clear introduction at first glance.",
+      "images": [
+        "/media/projects/nikola-1.webp",
+        "/media/projects/nikola-2.webp"
+      ],
+      "eink": "/media/eink/nikola.png"
+    },
+    {
+      "id": "flowfi",
+      "title": "FlowFi",
+      "category": "Treasury Protocol",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "gemini"
+      ],
+      "stack": [
+        "React",
+        "Vite",
+        "Tailwind CSS"
+      ],
+      "tags": [
+        "DAO",
+        "Protocol Site"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://www.flowfidao.com/",
+      "description": "FlowFi is a community-governed treasury protocol on ENI. I designed an interface that presents capital as digital architecture, using vault diagrams, tokenomics grids and a phased roadmap to explain how the protocol works.",
+      "images": [
+        "/media/projects/flowfi-1.webp",
+        "/media/projects/flowfi-2.webp"
+      ],
+      "eink": "/media/eink/flowfi.png"
+    },
+    {
+      "id": "pusc",
+      "title": "PUSC",
+      "category": "Algorithmic Stablecoin",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "gemini",
+        "figma",
+        "photoshop"
+      ],
+      "stack": [
+        "React",
+        "Vite"
+      ],
+      "tags": [
+        "Stablecoin",
+        "Protocol Site"
+      ],
+      "status": "Shipped",
+      "link": "https://pusc-liard.vercel.app/",
+      "description": "PUSC is a DAO-governed stablecoin protocol. I designed a terminal-inspired interface with live protocol readouts, mechanism modules and a focused minting narrative to make a technical product easier to understand.",
+      "images": [
+        "/media/projects/pusc-1.webp",
+        "/media/projects/pusc-2.webp"
+      ],
+      "eink": "/media/eink/pusc.png"
+    },
+    {
+      "id": "ait",
+      "title": "AIT NET",
+      "category": "AI Task Economy",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "gemini"
+      ],
+      "stack": [
+        "React",
+        "Vite"
+      ],
+      "tags": [
+        "AI Economy",
+        "Protocol Site"
+      ],
+      "status": "Shipped",
+      "link": "https://ait-topaz.vercel.app/",
+      "description": "AIT NET connects AI task registries, proof of execution and stablecoin settlement. The website explains that three-layer architecture through interactive tokenomics and use cases, showing how tasks become tradable digital commodities.",
+      "images": [
+        "/media/projects/ait-1.webp",
+        "/media/projects/ait-2.webp"
+      ],
+      "eink": "/media/eink/ait.png"
+    }
+  ],
+  "events": [
+    {
+      "id": "changsha",
+      "title": "ENI DeFi Week World Tour",
+      "role": "Speaker",
+      "place": "Changsha",
+      "country": "CN",
+      "description": "At the opening stop of the ENI DeFi Week World Tour, I introduced the ENI ecosystem and its vision for DeFi collaboration. Organised by ASEAN Labs, the Changsha event brought that conversation to a mainland Chinese audience, with my presentation delivered in Mandarin and English.",
+      "images": [
+        "/media/chronicle/ChangSha1.webp",
+        "/media/chronicle/ChangSha2.webp"
+      ],
+      "eink": "/media/eink/changsha.png"
+    },
+    {
+      "id": "hangzhou",
+      "title": "Web3 + RWA Global Infrastructure Summit",
+      "role": "Delegate",
+      "place": "Hangzhou",
+      "country": "CN",
+      "description": "I represented ENI at the Web3 and RWA Global Digital Infrastructure Summit in Hangzhou, connecting with builders and institutions working on real-world assets. The visit brought the ecosystem into conversations across the summit, from the signing wall to the main hall.",
+      "images": [
+        "/media/chronicle/HangZhou1.webp",
+        "/media/chronicle/HangZhou2.webp"
+      ],
+      "eink": "/media/eink/hangzhou.png"
+    },
+    {
+      "id": "bali",
+      "title": "Monster GameFi Soft Launch",
+      "role": "Host & Keynote",
+      "place": "Bali",
+      "country": "ID",
+      "description": "I hosted the Monster GameFi soft launch under the Bali night sky, welcoming partners from HODL and Kripto 101. As host and keynote presenter, I introduced the play-to-earn vision to the community gathering for launch night.",
+      "images": [
+        "/media/chronicle/Bali1.webp",
+        "/media/chronicle/Bali2.webp"
+      ],
+      "eink": "/media/eink/bali.png"
+    },
+    {
+      "id": "chain-of-trust",
+      "title": "Chain of Trust",
+      "role": "Presenter",
+      "place": "Kuala Lumpur",
+      "country": "MY",
+      "description": "At an evening hosted with CCACC and Fableration, I explored trust as a foundation for Web3. A live NOVA demonstration took the audience through contracts, mining mechanics and NFT minting, one step at a time.",
+      "images": [
+        "/media/chronicle/KL1.webp",
+        "/media/chronicle/KL2.webp"
+      ],
+      "eink": "/media/eink/chain-of-trust.png"
+    },
+    {
+      "id": "gala",
+      "title": "Christmas Crypto Gala",
+      "role": "Panelist",
+      "place": "Kuala Lumpur",
+      "country": "MY",
+      "description": "A year-end conversation about meme markets, PayFi and Malaysia’s digital initiatives. I joined the Christmas Crypto Gala panel to discuss what could drive the next wave of crypto activity with a room full of local community members.",
+      "images": [
+        "/media/chronicle/KL3.webp",
+        "/media/chronicle/KL4.webp"
+      ],
+      "eink": "/media/eink/gala.png"
+    },
+    {
+      "id": "paygo-meetup",
+      "title": "PayGo × ENI Community Night",
+      "role": "Presenter",
+      "place": "Kuala Lumpur",
+      "country": "MY",
+      "description": "An evening with the PayGo and ENI communities, introducing pay-as-you-go payments on ENI Mainnet to local builders. The session closed with a group photograph of the people bringing those ideas into practice.",
+      "images": [
+        "/media/chronicle/KL5.webp",
+        "/media/chronicle/KL6.webp"
+      ],
+      "eink": "/media/eink/paygo-meetup.png"
+    },
+    {
+      "id": "nova-mexc",
+      "title": "NOVA × MEXC Builders Session",
+      "role": "Speaker",
+      "place": "Selangor",
+      "country": "MY",
+      "description": "I presented a walkthrough of offline activations and online campaigns, showing how repeated, consistent community work helps build a Web3 brand that people recognise and trust.",
+      "images": [
+        "/media/chronicle/Selangor1.webp",
+        "/media/chronicle/Selangor2.webp"
+      ],
+      "eink": "/media/eink/nova-mexc.png"
+    },
+    {
+      "id": "blockchain-evolution",
+      "title": "Blockchain Evolution 2025",
+      "role": "Speaker",
+      "place": "Selangor",
+      "country": "MY",
+      "description": "At PPAS Bangi, I spoke with builders and newcomers about crypto, PayFi and GameFi heading into 2025. The community session focused on practical routes to adoption and what those technologies could mean for the local Web3 scene.",
+      "images": [
+        "/media/chronicle/Selangor3.webp",
+        "/media/chronicle/Selangor4.webp"
+      ],
+      "eink": "/media/eink/blockchain-evolution.png"
+    }
+  ]
+}

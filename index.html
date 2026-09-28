@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Dean Studio · UI/UX, frontend and creative design</title>
+  <meta name="description" content="Dean: UI/UX designer, frontend developer and creative designer working on Web3 products. Selected works, speaking chronicle and contact." />
+  <meta name="theme-color" content="#0f1014" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <!-- Loader: inline so it paints before the 3D bundle arrives (a JS/GSAP loader would sit frozen
+       until three.js had downloaded). Transform and opacity only, on their own elements, so every
+       part is composited and keeps running while the main thread parses three.js and compiles
+       shaders (a stroke trace would be painted on that busy thread and stall mid-draw).
+       The D rises out of a mask like set type; the sparkle appears, then twinkles until the page is ready. -->
+  <style>
+    .loader { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #0f1014; transition: opacity 420ms cubic-bezier(0.23, 1, 0.32, 1), visibility 0s linear 420ms; }
+    .loader.done { opacity: 0; visibility: hidden; }
+    .ld-mark { position: relative; width: clamp(76px, 9vw, 112px); aspect-ratio: 1; animation: ld-in 700ms cubic-bezier(0.23, 1, 0.32, 1) 100ms both; }
+    .ld-mark svg { position: absolute; display: block; fill: #f2dfb6; }
+    .ld-d { position: absolute; inset: 0; overflow: hidden; }
+    .ld-d svg { inset: 0; width: 100%; height: 100%; transform: translateY(101%); will-change: transform; animation: ld-rise 760ms cubic-bezier(0.23, 1, 0.32, 1) 180ms forwards; }
+    .ld-star { left: 68%; top: 5%; width: 24%; height: 24%; overflow: visible; opacity: 0; transform: scale(0.5); will-change: transform; animation: ld-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 760ms forwards, ld-twinkle 1800ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms infinite; }
+    @keyframes ld-in { from { transform: scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes ld-rise { to { transform: none; } }
+    @keyframes ld-pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    /* The sparkle turns a quarter and breathes in, then rests: a twinkle, not a spinner. */
+    @keyframes ld-twinkle { 0% { transform: rotate(0) scale(1); } 30% { transform: rotate(45deg) scale(0.62); } 55%, 100% { transform: rotate(90deg) scale(1); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .loader.done .ld-mark { transform: scale(0.94); transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ld-mark, .ld-d svg, .ld-star { animation: none; transform: none; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader" role="status" aria-label="Loading Dean Studio">
+    <div class="ld-mark" aria-hidden="true">
+      <div class="ld-d"><svg viewBox="0 0 100 100"><path d="M12 24c0 3 8 3 8 14v43c0 8-2 10-8 13h31c-7-3-9-5-9-13V31c22-1 39 10 43 28 3 15-6 28-25 35 27-5 40-20 37-39-2-14-12-24-26-28 2-2 3-4 4-7-5 4-12 4-24 4H12Z"/></svg></div>
+      <svg class="ld-star" viewBox="68 5 24 24"><path d="M80 5c2 9 3 10 12 12-9 2-10 3-12 12-2-9-3-10-12-12 9-2 10-3 12-12Z"/></svg>
+    </div>
+  </div>
+
+  <a class="skip" href="#works">Skip to selected works</a>
+
+  <div class="stage" aria-hidden="true">
+    <canvas id="webgl"></canvas>
+    <div class="stage-css" id="css3d"></div>
+    <p class="stage-fallback">The 3D wallet needs WebGL. Everything is still here in the page.</p>
+  </div>
+
+  <header class="site-header">
+    <a class="brand" href="#hello" aria-label="Dean Studio, back to top">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 24c0 3 8 3 8 14v43c0 8-2 10-8 13h31c-7-3-9-5-9-13V31c22-1 39 10 43 28 3 15-6 28-25 35 27-5 40-20 37-39-2-14-12-24-26-28 2-2 3-4 4-7-5 4-12 4-24 4H12Z"/><path d="M80 5c2 9 3 10 12 12-9 2-10 3-12 12-2-9-3-10-12-12 9-2 10-3 12-12Z"/></svg>
+      <span class="brand-name">Dean Studio</span>
+    </a>
+    <div class="header-cta">
+      <button class="share" id="share" type="button">
+        <span class="share-label">Share</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="17.5" cy="5.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/><path d="m8.7 10.8 6.6-4M8.7 13.2l6.6 4"/></svg>
+      </button>
+      <a class="cta cta-head" id="hire" href="#/contact">Work with Dean</a>
+    </div>
+  </header>
+
+  <div class="prefs" role="group" aria-label="Preferences">
+    <button class="pill" id="sound-toggle" type="button" aria-pressed="true">
+      <svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4Z"/><path class="pill-on" d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11"/></svg>
+      <span class="pill-label">Sound </span><span data-sound-label>on</span>
+    </button>
+    <button class="pill" id="motion-toggle" type="button" aria-pressed="true">
+      <svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15.5" cy="12" r="4.5"/><path class="pill-on" d="M3 8.5h5.5M2 12h6.5M3 15.5h5.5"/></svg>
+      <span class="pill-label">Motion </span><span data-motion-label>on</span>
+    </button>
+  </div>
+
+  <main id="main">
+    <section class="section" id="hello" data-section="hello" aria-labelledby="hello-title">
+      <div class="section-copy">
+        <div class="copy-main">
+          <h1 id="hello-title"><span class="h-sans">Dean</span> <span class="h-serif">Studio.</span></h1>
+          <p class="scroll-cue" aria-hidden="true"><span class="cue-icon"><i></i></span>Scroll to discover</p>
+        </div>
+        <div class="copy-side">
+          <p class="lede">UI/UX designer, frontend developer and creative designer, focused on making complex Web3 products understandable through interfaces, landing pages and frontend implementation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="works" data-section="works" aria-labelledby="works-title">
+      <div class="section-copy">
+        <div class="copy-main">
+          <p class="eyebrow"><b>01</b> — 04</p>
+          <h2 id="works-title">Selected works</h2>
+        </div>
+        <div class="copy-side">
+          <p class="lede">10 projects across Web3 networks, AI platforms and protocols.</p>
+          <p class="hint">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open</p>
+          <ul class="focus-list" data-list="works"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="chronicle" data-section="chronicle" aria-labelledby="chronicle-title">
+      <div class="section-copy">
+        <div class="copy-main">
+          <p class="eyebrow"><b>02</b> — 04</p>
+          <h2 id="chronicle-title">The chronicle</h2>
+        </div>
+        <div class="copy-side">
+          <p class="lede">8 events, 3 countries: speaking, hosting and community work.</p>
+          <p class="hint">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open</p>
+          <ul class="focus-list" data-list="chronicle"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about" data-section="about" aria-labelledby="about-title">
+      <div class="section-copy">
+        <div class="copy-main">
+          <p class="eyebrow"><b>03</b> — 04</p>
+          <h2 id="about-title">About Dean</h2>
+        </div>
+        <div class="copy-side">
+          <p class="lede" data-bio></p>
+          <p class="hint">✓ or <kbd>Enter</kbd> to read more</p>
+          <ul class="focus-list" data-list="about"><li><a href="#/about">Read about Dean</a></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact" data-section="contact" aria-labelledby="contact-title">
+      <div class="section-copy">
+        <div class="copy-main">
+          <p class="eyebrow"><b>04</b> — 04</p>
+          <h2 id="contact-title">Get in touch</h2>
+        </div>
+        <div class="copy-side">
+          <p class="lede">Email, LinkedIn or WhatsApp.</p>
+          <button class="cta" id="contact-cta" type="button">Contact me</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p id="live" class="sr" role="status" aria-live="polite"></p>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,6636 @@
+{
+  "targetName": "DeanFi hardware wallet",
+  "targetId": "deanfi-hardware-wallet",
+  "schemaVersion": "2.1",
+  "terminologyProfile": {
+    "domain": "real-time procedural Three.js asset",
+    "geometryTerms": [
+      "silhouette",
+      "topology",
+      "primitive",
+      "bevel",
+      "chamfer",
+      "taper",
+      "bend",
+      "boolean cut",
+      "edge loop",
+      "surface normal",
+      "displacement"
+    ],
+    "materialTerms": [
+      "albedo",
+      "baseColor",
+      "roughness",
+      "metalness",
+      "normal map",
+      "bump map",
+      "ambient occlusion",
+      "cavity dirt",
+      "edge wear",
+      "clearcoat"
+    ],
+    "lightingTerms": [
+      "key light",
+      "fill light",
+      "rim light",
+      "HDRI/environment reflection",
+      "contact shadow"
+    ],
+    "descriptionRule": "Use measurable 3D graphics terms. Avoid vague words unless they are paired with concrete geometry/material/shader parameters."
+  },
+  "sourceImage": "references/wallet/1.png",
+  "referenceCamera": {
+    "solved": false,
+    "fovDegrees": 40.0,
+    "aspect": 1.0,
+    "orientation": {
+      "yaw": 0.0,
+      "pitch": 0.0,
+      "roll": 0.0
+    },
+    "positionHint": [
+      0.0,
+      0.0,
+      3.0
+    ],
+    "note": "Form-factor review uses a front three-quarter camera (yaw -0.45, pitch 0.08) matching ref 1; no projection (see projection-route skip)."
+  },
+  "suitability": "conditional",
+  "scores": {
+    "object_isolation": 3,
+    "silhouette_readability": 3,
+    "depth_inference": 2,
+    "primitive_decomposition": 3,
+    "material_procedurality": 3,
+    "occlusion_risk": 1,
+    "interaction_fit": 3
+  },
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "handheld hardware crypto wallet (original derivative of a portrait e-ink wallet form factor)",
+      "primaryDomain": "object",
+      "formLanguage": [
+        "hard-surface",
+        "rounded-rectangular slab",
+        "soft face-to-side edge roll-off"
+      ],
+      "structureKind": [
+        "layered shell",
+        "compound object",
+        "articulated assembly",
+        "repeated modules"
+      ],
+      "motionPotential": [
+        "whole-object transform",
+        "articulated"
+      ],
+      "materialFamilies": [
+        "metal (thin-film iridescent coating)",
+        "glass-like",
+        "plastic",
+        "metal (anodized champagne)"
+      ],
+      "notes": "Form factor measured from references 1-3 (H = 1.5 W, chin 0.30 W, screen 0.79 x 1.07 W). Controls, CMF and branding follow docs/device-design.md and are intentionally NOT the reference's."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 1,
+        "componentCount": 3,
+        "hierarchyDepth": 2,
+        "repetitionDensity": 2,
+        "materialLayerCount": 3,
+        "localDetailDensity": 2,
+        "occlusionRisk": 1,
+        "actionReadinessNeed": 3
+      },
+      "estimatedCounts": {
+        "macroComponents": 4,
+        "mesoComponents": 12,
+        "microFeatureGroups": 7,
+        "materialLayers": 7,
+        "repetitionSystems": 2
+      },
+      "reasoning": [
+        "Silhouette is a plain rounded slab (1); identity lives in proportions, bezel/chin depth and edge roll-off.",
+        "Many discrete, individually animated controls push componentCount and actionReadinessNeed to 3.",
+        "Repetition: knurled roller ridges (~36) and four identical section tabs.",
+        "Materials: iridescent shell, glossy glass, e-ink paper, champagne metal, dark polymer keys, soft-touch back, LED emissive."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Choose simple/moderate/complex/ultra-complex from observed structure, not from a hardcoded domain."
+    },
+    "unknownsToResolveBeforeImplementation": [],
+    "detailInventory": {
+      "scanMethod": "component-zones",
+      "targetMinDetails": 10,
+      "note": "Zones from grid-3x3 scan of ref 2 (.img2threejs/analysis/zones) + design blueprint.",
+      "details": [
+        {
+          "id": "edge-rolloff",
+          "kind": "bevel",
+          "description": "Face-to-side soft radius (~0.03 W) giving a tight bright rim highlight in refs 1/3",
+          "region": {
+            "x": 0.36,
+            "y": 0.09,
+            "width": 0.56,
+            "height": 0.83,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "shell/edge-rolloff"
+          },
+          "evidenceRef": "references/wallet/1.png",
+          "confidence": 0.8,
+          "realization": "unreported"
+        },
+        {
+          "id": "corner-radius",
+          "kind": "contour",
+          "description": "Plan-view corner radius ~0.09 W",
+          "region": {
+            "x": 0.36,
+            "y": 0.09,
+            "width": 0.1,
+            "height": 0.1,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "silhouette",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "shell/plan-corners"
+          },
+          "evidenceRef": "references/wallet/2.png",
+          "confidence": 0.85,
+          "realization": "unreported"
+        },
+        {
+          "id": "glass-gloss",
+          "kind": "gloss",
+          "description": "Full-face glossy cover glass with sharp reflections (clearcoat)",
+          "region": {
+            "x": 0.37,
+            "y": 0.1,
+            "width": 0.54,
+            "height": 0.8,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "roughness",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "front-glass/cover-gloss"
+          },
+          "evidenceRef": "references/wallet/1.png",
+          "confidence": 0.85,
+          "realization": "unreported"
+        },
+        {
+          "id": "window-border",
+          "kind": "linework",
+          "description": "1 px lighter border around the display window inside the black bezel",
+          "region": {
+            "x": 0.4,
+            "y": 0.14,
+            "width": 0.47,
+            "height": 0.62,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "display/window-border"
+          },
+          "evidenceRef": "references/wallet/2.png",
+          "confidence": 0.7,
+          "realization": "unreported"
+        },
+        {
+          "id": "display-matte",
+          "kind": "decal",
+          "description": "E-ink active area: matte paper albedo, content from CSS3D HTML",
+          "region": {
+            "x": 0.42,
+            "y": 0.16,
+            "width": 0.44,
+            "height": 0.58,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "display/eink-surface"
+          },
+          "evidenceRef": "references/wallet/2.png",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "confirm-key",
+          "kind": "ridge",
+          "description": "Round champagne Confirm key proud of the chin + LED ring groove",
+          "region": {
+            "x": 0.72,
+            "y": 0.8,
+            "width": 0.14,
+            "height": 0.1,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "key-confirm/cap"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "led-ring",
+          "kind": "emissive",
+          "description": "LED ring around Confirm, fills while holding",
+          "region": {
+            "x": 0.71,
+            "y": 0.79,
+            "width": 0.16,
+            "height": 0.12,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "emissive",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "key-confirm/led-ring"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "back-key-glyph",
+          "kind": "groove",
+          "description": "Engraved chevron glyph on the Back key",
+          "region": {
+            "x": 0.39,
+            "y": 0.8,
+            "width": 0.08,
+            "height": 0.08,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "normal",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "key-back/glyph"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.8,
+          "realization": "unreported"
+        },
+        {
+          "id": "roller-knurl",
+          "kind": "ridge",
+          "description": "Knurled ridges around the thumb roller rim (repetition)",
+          "region": {
+            "x": 0.35,
+            "y": 0.3,
+            "width": 0.03,
+            "height": 0.12,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "roller/knurl"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.85,
+          "realization": "unreported"
+        },
+        {
+          "id": "tab-numerals",
+          "kind": "linework",
+          "description": "Engraved 01-04 numerals beside the top-edge tabs",
+          "region": {
+            "x": 0.45,
+            "y": 0.08,
+            "width": 0.4,
+            "height": 0.02,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "tabs/numerals"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.7,
+          "realization": "unreported"
+        },
+        {
+          "id": "usb-port",
+          "kind": "hole",
+          "description": "USB-C port recess centred on the bottom edge",
+          "region": {
+            "x": 0.6,
+            "y": 0.9,
+            "width": 0.07,
+            "height": 0.02,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "port/usb-c"
+          },
+          "evidenceRef": "references/wallet/3.png",
+          "confidence": 0.75,
+          "realization": "unreported"
+        },
+        {
+          "id": "lanyard-slot",
+          "kind": "hole",
+          "description": "Lanyard slot with bevel lip in the bottom face at x = -0.30 W",
+          "region": {
+            "x": 0.44,
+            "y": 0.9,
+            "width": 0.06,
+            "height": 0.02,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "lanyard-slot/opening"
+          },
+          "evidenceRef": "src/device/keychain.ts",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "back-logo",
+          "kind": "ridge",
+          "description": "D-star emboss on the back plate",
+          "region": {
+            "x": 0.45,
+            "y": 0.2,
+            "width": 0.25,
+            "height": 0.2,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "back-plate/logo-emboss"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.85,
+          "realization": "unreported"
+        },
+        {
+          "id": "back-softtouch",
+          "kind": "stain",
+          "description": "Soft-touch microtexture on the back plate (high roughness, fine noise normal)",
+          "region": {
+            "x": 0.3,
+            "y": 0.1,
+            "width": 0.6,
+            "height": 0.8,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "roughness",
+          "mapsTo": {
+            "type": "material.localOverrides",
+            "ref": "back-softtouch"
+          },
+          "evidenceRef": "references/wallet/3.png",
+          "confidence": 0.7,
+          "realization": "unreported"
+        }
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0.0,
+      "proportions": {
+        "headUnit": 0.0,
+        "torso": 0.0,
+        "legs": 0.0,
+        "shoulderWidth": 0.0,
+        "hipWidth": 0.0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0.0,
+        "eyeSpacing": 0.0,
+        "noseBase": 0.0,
+        "mouthLine": 0.0,
+        "hairline": 0.0
+      },
+      "features": [],
+      "confidence": 0.0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "references/wallet/1.png"
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "The rendered model matches the reference silhouette, primary proportions, visible component hierarchy, material response, and most recognizable local features for the selected fidelity tier."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 3,
+      "mesoComponents": 8,
+      "microFeatureGroups": 5,
+      "materialLayers": 3,
+      "repetitionSystems": 1,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Bounding shape, dominant curves, negative spaces, and scale relationships are explicitly described."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic placeholder instead of the reference object",
+          "major proportions are guessed without evidence"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Major parts, joints, seams, contact points, and parent-child relationships are named before code generation."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every visible child appendage, branch, limb, handle, connector, tube, cable, horn, wing, leg, or hinged part has an attachment contract with parent socket, localStart/localEnd, contact type, embed/overlap, and gap tolerance."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Albedo zones, roughness, normal/bump/displacement intent, cavity dirt, edge wear, and local overrides are specified where visible.",
+          "Important materials define independent albedo, roughness, height/normal, and AO responses instead of reusing one texture for unrelated PBR channels.",
+          "Surface response is decomposed into macro, meso, and micro frequency bands with scale and amplitude tied to object scale."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Material-pass names the reference-derived albedo palette, roughness variation, tactile normal/bump/displacement response, and local masks.",
+          "When a source image is available, run reference PBR extraction and require confidence >= 0.7 before treating maps as implementation-ready.",
+          "Lighting-pass names key/fill/rim or environment light, exposure, tone mapping, background, and contact shadow behavior.",
+          "Neutral, grazing-angle, and reference-matched renders prove that surface relief survives relighting and is not painted into albedo."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "colors are a generic average instead of reference-observed local color zones",
+          "lighting is evenly ambient and cannot reproduce the source value range"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "silhouette and negative-space delta",
+      "component hierarchy depth delta",
+      "repetition density and distribution delta",
+      "material albedo/roughness/normal response delta",
+      "local feature placement and scale delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md).",
+      "Adjacent components must overlap by at least 0.02 world units at shared seams (source: grimoire/build/geometry_patterns.md).",
+      "Raised or recessed relief and fasteners must be geometry, instanced micro-parts, or displacement; a map alone is an approximation (source: grimoire/build/geometry_patterns.md)."
+    ],
+    "mustNotDo": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md).",
+      "Adjacent components must overlap by at least 0.02 world units at shared seams (source: grimoire/build/geometry_patterns.md).",
+      "Raised or recessed relief and fasteners must be geometry, instanced micro-parts, or displacement; a map alone is an approximation (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "qualityTargets": {
+    "targetFidelity": 0.7,
+    "mustMatch": [
+      "macro silhouette and proportions",
+      "primary material albedo/roughness response",
+      "reference-derived PBR material response at or above 0.7 confidence when source pixels are usable",
+      "most recognizable local features"
+    ],
+    "niceToHave": [
+      "micro scratches, stains, chips, and dirt masks",
+      "secondary lighting match"
+    ],
+    "fpsTarget": 60,
+    "reviewViewpoints": [
+      "front",
+      "three-quarter",
+      "side",
+      "thickness-axis",
+      "long-axis"
+    ]
+  },
+  "selfCorrectLoop": {
+    "enabled": true,
+    "visualAcceptance": {
+      "reviewer": "ai-vision",
+      "threshold": 0.7,
+      "comparisonArtifactRequired": true,
+      "layerScoresRequired": true,
+      "codePixelDiffIsAcceptanceAuthority": false,
+      "scoringRule": "AI vision must inspect a side-by-side reference/render sheet and score the current pass from 0 to 1. Pixel-diff code may assist diagnostics but cannot approve a pass.",
+      "requiredLayerScores": [
+        "silhouetteProportion",
+        "componentStructure",
+        "formDetail",
+        "materialSurface",
+        "lightingCamera"
+      ],
+      "featureReviewPolicy": {
+        "enabled": true,
+        "reviewUnit": "semantic-subsystem",
+        "maxCriticalFeaturesPerPass": 5,
+        "maxImportantFeaturesPerPass": 3,
+        "criticalDefaultThreshold": 0.8,
+        "importantAverageThreshold": 0.65,
+        "adaptiveEscalation": true,
+        "singleImagePairOnly": true,
+        "selectionRule": "Choose only the most visually salient, identity-defining, user-prioritized, or high-risk semantic systems. Group repeated parts instead of reviewing every mesh. AI vision scores every selected feature from the same full reference/render pair."
+      }
+    },
+    "reviewAfterPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "allowedActions": [
+      "continue",
+      "refine-spec",
+      "refine-code",
+      "request-input",
+      "stop"
+    ],
+    "specRefineTriggers": [
+      "missing component",
+      "wrong primitive family",
+      "wrong proportions",
+      "material layer under-specified",
+      "local feature not traceable to viewEvidence",
+      "reference ambiguity discovered during implementation"
+    ],
+    "codeRefineTriggers": [
+      "spec is adequate but generated geometry/material does not match",
+      "browser render differs from reference",
+      "performance budget exceeded",
+      "lighting hides geometry or material response"
+    ],
+    "stopCriteria": [
+      "target fidelity reached or user accepts current approximation",
+      "remaining gaps require new reference images or manual art"
+    ],
+    "screenshotPolicy": {
+      "requiredForPasses": [
+        "blockout",
+        "structural-pass",
+        "form-refinement",
+        "material-pass",
+        "surface-pass",
+        "lighting-pass",
+        "interaction-pass"
+      ],
+      "preferredCapture": "in-app-browser-screenshot",
+      "fallbackCapture": "user-supplied-screenshot-path",
+      "minimumEvidence": "Each visual pass needs a reference image, rendered screenshot, side-by-side comparison sheet, AI vision score, layer scores, and critique before choosing continue.",
+      "reviewPairRule": "Compare the same camera/viewpoint whenever possible; do not judge a front reference against a random render angle.",
+      "acceptanceAuthority": "AI vision review of the comparison sheet. Code-generated pixel similarity is not sufficient evidence."
+    }
+  },
+  "featureReviewTargets": [
+    {
+      "id": "overall-silhouette",
+      "name": "Slab proportions 1 : 1.5 : 0.15, plan corners, edge roll-off",
+      "tier": "critical",
+      "passIds": [
+        "blockout"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "shell"
+      ],
+      "evidenceRefs": [
+        "front-ortho",
+        "full-object"
+      ]
+    },
+    {
+      "id": "face-layout",
+      "name": "Bezel / display window / chin proportions",
+      "tier": "critical",
+      "passIds": [
+        "blockout",
+        "structural-pass"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "front-glass",
+        "display"
+      ],
+      "evidenceRefs": [
+        "front-ortho"
+      ]
+    },
+    {
+      "id": "control-set",
+      "name": "Controls placed per blueprint (tabs, roller, keys, switch)",
+      "tier": "critical",
+      "passIds": [
+        "structural-pass",
+        "form-refinement"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "roller",
+        "key-confirm",
+        "key-back",
+        "switch-motion"
+      ],
+      "evidenceRefs": [
+        "blueprint"
+      ]
+    },
+    {
+      "id": "reference-material-system",
+      "name": "Iridescent shell, black glass, e-ink, champagne accents",
+      "tier": "critical",
+      "passIds": [
+        "material-pass",
+        "surface-pass"
+      ],
+      "minimumScore": 0.75,
+      "mustPass": true,
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "key-confirm"
+      ],
+      "evidenceRefs": [
+        "blueprint",
+        "full-object"
+      ]
+    },
+    {
+      "id": "underside-details",
+      "name": "Port, lanyard slot, back emboss",
+      "tier": "important",
+      "passIds": [
+        "form-refinement",
+        "surface-pass"
+      ],
+      "minimumScore": 0.65,
+      "mustPass": false,
+      "componentRefs": [
+        "port",
+        "lanyard-slot",
+        "back-plate"
+      ],
+      "evidenceRefs": [
+        "blueprint"
+      ]
+    }
+  ],
+  "sculptPipeline": {
+    "passGateMode": "locked-sequential",
+    "passOrder": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "currentPass": "surface-pass",
+    "completedPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass"
+    ],
+    "lastCompletedPass": "material-pass",
+    "blockedReason": "",
+    "nextRequiredEvidence": [
+      "Every required material feature group has local overrides or surfaceDetail tied to evidenceRefs.",
+      "A grazing-angle close-up proves that normal/height detail breaks highlights naturally and does not read as smooth plastic.",
+      "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold.",
+      "component surfaceDetail for tactile normal/bump/displacement and locality",
+      "browser render screenshot from your agent's browser/screenshot tool",
+      "side-by-side reference/render comparison sheet for AI vision review",
+      "banded interior difference vs the reference baseline (forge/stage4_review/interior_difference.py --from/--to per region)",
+      "AI vision score at or above the visual acceptance threshold",
+      "all critical semantic feature scores from the shared image pair at or above their thresholds",
+      "self-correction review appended with action=continue before the next pass"
+    ]
+  },
+  "lookDevTargets": {
+    "qualityPriority": "balanced",
+    "materialPass": {
+      "albedoPaletteRequired": true,
+      "roughnessVariationRequired": true,
+      "normalOrBumpRequired": true,
+      "localOverridesRequired": true,
+      "minimumTextureResolution": 1024,
+      "preferredTextureResolution": 2048,
+      "independentMapChannels": [
+        "albedo",
+        "roughness",
+        "height",
+        "normal",
+        "ambient-occlusion"
+      ],
+      "requiredSurfaceFrequencyBands": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "geometryReliefRequiredWhenSilhouetteAffected": true,
+      "referencePbrExtraction": {
+        "requiredWhenSourceImagePresent": true,
+        "targetThreshold": 0.7,
+        "stopOnLowConfidence": true,
+        "script": "forge/stage1_intake/extract_pbr_evidence.py",
+        "acceptedLimitation": "single-image extraction is reference-derived inference, not exact photogrammetry"
+      },
+      "mustAvoid": [
+        "single flat albedo per material",
+        "uniform roughness",
+        "albedo texture reused as roughness/height/normal/AO",
+        "single-frequency random noise",
+        "plastic-looking smooth bark, stone, cloth, foliage, or aged material",
+        "local color/detail described only in prose without material masks",
+        "claiming exact PBR recovery when confidence is below the target threshold"
+      ]
+    },
+    "lightingPass": {
+      "requiredTerms": [
+        "key light",
+        "fill light",
+        "rim or environment light",
+        "exposure",
+        "tone mapping",
+        "background",
+        "contact shadow"
+      ],
+      "mustAvoid": [
+        "ambient-only lighting",
+        "flat value range",
+        "missing contact shadow",
+        "reference lighting copied without separating material readability"
+      ]
+    },
+    "screenshotReview": [
+      "Compare albedo palette and local color zones.",
+      "Compare roughness/normal/bump response under light.",
+      "Compare cavity dirt, edge wear, stains, moss, scratches, or other local masks.",
+      "Compare key/fill/rim structure, exposure, tone mapping, background, and contact shadows.",
+      "Capture a neutral-light render to verify material readability without reference lighting.",
+      "Capture a grazing-light close-up to expose flat normals, uniform roughness, tiling, and plastic highlights.",
+      "Capture a reference-matched render from the same camera framing as the source."
+    ],
+    "qualityPriorityRationale": "Surfaces are an ORIGINAL designed CMF (docs/device-design.md, lab/materials.html), deliberately not the reference's; reference-fidelity texture extraction would import Ledger trade dress. Form factor is still gated against the photo (Tier-1 silhouette) and every material is declared textureless with evidence."
+  },
+  "actionReadiness": {
+    "contract": "Every macro/meso component should be generated as a stable named Object3D pivot node with a mesh child, action metadata, optional sockets, collider proxy, and destruction metadata.",
+    "defaultRigType": "action-ready-static-rig",
+    "rootMotionNode": "root",
+    "requiredComponentFields": [
+      "id",
+      "parent",
+      "transform",
+      "attachment for child appendages, connectors, limbs, tubes, handles, legs, horns, wings, branches, or cables",
+      "actionProfile.animationRole",
+      "actionProfile.pivot",
+      "actionProfile.collider",
+      "actionProfile.destruction"
+    ],
+    "transformChannels": [
+      "translate",
+      "rotate",
+      "scale",
+      "bend",
+      "twist",
+      "detach",
+      "visibility",
+      "material-state"
+    ],
+    "authoringRules": [
+      "Do not collapse independently movable parts into one mesh.",
+      "Put transforms on component pivot groups, not only on raw meshes.",
+      "For attached child parts, put the pivot at the semantic root/socket and build visible geometry from localStart to localEnd.",
+      "Represent hinge, socket, detachable, and breakable intent even when no animation is implemented yet.",
+      "Use simplified collider proxies for runtime physics instead of visual mesh colliders by default."
+    ],
+    "destructionPolicy": {
+      "defaultBreakable": false,
+      "fractureGroupNaming": "Use stable semantic names such as body-shell, left-hinge, glass-panel, branch-segment.",
+      "debrisStrategy": "Prefer detachable component groups and a small number of procedural fragments over random mesh explosion."
+    }
+  },
+  "assumptions": [
+    "Thickness 0.15 W (refs 1/3 suggest 0.14-0.16 W) and a flat back are design decisions (single-view limit).",
+    "USB-C port centred on the bottom edge (design change 7); control side profiles authored from docs/device-blueprint.html v0.3.",
+    "Controls, colour/material/finish and branding intentionally differ from the reference (docs/device-design.md); reviews score form factor against the photo and everything else against the blueprint."
+  ],
+  "coordinateFrame": {
+    "front": "+Z (screen)",
+    "up": "+Y",
+    "right": "+X",
+    "units": "W = body width",
+    "scaleReference": "1 W ≈ 54 mm"
+  },
+  "silhouette": {
+    "boundingShape": "rounded-rectangle slab 1 x 1.5 x 0.15 W",
+    "aspectRatios": [
+      {
+        "axis": "height/width",
+        "value": 1.5,
+        "source": "measured ref 2 (383/256 px)"
+      },
+      {
+        "axis": "thickness/width",
+        "value": 0.15,
+        "source": "inferred refs 1/3"
+      }
+    ],
+    "symmetry": "bilateral outline; asymmetric controls (roller -X, switch +X, keys in chin)",
+    "dominantCurves": [
+      "0.09 W plan corners",
+      "0.03 W face-to-side roll-off"
+    ],
+    "negativeSpaces": [
+      "keychain hangs below the bottom edge (not part of the silhouette gate)"
+    ],
+    "landmarks": [
+      "display window top at 0.082 W below the top",
+      "chin 0.33 W",
+      "Confirm key at (0.30, -0.59)"
+    ]
+  },
+  "viewEvidence": [
+    {
+      "id": "full-object",
+      "view": "front three-quarter (ref 1)",
+      "imageRegion": {
+        "x": 0.28,
+        "y": 0.06,
+        "width": 0.62,
+        "height": 0.9,
+        "units": "normalized"
+      },
+      "observations": [
+        "deep glossy bezel",
+        "large portrait display",
+        "soft edge roll-off"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "front-ortho",
+      "view": "front (ref 2)",
+      "imageRegion": {
+        "x": 0.36,
+        "y": 0.09,
+        "width": 0.56,
+        "height": 0.83,
+        "units": "normalized"
+      },
+      "observations": [
+        "H = 1.5 W",
+        "screen 0.79 x 1.07 W",
+        "chin 0.30-0.33 W"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "blueprint",
+      "view": "design blueprint v0.3",
+      "imageRegion": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1,
+        "units": "normalized"
+      },
+      "observations": [
+        "controls, CMF, keychain, card"
+      ],
+      "confidence": 1.0
+    }
+  ],
+  "componentTree": [
+    {
+      "id": "shell",
+      "name": "Body shell (frame + back)",
+      "level": "macro",
+      "role": "body",
+      "importance": 1.0,
+      "confidence": 0.85,
+      "primitive": "extrude",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Rounded-rectangle slab: plan corners 0.09 W, face-to-side roll-off bevel 0.03 W (4 segments) for the tight rim highlight in refs 1/3.",
+      "geometryDescriptor": {
+        "topologyIntent": "Rounded-rectangle slab: plan corners 0.09 W, face-to-side roll-off bevel 0.03 W (4 segments) for the tight rim highlight in refs 1/3.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.03,
+          "segments": 4
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry",
+        "profile2D": {
+          "points": [
+            [
+              0.5,
+              0.66
+            ],
+            [
+              0.4969,
+              0.6833
+            ],
+            [
+              0.4879,
+              0.705
+            ],
+            [
+              0.4736,
+              0.7236
+            ],
+            [
+              0.455,
+              0.7379
+            ],
+            [
+              0.4333,
+              0.7469
+            ],
+            [
+              0.41,
+              0.75
+            ],
+            [
+              -0.41,
+              0.75
+            ],
+            [
+              -0.4333,
+              0.7469
+            ],
+            [
+              -0.455,
+              0.7379
+            ],
+            [
+              -0.4736,
+              0.7236
+            ],
+            [
+              -0.4879,
+              0.705
+            ],
+            [
+              -0.4969,
+              0.6833
+            ],
+            [
+              -0.5,
+              0.66
+            ],
+            [
+              -0.5,
+              -0.66
+            ],
+            [
+              -0.4969,
+              -0.6833
+            ],
+            [
+              -0.4879,
+              -0.705
+            ],
+            [
+              -0.4736,
+              -0.7236
+            ],
+            [
+              -0.455,
+              -0.7379
+            ],
+            [
+              -0.4333,
+              -0.7469
+            ],
+            [
+              -0.41,
+              -0.75
+            ],
+            [
+              0.41,
+              -0.75
+            ],
+            [
+              0.4333,
+              -0.7469
+            ],
+            [
+              0.455,
+              -0.7379
+            ],
+            [
+              0.4736,
+              -0.7236
+            ],
+            [
+              0.4879,
+              -0.705
+            ],
+            [
+              0.4969,
+              -0.6833
+            ],
+            [
+              0.5,
+              -0.66
+            ]
+          ],
+          "depth": 0.15
+        },
+        "handRefinement": "ExtrudeGeometry bevelEnabled (bevelSize = bevelThickness = 0.03, 4 segments) on the outline inset by 0.03; depth t − 0.06 (generator emits bevelEnabled:false)."
+      },
+      "parent": null,
+      "attachment": null,
+      "dimensions": {
+        "width": 1.0,
+        "height": 1.5,
+        "depth": 0.15,
+        "units": "W",
+        "confidence": 0.85
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          -0.075
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "root",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "front-face",
+            "localPosition": [
+              0,
+              0,
+              0.15
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "keychain-anchor",
+            "localPosition": [
+              -0.3,
+              -0.73,
+              0.075
+            ],
+            "normal": [
+              0,
+              -1,
+              0
+            ],
+            "notes": "src/device/keychain.ts anchor; X = bar axis"
+          },
+          {
+            "id": "card-dock",
+            "localPosition": [
+              0,
+              0,
+              -0.035
+            ],
+            "normal": [
+              0,
+              0,
+              -1
+            ]
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "shell-iridescent"
+        }
+      },
+      "material": "shell-iridescent",
+      "materialLayers": [
+        "shell-iridescent"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "edge-rolloff",
+          "kind": "bevel",
+          "description": "0.03 W face-to-side radius, 4 segments"
+        },
+        {
+          "id": "plan-corners",
+          "kind": "contour",
+          "description": "0.09 W plan-view corner radius"
+        },
+        {
+          "id": "left-roller-slot",
+          "kind": "hole",
+          "description": "Dark recess on the -X face behind the exposed roller rim: 0.23 x 0.06 W"
+        },
+        {
+          "id": "right-switch-slot",
+          "kind": "hole",
+          "description": "Dark recess on the +X face: 0.1 x 0.04 W at y = 0.475"
+        },
+        {
+          "id": "top-tab-slots",
+          "kind": "hole",
+          "description": "Four tab openings in the top face"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object",
+        "front-ortho"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(42, 43, 49, 1.0)",
+        "secondaryAlbedo": "rgba(58, 44, 60, 1.0)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.8,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ],
+        "colorGradient": {
+          "type": "linear",
+          "stops": [
+            {
+              "position": 0.0,
+              "color": "rgba(52, 40, 58, 1.0)"
+            },
+            {
+              "position": 0.5,
+              "color": "rgba(27, 28, 33, 1.0)"
+            },
+            {
+              "position": 1.0,
+              "color": "rgba(28, 46, 46, 1.0)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "front-glass",
+      "name": "Front cover glass",
+      "level": "macro",
+      "role": "cover",
+      "importance": 0.9,
+      "confidence": 0.8,
+      "primitive": "extrude",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "Glass covers the FLAT front face only: the 0.03 W roll-off leaves 0.94 x 1.44 W (corner 0.06 W); a wider plate would overhang the rounded edge (form-refinement finding).",
+      "geometryDescriptor": {
+        "topologyIntent": "Glass covers the FLAT front face only: the 0.03 W roll-off leaves 0.94 x 1.44 W (corner 0.06 W); a wider plate would overhang the rounded edge (form-refinement finding).",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry",
+        "profile2D": {
+          "points": [
+            [
+              0.47,
+              0.66
+            ],
+            [
+              0.468,
+              0.6755
+            ],
+            [
+              0.462,
+              0.69
+            ],
+            [
+              0.4524,
+              0.7024
+            ],
+            [
+              0.44,
+              0.712
+            ],
+            [
+              0.4255,
+              0.718
+            ],
+            [
+              0.41,
+              0.72
+            ],
+            [
+              -0.41,
+              0.72
+            ],
+            [
+              -0.4255,
+              0.718
+            ],
+            [
+              -0.44,
+              0.712
+            ],
+            [
+              -0.4524,
+              0.7024
+            ],
+            [
+              -0.462,
+              0.69
+            ],
+            [
+              -0.468,
+              0.6755
+            ],
+            [
+              -0.47,
+              0.66
+            ],
+            [
+              -0.47,
+              -0.66
+            ],
+            [
+              -0.468,
+              -0.6755
+            ],
+            [
+              -0.462,
+              -0.69
+            ],
+            [
+              -0.4524,
+              -0.7024
+            ],
+            [
+              -0.44,
+              -0.712
+            ],
+            [
+              -0.4255,
+              -0.718
+            ],
+            [
+              -0.41,
+              -0.72
+            ],
+            [
+              0.41,
+              -0.72
+            ],
+            [
+              0.4255,
+              -0.718
+            ],
+            [
+              0.44,
+              -0.712
+            ],
+            [
+              0.4524,
+              -0.7024
+            ],
+            [
+              0.462,
+              -0.69
+            ],
+            [
+              0.468,
+              -0.6755
+            ],
+            [
+              0.47,
+              -0.66
+            ]
+          ],
+          "depth": 0.004
+        }
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.94,
+        "height": 1.44,
+        "depth": 0.004,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0.149
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "static-child",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "glass-black"
+        }
+      },
+      "material": "glass-black",
+      "materialLayers": [
+        "glass-black"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "cover-gloss",
+          "kind": "gloss",
+          "description": "Clearcoat 1.0, roughness 0.05: sharp environment reflections across the face"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(11, 11, 13, 1.0)",
+        "secondaryAlbedo": "rgba(69, 70, 77, 1.0)",
+        "materialClass": "glass",
+        "materialClassConfidence": 0.9,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "display",
+      "name": "E-ink display (CSS3D host)",
+      "level": "macro",
+      "role": "display",
+      "importance": 0.95,
+      "confidence": 0.8,
+      "primitive": "plane-card",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "Flat matte plane just above the glass; live UI is a CSS3DObject aligned to this plane (360 x 480 CSS px).",
+      "geometryDescriptor": {
+        "topologyIntent": "Flat matte plane just above the glass; live UI is a CSS3DObject aligned to this plane (360 x 480 CSS px).",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "front-glass",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.795,
+        "height": 1.06,
+        "depth": 1,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.115,
+          0.0045
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.795,
+          1.06,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "display",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "css3d-screen",
+            "localPosition": [
+              0,
+              0,
+              0.0005
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "notes": "CSS3DObject scale = 0.795 / 360 per px"
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "front-glass",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "eink-paper"
+        }
+      },
+      "material": "eink-paper",
+      "materialLayers": [
+        "eink-paper"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "eink-surface",
+          "kind": "decal",
+          "description": "Matte paper #e8e3d6, content from CSS3D HTML; fallback texture when CSS3D is off; corners 0.025 W radius"
+        },
+        {
+          "id": "window-border",
+          "kind": "linework",
+          "description": "Lighter 1 px border: window 0.836 x 1.11 W at y = 0.113"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(232, 227, 214, 1.0)",
+        "secondaryAlbedo": "rgba(29, 28, 26, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.7,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "back-plate",
+      "name": "Back plate",
+      "level": "macro",
+      "role": "panel",
+      "importance": 0.7,
+      "confidence": 0.8,
+      "primitive": "extrude",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "Inset rear panel (0.03 W from the edge) with a hairline seam to the frame.",
+      "geometryDescriptor": {
+        "topologyIntent": "Inset rear panel (0.03 W from the edge) with a hairline seam to the frame.",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry",
+        "profile2D": {
+          "points": [
+            [
+              0.47,
+              0.65
+            ],
+            [
+              0.4676,
+              0.6681
+            ],
+            [
+              0.4606,
+              0.685
+            ],
+            [
+              0.4495,
+              0.6995
+            ],
+            [
+              0.435,
+              0.7106
+            ],
+            [
+              0.4181,
+              0.7176
+            ],
+            [
+              0.4,
+              0.72
+            ],
+            [
+              -0.4,
+              0.72
+            ],
+            [
+              -0.4181,
+              0.7176
+            ],
+            [
+              -0.435,
+              0.7106
+            ],
+            [
+              -0.4495,
+              0.6995
+            ],
+            [
+              -0.4606,
+              0.685
+            ],
+            [
+              -0.4676,
+              0.6681
+            ],
+            [
+              -0.47,
+              0.65
+            ],
+            [
+              -0.47,
+              -0.65
+            ],
+            [
+              -0.4676,
+              -0.6681
+            ],
+            [
+              -0.4606,
+              -0.685
+            ],
+            [
+              -0.4495,
+              -0.6995
+            ],
+            [
+              -0.435,
+              -0.7106
+            ],
+            [
+              -0.4181,
+              -0.7176
+            ],
+            [
+              -0.4,
+              -0.72
+            ],
+            [
+              0.4,
+              -0.72
+            ],
+            [
+              0.4181,
+              -0.7176
+            ],
+            [
+              0.435,
+              -0.7106
+            ],
+            [
+              0.4495,
+              -0.6995
+            ],
+            [
+              0.4606,
+              -0.685
+            ],
+            [
+              0.4676,
+              -0.6681
+            ],
+            [
+              0.47,
+              -0.65
+            ]
+          ],
+          "depth": 0.003
+        }
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.94,
+        "height": 1.44,
+        "depth": 0.003,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          -0.002
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "static-child",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "back-satin"
+        }
+      },
+      "material": "back-satin",
+      "materialLayers": [
+        "back-satin"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "logo-emboss",
+          "kind": "ridge",
+          "description": "D-star from deanfi.svg, 0.3 W tall, champagne, raised 0.004 W, centred at y = 0.3"
+        },
+        {
+          "id": "studio-text",
+          "kind": "linework",
+          "description": "DEAN STUDIO, letter-spaced, engraved at y = -0.64"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(42, 43, 49, 1.0)",
+        "secondaryAlbedo": "rgba(58, 44, 60, 1.0)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.8,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ],
+        "colorGradient": {
+          "type": "linear",
+          "stops": [
+            {
+              "position": 0.0,
+              "color": "rgba(52, 40, 58, 1.0)"
+            },
+            {
+              "position": 0.5,
+              "color": "rgba(27, 28, 33, 1.0)"
+            },
+            {
+              "position": 1.0,
+              "color": "rgba(28, 46, 46, 1.0)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "key-confirm",
+      "name": "Confirm key (hold)",
+      "level": "meso",
+      "role": "button",
+      "importance": 0.9,
+      "confidence": 0.8,
+      "primitive": "cylinder",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Round key proud of the glass by 0.006 W; D-star engraved on the cap.",
+      "geometryDescriptor": {
+        "topologyIntent": "Round key proud of the glass by 0.006 W; D-star engraved on the cap.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.006,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": {
+        "parentId": "shell",
+        "parentSocket": "front-face",
+        "baseRadius": 0.085,
+        "endRadius": 0.085,
+        "contactType": "embed",
+        "contactNormal": [
+          0,
+          0,
+          1
+        ],
+        "embedDepth": 0.003,
+        "gapTolerance": 0.0015,
+        "evidenceRefs": [
+          "blueprint"
+        ],
+        "localStart": [
+          0.3,
+          -0.59,
+          0.147
+        ],
+        "localEnd": [
+          0.3,
+          -0.59,
+          0.161
+        ]
+      },
+      "dimensions": {
+        "width": 0.17,
+        "height": 0.17,
+        "depth": 0.014,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.3,
+          -0.59,
+          0.154
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-press",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            0,
+            -1
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "champagne-metal"
+        }
+      },
+      "material": "champagne-metal",
+      "materialLayers": [
+        "champagne-metal"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "cap",
+          "kind": "groove",
+          "description": "Engraved D-star on the cap, 0.09 W"
+        },
+        {
+          "id": "led-ring",
+          "kind": "emissive",
+          "description": "Emissive ring fill 0..1 while held (see confirm-led-ring)"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(227, 200, 148, 1.0)",
+        "secondaryAlbedo": "rgba(143, 127, 92, 1.0)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.9,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "confirm-led-ring",
+      "name": "Confirm LED ring",
+      "level": "micro",
+      "role": "indicator",
+      "importance": 0.6,
+      "confidence": 0.8,
+      "primitive": "torus",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Thin emissive ring set into the glass around the key (TorusGeometry 0.45 scaled to R 0.105; tube 0.006 W).",
+      "geometryDescriptor": {
+        "topologyIntent": "Thin emissive ring set into the glass around the key (TorusGeometry 0.45 scaled to R 0.105; tube 0.006 W).",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry",
+        "torusTubeRatio": 0.0571
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.21,
+        "height": 0.21,
+        "depth": 0.012,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.3,
+          -0.59,
+          0.1515
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.2333333333333333,
+          0.2333333333333333,
+          0.2333333333333333
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "indicator",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "none",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "led-emissive"
+        }
+      },
+      "material": "led-emissive",
+      "materialLayers": [
+        "led-emissive"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(227, 200, 148, 1.0)",
+        "secondaryAlbedo": "rgba(143, 127, 92, 1.0)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.9,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "key-back",
+      "name": "Back key",
+      "level": "meso",
+      "role": "button",
+      "importance": 0.75,
+      "confidence": 0.8,
+      "primitive": "cylinder",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Small round key; chevron glyph engraved.",
+      "geometryDescriptor": {
+        "topologyIntent": "Small round key; chevron glyph engraved.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.005,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": {
+        "parentId": "shell",
+        "parentSocket": "front-face",
+        "baseRadius": 0.06,
+        "endRadius": 0.06,
+        "contactType": "embed",
+        "contactNormal": [
+          0,
+          0,
+          1
+        ],
+        "embedDepth": 0.003,
+        "gapTolerance": 0.0015,
+        "evidenceRefs": [
+          "blueprint"
+        ],
+        "localStart": [
+          -0.32,
+          -0.59,
+          0.148
+        ],
+        "localEnd": [
+          -0.32,
+          -0.59,
+          0.158
+        ]
+      },
+      "dimensions": {
+        "width": 0.12,
+        "height": 0.12,
+        "depth": 0.01,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.32,
+          -0.59,
+          0.153
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-press",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            0,
+            -1
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "key-polymer"
+        }
+      },
+      "material": "key-polymer",
+      "materialLayers": [
+        "key-polymer"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "glyph",
+          "kind": "groove",
+          "description": "Engraved chevron ‹, 0.04 W"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(38, 40, 47, 1.0)",
+        "secondaryAlbedo": "rgba(74, 76, 85, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.85,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "roller",
+      "name": "Thumb roller",
+      "level": "meso",
+      "role": "wheel",
+      "importance": 0.85,
+      "confidence": 0.8,
+      "primitive": "cylinder",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Disc (axis Z) mostly inside the body; rim protrudes 0.03 W from the -X face giving a 0.2 W visible chord.",
+      "geometryDescriptor": {
+        "topologyIntent": "Disc (axis Z) mostly inside the body; rim protrudes 0.03 W from the -X face giving a 0.2 W visible chord.",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": {
+        "parentId": "shell",
+        "parentSocket": "left-face",
+        "baseRadius": 0.18,
+        "endRadius": 0.18,
+        "contactType": "embed",
+        "contactNormal": [
+          0,
+          0,
+          1
+        ],
+        "embedDepth": 0.15,
+        "gapTolerance": 0.0015,
+        "evidenceRefs": [
+          "blueprint"
+        ],
+        "localStart": [
+          -0.35,
+          0.29,
+          0.05
+        ],
+        "localEnd": [
+          -0.35,
+          0.29,
+          0.1
+        ]
+      },
+      "dimensions": {
+        "width": 0.36,
+        "height": 0.36,
+        "depth": 0.05,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.35,
+          0.29,
+          0.075
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-rotate",
+        "pivot": {
+          "mode": "custom",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "champagne-metal"
+        }
+      },
+      "material": "champagne-metal",
+      "materialLayers": [
+        "champagne-metal"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "knurl",
+          "kind": "ridge",
+          "description": "72 radial ridges around the rim (repetition system roller-knurl)"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(227, 200, 148, 1.0)",
+        "secondaryAlbedo": "rgba(143, 127, 92, 1.0)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.9,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "tabs",
+      "name": "Section tab rail",
+      "level": "meso",
+      "role": "rail",
+      "importance": 0.6,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "Dark strip on the top face that the four tabs rise from.",
+      "geometryDescriptor": {
+        "topologyIntent": "Dark strip on the top face that the four tabs rise from.",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.62,
+        "height": 0.004,
+        "depth": 0.09,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.7515,
+          0.075
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.62,
+          0.004,
+          0.09
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "static-child",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "port-dark"
+        }
+      },
+      "material": "port-dark",
+      "materialLayers": [
+        "port-dark"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "numerals",
+          "kind": "linework",
+          "description": "01 02 03 04 engraved on the top face beside each tab"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(6, 6, 7, 1.0)",
+        "secondaryAlbedo": "rgba(58, 59, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "tab-01",
+      "name": "Section tab 01",
+      "level": "meso",
+      "role": "button",
+      "importance": 0.8,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "geometryDescriptor": {
+        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.008,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "tabs",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.12,
+        "height": 0.03,
+        "depth": 0.08,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.25,
+          0.0015,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.12,
+          0.03,
+          0.08
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-press",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            -1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "tabs",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "champagne-metal"
+        }
+      },
+      "material": "champagne-metal",
+      "materialLayers": [
+        "champagne-metal"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(227, 200, 148, 1.0)",
+        "secondaryAlbedo": "rgba(143, 127, 92, 1.0)",
+        "materialClass": "metal",
+        "materialClassConfidence": 0.9,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "tab-02",
+      "name": "Section tab 02",
+      "level": "meso",
+      "role": "button",
+      "importance": 0.8,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "geometryDescriptor": {
+        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.008,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "tabs",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.12,
+        "height": 0.03,
+        "depth": 0.08,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.085,
+          0.0135,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.12,
+          0.03,
+          0.08
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-press",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            -1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "tabs",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "key-polymer"
+        }
+      },
+      "material": "key-polymer",
+      "materialLayers": [
+        "key-polymer"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(38, 40, 47, 1.0)",
+        "secondaryAlbedo": "rgba(74, 76, 85, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.85,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "tab-03",
+      "name": "Section tab 03",
+      "level": "meso",
+      "role": "button",
+      "importance": 0.8,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "geometryDescriptor": {
+        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.008,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "tabs",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.12,
+        "height": 0.03,
+        "depth": 0.08,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.085,
+          0.0135,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.12,
+          0.03,
+          0.08
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-press",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            -1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "tabs",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "key-polymer"
+        }
+      },
+      "material": "key-polymer",
+      "materialLayers": [
+        "key-polymer"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(38, 40, 47, 1.0)",
+        "secondaryAlbedo": "rgba(74, 76, 85, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.85,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "tab-04",
+      "name": "Section tab 04",
+      "level": "meso",
+      "role": "button",
+      "importance": 0.8,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "geometryDescriptor": {
+        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.008,
+          "segments": 3
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "tabs",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.12,
+        "height": 0.03,
+        "depth": 0.08,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.25,
+          0.0135,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.12,
+          0.03,
+          0.08
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-press",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            -1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "tabs",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "key-polymer"
+        }
+      },
+      "material": "key-polymer",
+      "materialLayers": [
+        "key-polymer"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(38, 40, 47, 1.0)",
+        "secondaryAlbedo": "rgba(74, 76, 85, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.85,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "switch-motion",
+      "name": "Motion switch",
+      "level": "meso",
+      "role": "switch",
+      "importance": 0.6,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Slider knob proud of the +X face by 0.024 W, travels ±0.03 W along Y.",
+      "geometryDescriptor": {
+        "topologyIntent": "Slider knob proud of the +X face by 0.024 W, travels ±0.03 W along Y.",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.006,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.03,
+        "height": 0.06,
+        "depth": 0.03,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.509,
+          0.475,
+          0.075
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.03,
+          0.06,
+          0.03
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "control-slide",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": true,
+          "notes": "Raycast/click proxy for this control"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "key-polymer"
+        }
+      },
+      "material": "key-polymer",
+      "materialLayers": [
+        "key-polymer"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(38, 40, 47, 1.0)",
+        "secondaryAlbedo": "rgba(74, 76, 85, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.85,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "port",
+      "name": "USB-C port",
+      "level": "micro",
+      "role": "port",
+      "importance": 0.4,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "Stadium-shaped dark opening with a light tongue, centred on the bottom face.",
+      "geometryDescriptor": {
+        "topologyIntent": "Stadium-shaped dark opening with a light tongue, centred on the bottom face.",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.15,
+        "height": 0.004,
+        "depth": 0.04,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.7515,
+          0.075
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.15,
+          0.004,
+          0.04
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "static-child",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "port-dark"
+        }
+      },
+      "material": "port-dark",
+      "materialLayers": [
+        "port-dark"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "usb-c",
+          "kind": "hole",
+          "description": "0.15 x 0.04 W stadium opening + 0.09 W tongue"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(6, 6, 7, 1.0)",
+        "secondaryAlbedo": "rgba(58, 59, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "lanyard-slot",
+      "name": "Lanyard slot",
+      "level": "micro",
+      "role": "slot",
+      "importance": 0.6,
+      "confidence": 0.8,
+      "primitive": "plane-card",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "Flush rounded-rect opening with bevel lip (createLanyardSlot in src/device/keychain.ts); the keychain bar sits 0.02 W inside.",
+      "geometryDescriptor": {
+        "topologyIntent": "Flush rounded-rect opening with bevel lip (createLanyardSlot in src/device/keychain.ts); the keychain bar sits 0.02 W inside.",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.064,
+        "height": 0.088,
+        "depth": 1,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          -0.3,
+          -0.7504,
+          0.075
+        ],
+        "rotation": [
+          1.5708,
+          0,
+          0
+        ],
+        "scale": [
+          0.064,
+          0.088,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "static-child",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "port-dark"
+        }
+      },
+      "material": "port-dark",
+      "materialLayers": [
+        "port-dark"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "opening",
+          "kind": "hole",
+          "description": "0.056 x 0.08 W opening + 0.004 W lip, within the flat part of the bottom face"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(6, 6, 7, 1.0)",
+        "secondaryAlbedo": "rgba(58, 59, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "contact-card",
+      "name": "NFC key card (detachable)",
+      "level": "macro",
+      "role": "card",
+      "importance": 0.7,
+      "confidence": 0.8,
+      "primitive": "box",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "Dean's NFC key (src/device/keyCard.ts), recovery-key card language in Dean's branding: charcoal matte soft-touch, four-point-star marks in stepped clusters at the top-left and bottom-right corners, four larger stars framing the centre (instead of Ledger's bracket corners), DEAN STUDIO engraved; debossed D-star on the back. Details are written inside the frame. Not in the viewport until the visitor presses Contact me / the wallet's ✓ (Contact sequence, lab/contact.html).",
+      "geometryDescriptor": {
+        "topologyIntent": "Dean's NFC key (src/device/keyCard.ts), recovery-key card language in Dean's branding: charcoal matte soft-touch, four-point-star marks in stepped clusters at the top-left and bottom-right corners, four larger stars framing the centre (instead of Ledger's bracket corners), DEAN STUDIO engraved; debossed D-star on the back. Details are written inside the frame. Not in the viewport until the visitor presses Contact me / the wallet's ✓ (Contact sequence, lab/contact.html).",
+        "edgeTreatment": {
+          "type": "chamfer",
+          "bevelRadius": 0.01,
+          "segments": 2
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.81,
+        "height": 0.81,
+        "depth": 0.02,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0,
+          0.05,
+          -0.045
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.81,
+          0.81,
+          0.02
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "detachable",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": true,
+          "visibility": true,
+          "materialState": false
+        },
+        "sockets": [
+          {
+            "id": "css3d-card",
+            "localPosition": [
+              0,
+              0,
+              0.0105
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "notes": "320 x 320 CSS px face"
+          }
+        ],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [
+            "contact-card"
+          ],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "key-card-matte"
+        }
+      },
+      "material": "key-card-matte",
+      "materialLayers": [
+        "key-card-matte"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "",
+        "edgeWearPattern": "",
+        "notes": ""
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(22, 23, 27, 1.0)",
+        "secondaryAlbedo": "rgba(228, 207, 159, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    }
+  ],
+  "materials": [
+    {
+      "id": "shell-iridescent",
+      "name": "Iridescent graphite (A)",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial",
+      "baseColor": "#2a2b31",
+      "color": "#2a2b31",
+      "albedo": {
+        "dominant": "#2a2b31",
+        "secondary": [
+          "#2a2b31"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#2a2b31"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.3,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.8,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Chosen in lab/materials.html (variant A). Thin-film shifts mauve to teal with view angle; needs a PMREM environment.",
+      "materialClass": "metal",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      },
+      "physical": {
+        "iridescence": 1.0,
+        "iridescenceIOR": 1.8,
+        "iridescenceThicknessRange": [
+          250,
+          650
+        ],
+        "clearcoat": 0.5,
+        "clearcoatRoughness": 0.2,
+        "fallback": {
+          "color": "#15161a",
+          "metalness": 0.35,
+          "roughness": 0.42,
+          "clearcoat": 0.3,
+          "when": "low GPU tier"
+        }
+      }
+    },
+    {
+      "id": "back-satin",
+      "name": "Iridescent graphite, satin (back)",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial",
+      "baseColor": "#2a2b31",
+      "color": "#2a2b31",
+      "albedo": {
+        "dominant": "#2a2b31",
+        "secondary": [
+          "#2a2b31"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#2a2b31"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.42,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.8,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [
+        {
+          "id": "back-softtouch",
+          "region": "whole plate",
+          "roughness": 0.46,
+          "notes": "slightly more satin than the frame so the seam reads"
+        }
+      ],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Same film as the frame, satin, so the back panel seam reads.",
+      "materialClass": "metal",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      },
+      "physical": {
+        "iridescence": 0.85,
+        "iridescenceIOR": 1.8,
+        "iridescenceThicknessRange": [
+          250,
+          650
+        ],
+        "clearcoat": 0.2,
+        "clearcoatRoughness": 0.4
+      }
+    },
+    {
+      "id": "glass-black",
+      "name": "Black cover glass",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial",
+      "baseColor": "#0b0b0d",
+      "color": "#0b0b0d",
+      "albedo": {
+        "dominant": "#0b0b0d",
+        "secondary": [
+          "#0b0b0d"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#0b0b0d"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.05,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.0,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [
+        {
+          "id": "window-border",
+          "region": "display window rim",
+          "color": "#45464d",
+          "notes": "1 px lighter rim"
+        }
+      ],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Opaque black bezel glass; the display sits under a cut window.",
+      "materialClass": "glass",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      },
+      "physical": {
+        "clearcoat": 1.0,
+        "clearcoatRoughness": 0.03,
+        "ior": 1.5
+      }
+    },
+    {
+      "id": "eink-paper",
+      "name": "E-ink paper",
+      "type": "standard",
+      "shaderModel": "MeshStandardMaterial",
+      "baseColor": "#e8e3d6",
+      "color": "#e8e3d6",
+      "albedo": {
+        "dominant": "#e8e3d6",
+        "secondary": [
+          "#e8e3d6"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#e8e3d6"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.92,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.0,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Visually unlit (emissive = albedo x 0.85) so the paper reads identically under any key light; CSS3D HTML draws the content.",
+      "materialClass": "plastic",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      }
+    },
+    {
+      "id": "champagne-metal",
+      "name": "Champagne anodized metal",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial",
+      "baseColor": "#e3c894",
+      "color": "#e3c894",
+      "albedo": {
+        "dominant": "#e3c894",
+        "secondary": [
+          "#e3c894"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#e3c894"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.24,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 1.0,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Roller, Confirm, active tab, logo emboss, keychain. Matches LOGO_COLOR family (#f2dfb6).",
+      "materialClass": "metal",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      },
+      "physical": {
+        "clearcoat": 0.0
+      }
+    },
+    {
+      "id": "key-polymer",
+      "name": "Graphite key polymer",
+      "type": "standard",
+      "shaderModel": "MeshStandardMaterial",
+      "baseColor": "#26282f",
+      "color": "#26282f",
+      "albedo": {
+        "dominant": "#26282f",
+        "secondary": [
+          "#26282f"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#26282f"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.45,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.1,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Back key, inactive tabs, switch knob.",
+      "materialClass": "plastic",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      }
+    },
+    {
+      "id": "led-emissive",
+      "name": "Confirm LED",
+      "type": "standard",
+      "shaderModel": "MeshStandardMaterial",
+      "baseColor": "#e4cf9f",
+      "color": "#e4cf9f",
+      "albedo": {
+        "dominant": "#e4cf9f",
+        "secondary": [
+          "#e4cf9f"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#e4cf9f"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.4,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.0,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Emissive intensity animates with the hold.",
+      "materialClass": "plastic",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      },
+      "emissive": {
+        "color": "#f2dfb6",
+        "intensityIdle": 0.15,
+        "intensityHeld": 2.2
+      }
+    },
+    {
+      "id": "port-dark",
+      "name": "Recess dark",
+      "type": "standard",
+      "shaderModel": "MeshStandardMaterial",
+      "baseColor": "#060607",
+      "color": "#060607",
+      "albedo": {
+        "dominant": "#060607",
+        "secondary": [
+          "#060607"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#060607"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.9,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.0,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Slots, port and rail cavities.",
+      "materialClass": "plastic",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      }
+    },
+    {
+      "id": "key-card-matte",
+      "name": "Key card matte soft-touch",
+      "type": "physical",
+      "shaderModel": "MeshPhysicalMaterial",
+      "baseColor": "#2a2b30",
+      "color": "#2a2b30",
+      "albedo": {
+        "dominant": "#2a2b30",
+        "secondary": [
+          "#2a2b30"
+        ],
+        "samplingNotes": "Designed value (docs/device-design.md), not averaged from the reference."
+      },
+      "colorVariation": {
+        "palette": [
+          "#2a2b30"
+        ],
+        "pattern": "none",
+        "amplitude": 0.0,
+        "heightCorrelation": 0.0
+      },
+      "roughness": {
+        "base": 0.86,
+        "variation": 0.04,
+        "map": "none (uniform finish; variation via clearcoat/iridescence response)",
+        "localResponse": "uniform finish"
+      },
+      "metalness": {
+        "base": 0.0,
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.25,
+        "contactShadowBias": 0.35,
+        "notes": "Darken creases, seams, intersections, and recessed local features."
+      },
+      "wear": {
+        "edgeWear": 0.0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0.0,
+        "cavityBias": 0.0,
+        "color": "#000000"
+      },
+      "localOverrides": [
+        {
+          "id": "star-marks",
+          "region": "stepped corner clusters + 4 frame stars",
+          "color": "#55565e",
+          "roughness": 0.43,
+          "notes": "spot-gloss, slightly raised"
+        },
+        {
+          "id": "engraving",
+          "region": "DEAN STUDIO (front, y 0.29) / D-star (back)",
+          "color": "#7a7b83",
+          "roughness": 0.6,
+          "notes": "recessed"
+        }
+      ],
+      "shaderNotes": [
+        "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+        "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+        "Use normal/bump/displacement only when they map to observed surface relief.",
+        "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+      ],
+      "notes": "Canvas-generated maps from deanfi.svg paths with seeded soft-touch grain (no image files).",
+      "materialClass": "plastic",
+      "textureless": {
+        "declared": true,
+        "evidence": [
+          "front-ortho: bezel glass, frame and key read as uniform specular/diffuse fields with no visible grain at 531 px",
+          "docs/device-design.md: finish is a designed CMF (lab/materials.html variant A), not reference pixels"
+        ]
+      },
+      "physical": {
+        "sheen": 0.25,
+        "sheenRoughness": 0.8,
+        "sheenColor": "#3a3b44",
+        "envMapIntensity": 0.8
+      }
+    }
+  ],
+  "repetitionSystems": [
+    {
+      "id": "roller-knurl",
+      "parent": "roller",
+      "distribution": "radial",
+      "count": 72,
+      "instances": 72,
+      "buildsGeometry": true,
+      "geometry": {
+        "primitive": "box",
+        "size": [
+          0.012,
+          0.006,
+          0.05
+        ]
+      },
+      "placement": "on rim radius 0.18 W, every 5°",
+      "variation": {
+        "scale": 0.0,
+        "rotation": 0.0
+      },
+      "material": "champagne-metal",
+      "evidenceRefs": [
+        "docs/device-blueprint.html"
+      ]
+    },
+    {
+      "id": "section-tabs",
+      "parent": "tabs",
+      "distribution": "linear",
+      "count": 4,
+      "instances": 4,
+      "buildsGeometry": true,
+      "geometry": {
+        "primitive": "box",
+        "size": [
+          0.12,
+          0.03,
+          0.08
+        ]
+      },
+      "placement": "x = [-0.25, -0.085, 0.085, 0.25]",
+      "variation": {
+        "scale": 0.0,
+        "rotation": 0.0
+      },
+      "material": "key-polymer",
+      "evidenceRefs": [
+        "docs/device-blueprint.html"
+      ]
+    }
+  ],
+  "buildPasses": [
+    {
+      "id": "blockout",
+      "goal": "Match macro silhouette and proportions.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate"
+      ],
+      "acceptance": [
+        "Silhouette reads correctly without materials.",
+        "Quality contract has named all required macro feature groups before code generation.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "structural-pass",
+      "goal": "Build the component hierarchy implied by the pre-spec complexity assessment.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "Macro, meso, and repeated structures meet qualityContract.minimumSpecDepth.",
+        "Parent-child relations, joints, seams, sockets, and contact points are explicit.",
+        "Every attached child appendage/connector has parentSocket, localStart/localEnd, contactType, embedDepth or overlap, and gapTolerance.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "form-refinement",
+      "goal": "Refine shape, deformation, bevels, tapers, curves, asymmetry, and visible local geometry.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "Important visible forms are represented in component geometryDescriptor, deformations, localFeatures, or repetitionSystems.",
+        "Endpoint-based child parts are rooted at their attachment sockets and do not visibly float away from parents.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "material-pass",
+      "goal": "Match material color, roughness, bump, and local variation.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "Reference-derived albedo palette records dominant, secondary, and accent colors per visible material.",
+        "Each important material defines roughness variation and at least one normal/bump/displacement response.",
+        "Local material overrides, dirt/wear/stains/moss/chips/scratches or equivalent masks are tied to evidenceRefs.",
+        "Thin, transparent, reflective, wet, or fibrous materials document alpha/transmission/clearcoat/metalness/fiber response when relevant.",
+        "Generated preview uses procedural albedo/roughness/bump texture or vertex color variation instead of one flat color.",
+        "Generated preview uses independent PBR maps at 1024px or higher for the quality-first tier.",
+        "If source pixels are available, referencePbr extraction passed at confidence >= 0.7 or the pass is stopped/requesting better references.",
+        "Macro, meso, and micro surface frequency bands are visible at the intended review distance without obvious tiling.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "surface-pass",
+      "goal": "Add procedural surface locality such as normal/bump/displacement, AO, dirt, stains, chips, grain, moss, scratches, and wear.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "Every required material feature group has local overrides or surfaceDetail tied to evidenceRefs.",
+        "A grazing-angle close-up proves that normal/height detail breaks highlights naturally and does not read as smooth plastic.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "lighting-pass",
+      "goal": "Make material and form readable under neutral turntable lighting plus optional reference lighting.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "lightingFromPhoto identifies key light direction/color/intensity, fill light, rim or environment light, and ambient color.",
+        "Exposure, tone mapping, background color/gradient, shadow softness, and contact shadow behavior are specified.",
+        "Lighting does not hide geometry/material gaps and screenshots can be compared fairly to the reference.",
+        "Neutral, grazing, and reference-matched lighting checks distinguish material errors from lighting errors.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "interaction-pass",
+      "goal": "Make the model ready for future animation, transformation, physics, or destruction.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "Macro and movable meso components have stable pivot nodes.",
+        "Sockets, collider proxies, and destruction metadata are present for future runtime actions.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "optimization-pass",
+      "goal": "Protect runtime performance after visual fidelity is accepted.",
+      "componentRefs": [
+        "shell",
+        "front-glass",
+        "display",
+        "back-plate",
+        "key-confirm",
+        "confirm-led-ring",
+        "key-back",
+        "roller",
+        "tabs",
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "switch-motion",
+        "port",
+        "lanyard-slot",
+        "contact-card"
+      ],
+      "acceptance": [
+        "Triangle count, draw calls, instancing, LOD strategy, and FPS target are documented or verified.",
+        "Repeated detail is instanced or simplified where possible without breaking silhouette/material believability."
+      ]
+    }
+  ],
+  "visualEvidence": [
+    {
+      "timestamp": "2026-09-27T12:51:54.536222+00:00",
+      "passId": "blockout",
+      "estimatedFidelity": 0.78,
+      "aiVisionScore": 0.78,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.88,
+        "componentStructure": 0.7,
+        "formDetail": 0.55,
+        "materialSurface": 0.5,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "overall-silhouette",
+          "score": 0.86,
+          "tier": "critical",
+          "notes": "Slab 1:1.5 outline, plan corners and thickness read correctly at the fitted pose (Tier-1 IoU 0.936). Hard 90° face-to-side edges: the 0.03 W roll-off is a form-refinement hand refinement."
+        },
+        {
+          "id": "face-layout",
+          "score": 0.82,
+          "tier": "critical",
+          "notes": "Measured on cmp-blockout-front.png (px normalised to body width): top bezel ref 0.096 vs render 0.106 W; screen width ref 0.785 vs 0.80 W; chin ref 0.33 vs 0.337 W. Screen corners are square (ref ≈0.025 W radius) and the lighter window lip is missing."
+        }
+      ],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/blockout-ref-match.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-blockout.png",
+      "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": "Photo vs procedural: pixel signals advisory. Pose fitted by grid search (az 40, tilt -10). Silhouette from hole-filled reference (screen near bg colour)."
+    },
+    {
+      "timestamp": "2026-09-27T12:53:40.740816+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.5,
+      "aiVisionScore": 0.5,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.85,
+        "componentStructure": 0.45,
+        "formDetail": 0.5,
+        "materialSurface": 0.5,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/structural-pass-ref-match.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-structural-1.png",
+      "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": ""
+    },
+    {
+      "timestamp": "2026-09-27T12:55:37.350245+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.9,
+        "componentStructure": 0.82,
+        "formDetail": 0.55,
+        "materialSurface": 0.55,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "face-layout",
+          "score": 0.82,
+          "tier": "critical",
+          "notes": "Unchanged from blockout (bezel 0.106 / screen 0.80 / chin 0.337 W); screen corners still square."
+        },
+        {
+          "id": "control-set",
+          "score": 0.82,
+          "tier": "critical",
+          "notes": "All 8 controls present and placed per blueprint v0.3: Confirm (0.30,-0.59) with LED ring, Back (-0.32,-0.59), roller rim out of the -X edge at y 0.29, tabs 01-04 on top (01 pressed, champagne), switch on +X at y 0.475, port + lanyard slot underneath. Attached cylinders show 16-segment faceting; no slot recesses around roller/switch yet."
+        }
+      ],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/structural-pass-ref-match.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-structural-pass.png",
+      "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": ""
+    },
+    {
+      "timestamp": "2026-09-27T13:01:03.038305+00:00",
+      "passId": "form-refinement",
+      "estimatedFidelity": 0.84,
+      "aiVisionScore": 0.84,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.92,
+        "componentStructure": 0.85,
+        "formDetail": 0.82,
+        "materialSurface": 0.55,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "control-set",
+          "score": 0.86,
+          "tier": "critical",
+          "notes": "Chamfered 96-seg lathe keys; Confirm cap engraved D-star (coin maps), Back cap engraved chevron; roller 72-ridge knurl reads at the -X edge; rounded tabs/switch; roller + switch slot recesses inside the flat side band (|z| <= 0.045 W)."
+        },
+        {
+          "id": "overall-silhouette",
+          "score": 0.88,
+          "tier": "critical",
+          "notes": "0.03 W bevelled roll-off (6 segments) now gives the rim highlight; IoU 0.947. Reference bumper edge is softer (~0.05 W); ours is intentionally slimmer."
+        },
+        {
+          "id": "underside-details",
+          "score": 0.8,
+          "tier": "important",
+          "notes": "USB-C stadium + tongue centred on the bottom; lanyard slot with lip at x -0.30; back D-star emboss reads correctly from behind (180 deg X then Y rotation, winding preserved); DEAN STUDIO engraved at y -0.64."
+        }
+      ],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/form-refinement-ref-match.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-form-refinement.png",
+      "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": ""
+    },
+    {
+      "timestamp": "2026-09-27T13:09:42.060037+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.84,
+      "aiVisionScore": 0.84,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.92,
+        "componentStructure": 0.86,
+        "formDetail": 0.84,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/material-pass-ref-match.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-material-pass.png",
+      "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": ""
+    },
+    {
+      "timestamp": "2026-09-27T14:49:49.633949+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.84,
+      "aiVisionScore": 0.84,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.92,
+        "componentStructure": 0.86,
+        "formDetail": 0.84,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [
+        {
+          "id": "reference-material-system",
+          "score": 0.8,
+          "tier": "critical",
+          "notes": "Designed CMF reads as intended under the studio env: iridescent graphite frame (mauve at grazing), satin back deep graphite-teal with champagne emboss, black clearcoat glass, unlit e-ink paper, champagne accents after per-material envMap fix (sampled 164,148,120). Not scored against Ledger pixels by design (textureless, balanced priority)."
+        },
+        {
+          "id": "underside-details",
+          "score": 0.8,
+          "tier": "important",
+          "notes": "Port, lanyard slot lip and back emboss keep their material separation (dark recess vs champagne vs film)."
+        }
+      ],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/material-pass-ref-match.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-material-pass.png",
+      "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": ""
+    }
+  ],
+  "reviewHistory": [
+    {
+      "timestamp": "2026-09-27T12:51:54.536222+00:00",
+      "passId": "blockout",
+      "estimatedFidelity": 0.78,
+      "aiVisionScore": 0.78,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.88,
+        "componentStructure": 0.7,
+        "formDetail": 0.55,
+        "materialSurface": 0.5,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "overall-silhouette",
+          "score": 0.86,
+          "tier": "critical",
+          "notes": "Slab 1:1.5 outline, plan corners and thickness read correctly at the fitted pose (Tier-1 IoU 0.936). Hard 90° face-to-side edges: the 0.03 W roll-off is a form-refinement hand refinement."
+        },
+        {
+          "id": "face-layout",
+          "score": 0.82,
+          "tier": "critical",
+          "notes": "Measured on cmp-blockout-front.png (px normalised to body width): top bezel ref 0.096 vs render 0.106 W; screen width ref 0.785 vs 0.80 W; chin ref 0.33 vs 0.337 W. Screen corners are square (ref ≈0.025 W radius) and the lighter window lip is missing."
+        }
+      ],
+      "action": "continue",
+      "summary": "Blockout matches the reference slab silhouette and face layout at the fitted product-shot pose; edge roll-off, screen corner radius and window lip deferred to form-refinement.",
+      "matched": [
+        "slab proportions 1:1.5:0.15",
+        "plan-corner radius",
+        "bezel/screen/chin ratios within 0.01 W",
+        "thickness band visible at three-quarter"
+      ],
+      "mismatches": [
+        "hard face-to-side edges (no 0.03 W roll-off)",
+        "square screen corners (ref ~0.025 W)",
+        "no raised window lip",
+        "screen reads blank (CSS3D content comes later, intentional)"
+      ],
+      "specFixes": [
+        "display: add screen corner radius 0.025 W and window-lip feature for form-refinement"
+      ],
+      "codeFixes": [
+        "shell: bevelled ExtrudeGeometry per geometryDescriptor.handRefinement"
+      ],
+      "evidence": [
+        ".img2threejs/analysis/tier1-blockout.json",
+        ".img2threejs/analysis/multi-angle-blockout.json",
+        ".img2threejs/analysis/interior-blockout-screen.json",
+        ".img2threejs/analysis/interior-blockout-chin.json",
+        ".img2threejs/analysis/iou-overlay.png"
+      ],
+      "mapStrippedRender": ".img2threejs/renders/blockout-ref-match-stripped.png",
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/blockout-ref-match.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-blockout.png",
+        "cameraView": "ref-match",
+        "notes": "",
+        "aiVisionNotes": "Photo vs procedural: pixel signals advisory. Pose fitted by grid search (az 40, tilt -10). Silhouette from hole-filled reference (screen near bg colour)."
+      }
+    },
+    {
+      "timestamp": "2026-09-27T12:53:40.740816+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.5,
+      "aiVisionScore": 0.5,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.85,
+        "componentStructure": 0.45,
+        "formDetail": 0.5,
+        "materialSurface": 0.5,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [],
+      "action": "refine-spec",
+      "summary": "Cylinder controls misplaced: attachment localStart/localEnd were authored component-local but the generator reads them parent-local (pivot = localStart), so Confirm/Back keys and roller collapsed toward the shell origin.",
+      "matched": [
+        "tabs, tab rail, switch, port, lanyard slot, LED ring placed per blueprint"
+      ],
+      "mismatches": [
+        "key-confirm and key-back not on the chin",
+        "roller not protruding from -X edge",
+        "stray champagne disc visible on the rear"
+      ],
+      "specFixes": [
+        "axle(): derive localStart/localEnd = parent-local centre ± axis·length/2"
+      ],
+      "codeFixes": [],
+      "evidence": [
+        ".img2threejs/analysis/structural-contact.png"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/structural-pass-ref-match.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-structural-1.png",
+        "cameraView": "ref-match",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
+    },
+    {
+      "timestamp": "2026-09-27T12:55:37.350245+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.9,
+        "componentStructure": 0.82,
+        "formDetail": 0.55,
+        "materialSurface": 0.55,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "face-layout",
+          "score": 0.82,
+          "tier": "critical",
+          "notes": "Unchanged from blockout (bezel 0.106 / screen 0.80 / chin 0.337 W); screen corners still square."
+        },
+        {
+          "id": "control-set",
+          "score": 0.82,
+          "tier": "critical",
+          "notes": "All 8 controls present and placed per blueprint v0.3: Confirm (0.30,-0.59) with LED ring, Back (-0.32,-0.59), roller rim out of the -X edge at y 0.29, tabs 01-04 on top (01 pressed, champagne), switch on +X at y 0.475, port + lanyard slot underneath. Attached cylinders show 16-segment faceting; no slot recesses around roller/switch yet."
+        }
+      ],
+      "action": "continue",
+      "summary": "Full component hierarchy built and placed per blueprint; Tier-1 IoU 0.942, not degenerate from orbit. Form detail (bevels, recesses, facet count) is next pass.",
+      "matched": [
+        "all 17 components built",
+        "controls placed per blueprint",
+        "switch occupies the reference side-button position",
+        "silhouette unchanged (IoU 0.942)"
+      ],
+      "mismatches": [
+        "16-segment faceting on key/roller cylinders",
+        "hard face-to-side edges",
+        "no roller/switch slot recesses",
+        "square screen corners",
+        "contact card parked behind device is visible from rear/sides (hide at rest in interaction pass)"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "form-refinement: bevelled shell extrude",
+        "64-segment cylinders",
+        "recess decals",
+        "rounded screen corners + window lip"
+      ],
+      "evidence": [
+        ".img2threejs/analysis/tier1-structural-pass.json",
+        ".img2threejs/analysis/multi-angle-structural-pass.json",
+        ".img2threejs/analysis/interior-structural-pass-screen.json",
+        ".img2threejs/analysis/interior-structural-pass-chin.json",
+        ".img2threejs/analysis/structural-contact.png"
+      ],
+      "mapStrippedRender": ".img2threejs/renders/structural-pass-ref-match-stripped.png",
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/structural-pass-ref-match.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-structural-pass.png",
+        "cameraView": "ref-match",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
+    },
+    {
+      "timestamp": "2026-09-27T13:01:03.038305+00:00",
+      "passId": "form-refinement",
+      "estimatedFidelity": 0.84,
+      "aiVisionScore": 0.84,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.92,
+        "componentStructure": 0.85,
+        "formDetail": 0.82,
+        "materialSurface": 0.55,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "control-set",
+          "score": 0.86,
+          "tier": "critical",
+          "notes": "Chamfered 96-seg lathe keys; Confirm cap engraved D-star (coin maps), Back cap engraved chevron; roller 72-ridge knurl reads at the -X edge; rounded tabs/switch; roller + switch slot recesses inside the flat side band (|z| <= 0.045 W)."
+        },
+        {
+          "id": "overall-silhouette",
+          "score": 0.88,
+          "tier": "critical",
+          "notes": "0.03 W bevelled roll-off (6 segments) now gives the rim highlight; IoU 0.947. Reference bumper edge is softer (~0.05 W); ours is intentionally slimmer."
+        },
+        {
+          "id": "underside-details",
+          "score": 0.8,
+          "tier": "important",
+          "notes": "USB-C stadium + tongue centred on the bottom; lanyard slot with lip at x -0.30; back D-star emboss reads correctly from behind (180 deg X then Y rotation, winding preserved); DEAN STUDIO engraved at y -0.64."
+        }
+      ],
+      "action": "continue",
+      "summary": "Hand-refined form (src/device/walletRefine.ts): bevelled shell, glass limited to the flat face, rounded screen + window lip, chamfered engraved keys, knurled roller, recesses, USB-C, lanyard slot, back emboss + text. Card hidden at rest.",
+      "matched": [
+        "edge roll-off highlight",
+        "screen corner radius 0.025 W",
+        "window lip",
+        "keys read as physical controls",
+        "back emboss orientation correct"
+      ],
+      "mismatches": [
+        "materials still generic dark (iridescent/champagne/e-ink not applied)",
+        "reference bumper edge softer than ours (intentional)"
+      ],
+      "specFixes": [
+        "front-glass sized to flat face 0.94x1.44 W (recorded in spec)"
+      ],
+      "codeFixes": [
+        "material-pass: apply spec physical props (iridescence, clearcoat), champagne metal, e-ink unlit paper, LED emissive"
+      ],
+      "evidence": [
+        ".img2threejs/analysis/tier1-form-refinement.json",
+        ".img2threejs/analysis/multi-angle-form-refinement.json",
+        ".img2threejs/analysis/interior-form-refinement-screen.json",
+        ".img2threejs/analysis/interior-form-refinement-chin.json",
+        ".img2threejs/analysis/form-contact.png",
+        ".img2threejs/analysis/form-rear-under.png"
+      ],
+      "mapStrippedRender": ".img2threejs/renders/form-refinement-ref-match-stripped.png",
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/form-refinement-ref-match.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-form-refinement.png",
+        "cameraView": "ref-match",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
+    },
+    {
+      "timestamp": "2026-09-27T13:09:42.060037+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.84,
+      "aiVisionScore": 0.84,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.92,
+        "componentStructure": 0.86,
+        "formDetail": 0.84,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [],
+      "action": "request-input",
+      "summary": "Designed CMF applied (iridescent graphite A shell, satin back, black glass, unlit e-ink, champagne accents, LED). Geometry gates pass (IoU 0.947) but Tier-1 per-part colour fails structurally: k=5 whole-render clusters (paper 51%, glass 25%, frame 12%, greys 9%/3%) never include the ~1.5% champagne accents, so their recipe dE is measured against the paper (23.7 > 20) regardless of colour accuracy. Needs user acceptance to proceed past this gate.",
+      "matched": [
+        "iridescent frame shifts mauve at grazing angles",
+        "back plate deep graphite-teal with champagne D-star",
+        "champagne accents now read champagne (sampled 164,148,120 vs 146,130,103 before envMap fix)",
+        "e-ink paper uniform"
+      ],
+      "mismatches": [
+        "Tier-1 colour gate cannot resolve accent parts <3% of pixels",
+        "front glass reflects the bright review RoomEnvironment as grey (site lighting pass will use a dark environment)"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "done: per-material envMap so envMapIntensity applies (three r163+ overrides it with scene.environmentIntensity otherwise)"
+      ],
+      "evidence": [
+        ".img2threejs/analysis/tier1-material-pass.json",
+        ".img2threejs/analysis/multi-angle-material-pass.json",
+        ".img2threejs/analysis/material-contact.png",
+        ".img2threejs/analysis/material-contact2.png"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/material-pass-ref-match.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-material-pass.png",
+        "cameraView": "ref-match",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
+    },
+    {
+      "timestamp": "2026-09-27T14:49:49.633949+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.84,
+      "aiVisionScore": 0.84,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.92,
+        "componentStructure": 0.86,
+        "formDetail": 0.84,
+        "materialSurface": 0.8,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [
+        {
+          "id": "reference-material-system",
+          "score": 0.8,
+          "tier": "critical",
+          "notes": "Designed CMF reads as intended under the studio env: iridescent graphite frame (mauve at grazing), satin back deep graphite-teal with champagne emboss, black clearcoat glass, unlit e-ink paper, champagne accents after per-material envMap fix (sampled 164,148,120). Not scored against Ledger pixels by design (textureless, balanced priority)."
+        },
+        {
+          "id": "underside-details",
+          "score": 0.8,
+          "tier": "important",
+          "notes": "Port, lanyard slot lip and back emboss keep their material separation (dark recess vs champagne vs film)."
+        }
+      ],
+      "action": "continue",
+      "summary": "User accepted the material pass on 2026-09-27 ('if all good, proceed'). Tier-1 per-part colour check still fails structurally (k=5 whole-render clusters cannot resolve ~1.5% champagne accents); all geometric gates pass.",
+      "matched": [],
+      "mismatches": [
+        "Tier-1 colour-cluster check unresolvable for small accents (tool limitation, accepted by user)"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [],
+      "mapStrippedRender": ".img2threejs/renders/material-pass-ref-match-stripped.png",
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/material-pass-ref-match.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-material-pass.png",
+        "cameraView": "ref-match",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
+    }
+  ],
+  "lodPlan": [
+    {
+      "tier": "near",
+      "distance": 0,
+      "strategy": "full component tree and material layers"
+    },
+    {
+      "tier": "far",
+      "distance": 30,
+      "strategy": "merge static components and reduce local feature geometry"
+    }
+  ],
+  "performanceBudget": {
+    "qualityPriority": "balanced",
+    "targetTriangles": 60000,
+    "maxDrawCalls": 60,
+    "textureSize": 1024,
+    "fpsTarget": 60,
+    "optimizationPolicy": "Merge static meshes per material after the interaction pass; keep animated controls separate."
+  },
+  "lightingFromPhoto": [
+    {
+      "type": "environment",
+      "source": "RoomEnvironment PMREM (sigma 0.04)",
+      "notes": "reflections drive iridescence and glass"
+    },
+    {
+      "type": "key",
+      "direction": [
+        -3,
+        4,
+        5
+      ],
+      "intensity": 1.3,
+      "notes": "upper-left key light, matches ref 1 highlight side"
+    },
+    {
+      "type": "rim",
+      "direction": [
+        4,
+        1,
+        -3
+      ],
+      "intensity": 0.8,
+      "color": "#b9a6ff",
+      "notes": "cool rim light separates the dark edge from the page background"
+    },
+    {
+      "type": "tone",
+      "notes": "AgX tone mapping, exposure 1.1, sRGB output"
+    },
+    {
+      "type": "shadow",
+      "notes": "soft contact shadow (blurred ground-shadow plane / ContactShadows) under the device; no hard shadow maps"
+    }
+  ],
+  "proceduralStrategy": [
+    "Block out macro silhouette first.",
+    "Add component hierarchy and joints.",
+    "Create stable pivot groups, sockets, collider proxies, and destruction metadata before visual polish.",
+    "Refine forms with bevels, tapers, bends, and procedural noise.",
+    "Run reference PBR extraction for important source-image materials and stop when confidence is below the target threshold.",
+    "Add material variation before adding expensive micro-geometry."
+  ],
+  "animationAnchors": [
+    "shell root: scroll-driven pose (yaw/pitch/position) per section",
+    "tab-01..04: press -Y 0.012 W; active tab champagne",
+    "roller: rotate about Z, 5° per list step (one knurl)",
+    "key-confirm: press -Z 0.004 W; led ring emissive 0.15 → 2.2 over the hold",
+    "key-back: press -Z 0.003 W",
+    "switch-motion: slide ±0.03 W along Y",
+    "contact-card: slide out -Z then rotate to face camera",
+    "keychain-anchor socket: src/device/keychain.ts"
+  ],
+  "destructionAnchors": [
+    "actionProfile.destruction.fractureGroup marks detachable or breakable component sets",
+    "component seams and sockets define plausible break points instead of random explosions"
+  ],
+  "risks": [
+    {
+      "id": "css3d-occlusion",
+      "risk": "CSS3D HTML always draws above WebGL; the coin could appear behind the screen text",
+      "mitigation": "keychain hangs below; hide CSS3D when the back faces the camera (backface-visibility)"
+    },
+    {
+      "id": "iridescence-cost",
+      "risk": "thin-film shading cost on low-end mobile GPUs",
+      "mitigation": "fallback material C on low tier"
+    },
+    {
+      "id": "generator-bevel",
+      "risk": "factory extrude has no bevel",
+      "mitigation": "hand refinement recorded in geometryDescriptor.handRefinement"
+    }
+  ],
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "DeanFi hardware wallet rounded rectangle extrude bevel consumer electronics glossy glass bezel clearcoat e-ink display matte soft-touch plastic roughness push button key press thumb wheel knurled iridescence thin film",
+    "index": {
+      "status": "rebuilt",
+      "reason": "missing",
+      "fingerprint": "06f0b2ece2935e441653f5c3533f91b3a4d6163f2aec4267559d7d8419bdd040"
+    },
+    "matches": [
+      {
+        "record_id": "core.pbr-roughness",
+        "file_path": "grimoire/glossary/3d_vocabulary.md",
+        "heading": "Material And PBR",
+        "key_path": null,
+        "score": 14.333025248238,
+        "snippets": [
+          "Roughness is microfacet scatter: high roughness reads matte and low roughness reads glossy. Recognition cues: low roughness reads as a sharp, mirror-like, tight specular highlight; high roughness reads as a blurry, wide, dim highlight and matte ..."
+        ],
+        "source_refs": [
+          {
+            "path": "grimoire/glossary/3d_vocabulary.md",
+            "heading": "Material And PBR",
+            "key_path": null
+          },
+          {
+            "path": "grimoire/intake/image_analysis.md",
+            "heading": "Layer 5 — Materials & surface (PBR)",
+            "key_path": null
+          },
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[1]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "grimoire/glossary/3d_vocabulary.md"
+          },
+          {
+            "kind": "notebooklm-research",
+            "ref": "notebooklm:4b03c2f9-8393-411f-b5b4-039ab9532843",
+            "note": "Validated generic schema vocabulary; numeric claims remain backed by local source_refs."
+          },
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation — merged recognition cues + Three.js target instead of duplicating this entity."
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-clearcoat",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[4]",
+        "score": 7.813457652921,
+        "snippets": [
+          "... on top of a duller or differently-colored base layer; Common on Custom Paint Job / Gunsmith style finishes with a glossy topcoat over illustrative artwork Dấu hiệu nhận diện: Có một điểm sáng thứ cấp sắc nét nằm trên lớp nền mờ hơn ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[4]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-opacity-alpha",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[8]",
+        "score": 6.173944048162,
+        "snippets": [
+          "... làm kênh dữ liệu, không phải độ trong suốt. Recognition cues: Standard opacity: soft edge fade or full transparency in glass/plastic parts; CS2-specific: alpha channel of the base color texture instead encodes a Wearness Mask, not visual ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[8]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  },
+  "tier1Results": [
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.4764,
+        "aspectRatioDelta": 0.0716,
+        "scaleDelta": 0.5243,
+        "bilateralSymmetryError": 0.0356,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 28.63,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.17
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.46
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.68
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.17
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.93
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.93
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.93
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.96
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "silhouette IoU 0.476 is below threshold 0.85",
+        "aspect-ratio delta 0.072 exceeds threshold 0.05",
+        "scale delta 0.524 exceeds threshold 0.08",
+        "blockout requires --map-stripped-render evidence"
+      ],
+      "maskWarnings": [],
+      "renderHash": "0dc1f0f059febbc2",
+      "passId": "blockout"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.7705,
+        "aspectRatioDelta": 0.1136,
+        "scaleDelta": 0.0664,
+        "bilateralSymmetryError": 0.1016,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 28.63,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 4.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.16
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.68
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.64
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.64
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.64
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.24
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "silhouette IoU 0.771 is below threshold 0.85",
+        "aspect-ratio delta 0.114 exceeds threshold 0.05"
+      ],
+      "maskWarnings": [],
+      "renderHash": "a9a5e36e76cc4154",
+      "passId": "blockout",
+      "mapStrippedRender": ".img2threejs\\renders\\blockout-ref-match-stripped.png"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.7439,
+        "aspectRatioDelta": 0.0012,
+        "scaleDelta": 0.0117,
+        "bilateralSymmetryError": 0.0735,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 28.63,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 4.38
+            },
+            {
+              "componentId": null,
+              "deltaE": 11.03
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 4.38
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.92
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 12.47
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.63
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.92
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.92
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.92
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.92
+            },
+            {
+              "componentId": null,
+              "deltaE": 12.47
+            },
+            {
+              "componentId": null,
+              "deltaE": 12.47
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.43
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "silhouette IoU 0.744 is below threshold 0.85"
+      ],
+      "maskWarnings": [],
+      "renderHash": "7c22d9df23ae6c33",
+      "passId": "blockout",
+      "mapStrippedRender": ".img2threejs\\renders\\blockout-ref-match-stripped.png"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9252,
+        "aspectRatioDelta": 0.0758,
+        "scaleDelta": 0.0533,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 29.11,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 3.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.76
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.43
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.24
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.24
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.24
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.7
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "aspect-ratio delta 0.076 exceeds threshold 0.05"
+      ],
+      "maskWarnings": [],
+      "renderHash": "e7719ed38ed5346c",
+      "passId": "blockout",
+      "mapStrippedRender": ".img2threejs\\renders\\blockout-ref-match-stripped.png"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9252,
+        "aspectRatioDelta": 0.0758,
+        "scaleDelta": 0.0533,
+        "bilateralSymmetryError": 0.1562,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 29.11,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 3.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.76
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.43
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.24
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.11
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.34
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.24
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.24
+            },
+            {
+              "componentId": null,
+              "deltaE": 0.7
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [
+        "aspect-ratio delta 0.076 exceeds threshold 0.05"
+      ],
+      "maskWarnings": [],
+      "renderHash": "e7719ed38ed5346c",
+      "passId": "blockout",
+      "mapStrippedRender": ".img2threejs\\renders\\blockout-ref-match-stripped.png"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.9364,
+        "aspectRatioDelta": 0.0012,
+        "scaleDelta": 0.0117,
+        "bilateralSymmetryError": 0.1299,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 29.02,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 6.74
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.49
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.74
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.02
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.02
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.02
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 29.02
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.72
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.94
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [],
+      "maskWarnings": [],
+      "renderHash": "5b4150bc230ac9ce",
+      "passId": "blockout",
+      "mapStrippedRender": ".img2threejs\\renders\\blockout-ref-match-stripped.png"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.9416,
+        "aspectRatioDelta": 0.0012,
+        "scaleDelta": 0.0117,
+        "bilateralSymmetryError": 0.1337,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 28.95,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 5.84
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.83
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.44
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.84
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.31
+            },
+            {
+              "componentId": null,
+              "deltaE": 28.95
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.94
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.31
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.31
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.91
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [],
+      "maskWarnings": [],
+      "renderHash": "b3a3e877933d5534",
+      "passId": "structural-pass"
+    },
+    {
+      "passed": true,
+      "checks": {
+        "silhouetteIoU": 0.9468,
+        "aspectRatioDelta": 0.0271,
+        "scaleDelta": 0.0374,
+        "bilateralSymmetryError": 0.1329,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 21.77,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 6.51
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.44
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.51
+            },
+            {
+              "componentId": null,
+              "deltaE": 21.77
+            },
+            {
+              "componentId": null,
+              "deltaE": 21.77
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 21.77
+            },
+            {
+              "componentId": null,
+              "deltaE": 10.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 21.77
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 5.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 10.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 10.01
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.43
+            }
+          ],
+          "gated": false
+        }
+      },
+      "failures": [],
+      "maskWarnings": [],
+      "renderHash": "c363d0e3d4af9560",
+      "passId": "form-refinement"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9468,
+        "aspectRatioDelta": 0.0271,
+        "scaleDelta": 0.0374,
+        "bilateralSymmetryError": 0.1329,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 23.7,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 14.1
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.81
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.48
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [
+        "max per-part color delta-E 23.7 exceeds threshold 20.0"
+      ],
+      "maskWarnings": [],
+      "renderHash": "a7a6d3ba7fc29f37",
+      "passId": "material-pass"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9468,
+        "aspectRatioDelta": 0.0271,
+        "scaleDelta": 0.0374,
+        "bilateralSymmetryError": 0.1329,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 23.7,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 14.1
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.81
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.48
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [
+        "max per-part color delta-E 23.7 exceeds threshold 20.0"
+      ],
+      "maskWarnings": [],
+      "renderHash": "a7a6d3ba7fc29f37",
+      "passId": "material-pass"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9468,
+        "aspectRatioDelta": 0.0271,
+        "scaleDelta": 0.0374,
+        "bilateralSymmetryError": 0.1329,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 23.7,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 2.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 14.1
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.81
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.69
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.7
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 3.57
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 15.52
+            },
+            {
+              "componentId": null,
+              "deltaE": 9.48
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [
+        "max per-part color delta-E 23.7 exceeds threshold 20.0"
+      ],
+      "maskWarnings": [],
+      "renderHash": "a7a6d3ba7fc29f37",
+      "passId": "material-pass"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9464,
+        "aspectRatioDelta": 0.0271,
+        "scaleDelta": 0.0374,
+        "bilateralSymmetryError": 0.1333,
+        "colorDelta": {
+          "checked": 17,
+          "maxDeltaE": 23.71,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 8.25
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.87
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.81
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.25
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.71
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.71
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.71
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.3
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.71
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.26
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.3
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.3
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.77
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [
+        "max per-part color delta-E 23.71 exceeds threshold 20.0"
+      ],
+      "maskWarnings": [],
+      "renderHash": "3d4ca688501f7b16",
+      "passId": "material-pass"
+    }
+  ]
+}

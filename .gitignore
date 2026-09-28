@@ -1,0 +1,12 @@
+node_modules
+dist
+*.local
+.DS_Store
+.cache
+.claude/settings.local.json
+
+# Private: owner photos and raw personal data
+dean 2.jpeg
+REVAMP-HANDOFF.md
+.img2threejs/analysis/dean-preview.jpg
+.img2threejs/analysis/portrait-check.png

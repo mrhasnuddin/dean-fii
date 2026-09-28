@@ -1,0 +1,106 @@
+{
+  "id": "base",
+  "name": "Base material",
+  "type": "standard",
+  "shaderModel": "MeshStandardMaterial / PBR approximation",
+  "baseColor": "#8A7A5F",
+  "color": "#8A7A5F",
+  "albedo": {
+    "dominant": "#8A7A5F",
+    "secondary": [
+      "#6E614B",
+      "#A08F70"
+    ],
+    "samplingNotes": "Use image-observed local color zones, not a single averaged color."
+  },
+  "colorVariation": {
+    "palette": [
+      "#8A7A5F",
+      "#6E614B",
+      "#A08F70"
+    ],
+    "pattern": "mottled",
+    "amplitude": 0.15,
+    "heightCorrelation": 0.3
+  },
+  "textureResolution": 1024,
+  "textureProjection": {
+    "mode": "uv",
+    "repeat": [
+      2.0,
+      2.0
+    ],
+    "anisotropy": 8,
+    "texelDensityIntent": "Preserve stable world/object-scale detail; do not stretch micro detail with component scale."
+  },
+  "surfaceFrequencyBands": [
+    {
+      "id": "macro",
+      "frequency": 2.0,
+      "amplitude": 0.42,
+      "role": "broad color and height breakup"
+    },
+    {
+      "id": "meso",
+      "frequency": 12.0,
+      "amplitude": 0.22,
+      "role": "ridges, pores, grain, dents, or equivalent visible relief"
+    },
+    {
+      "id": "micro",
+      "frequency": 56.0,
+      "amplitude": 0.08,
+      "role": "highlight breakup visible under grazing light"
+    }
+  ],
+  "roughness": {
+    "base": 0.75,
+    "variation": 0.15,
+    "map": "independent-procedural-field",
+    "localResponse": "higher roughness in cavities, lower roughness on worn edges"
+  },
+  "metalness": {
+    "base": 0.0,
+    "variation": 0.0
+  },
+  "normal": {
+    "pattern": "derived-from-independent-height-field",
+    "strength": 0.35,
+    "scale": 24.0,
+    "space": "tangent"
+  },
+  "bump": {
+    "pattern": "none",
+    "amplitude": 0.0,
+    "scale": 1.0
+  },
+  "displacement": {
+    "pattern": "none",
+    "amplitude": 0.0,
+    "scale": 1.0,
+    "silhouetteAffects": false
+  },
+  "ambientOcclusion": {
+    "cavityStrength": 0.25,
+    "contactShadowBias": 0.35,
+    "notes": "Darken creases, seams, intersections, and recessed local features."
+  },
+  "wear": {
+    "edgeWear": 0.0,
+    "scratches": [],
+    "chips": []
+  },
+  "dirt": {
+    "amount": 0.0,
+    "cavityBias": 0.0,
+    "color": "#2F2A22"
+  },
+  "localOverrides": [],
+  "shaderNotes": [
+    "Prefer MeshPhysicalMaterial when clearcoat, sheen, transmission, or thin-surface response is observed; otherwise use MeshStandardMaterial-compatible PBR channels.",
+    "Generate albedo, roughness, height/normal, and AO independently; never alias albedo into roughness.",
+    "Use normal/bump/displacement only when they map to observed surface relief.",
+    "Use displacement geometry when the observed relief changes the close-up silhouette; texture-only relief is insufficient there."
+  ],
+  "notes": "Replace with image-derived color, roughness, noise, and edge-wear notes."
+}

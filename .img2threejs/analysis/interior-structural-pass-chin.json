@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "interior-difference",
+  "baseline": "references\\wallet\\1.png",
+  "render": ".img2threejs\\renders\\structural-pass-ref-match.png",
+  "band": {
+    "from": 0.72,
+    "to": 0.95
+  },
+  "grid": 192,
+  "cellsCompared": 6880,
+  "warnings": [],
+  "interiorDifference": 0.174213642207529,
+  "status": "measured"
+}

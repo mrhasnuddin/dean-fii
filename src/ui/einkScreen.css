@@ -1,0 +1,63 @@
+/* E-ink panel: 360 × 480 CSS px on a 0.795 × 1.06 W display (corner 0.025 W ≈ 11 px). */
+.eink {
+  --paper: #e3ded1;
+  --ink: #1d1c1a;
+  --rule: #9a968c;
+  box-sizing: border-box;
+  width: 360px;
+  height: 480px;
+  border-radius: 11px;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.35 ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  display: flex;
+  flex-direction: column;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.eink p { margin: 0; }
+.eink.ek-flash { filter: invert(1); }
+
+.ek-sb { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px dashed var(--rule); font-weight: 700; letter-spacing: 0.08em; font-size: 13px; }
+.ek-bat { width: 22px; height: 11px; border: 1.5px solid var(--ink); border-radius: 2px; position: relative; }
+.ek-bat::after { content: ''; position: absolute; inset: 2px 6px 2px 2px; background: var(--ink); }
+
+.ek-view { display: none; flex: 1; flex-direction: column; padding: 18px 18px 10px; gap: 10px; }
+.eink[data-state='prompt'] [data-view='prompt'],
+.eink[data-state='reading'] [data-view='reading'],
+.eink[data-state='verified'] [data-view='verified'] { display: flex; }
+[data-view='prompt'], [data-view='reading'] { align-items: center; justify-content: center; text-align: center; }
+
+.ek-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+.ek-sub { font-size: 13px; opacity: 0.72; max-width: 26ch; }
+.ek-grp { font-size: 11px; letter-spacing: 0.14em; font-weight: 700; opacity: 0.7; margin-top: 8px; }
+
+.ek-nfc { width: 150px; height: 112px; margin-bottom: 6px; }
+.ek-nfc-wallet { fill: none; stroke: var(--ink); stroke-width: 3; }
+.ek-nfc-card { fill: var(--ink); }
+.ek-arc { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; opacity: 0.15; animation: ek-arc 1.6s steps(1) infinite; }
+.ek-arc.a2 { animation-delay: 0.2s; }
+.ek-arc.a3 { animation-delay: 0.4s; }
+/* Stepped, not eased: e-ink shows discrete states. */
+@keyframes ek-arc { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
+
+.ek-bar { width: 70%; height: 16px; border: 2px solid var(--ink); padding: 2px; }
+/* Revealed with clip-path (not width, not scaleX): no layout, and the block stripes never squash. */
+.ek-bar i { display: block; height: 100%; width: 100%; clip-path: inset(0 100% 0 0); background: repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 13px); }
+.eink[data-state='reading'] .ek-bar i { clip-path: inset(0 0 0 0); transition: clip-path 750ms steps(8); }
+
+.ek-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.ek-list li { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 8px; border-bottom: 1px dashed var(--rule); }
+.ek-list li.sel { background: var(--ink); color: var(--paper); border-bottom-color: transparent; }
+.ek-list small { font-size: 12px; opacity: 0.8; }
+
+.ek-ab { display: flex; border-top: 1px dashed var(--rule); font-size: 13px; }
+.ek-ab span { flex: 1; text-align: center; padding: 10px 4px; border-left: 1px dashed var(--rule); }
+.ek-ab span:first-child { border-left: 0; }
+.ek-hold { background: var(--ink); color: var(--paper); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ek-arc { animation: none; opacity: 1; }
+  .eink[data-state='reading'] .ek-bar i { transition: none; }
+}

@@ -1,0 +1,4 @@
+[
+  {"id": "reference-material-system", "score": 0.8, "tier": "critical", "notes": "Designed CMF reads as intended under the studio env: iridescent graphite frame (mauve at grazing), satin back deep graphite-teal with champagne emboss, black clearcoat glass, unlit e-ink paper, champagne accents after per-material envMap fix (sampled 164,148,120). Not scored against Ledger pixels by design (textureless, balanced priority)."},
+  {"id": "underside-details", "score": 0.8, "tier": "important", "notes": "Port, lanyard slot lip and back emboss keep their material separation (dark recess vs champagne vs film)."}
+]

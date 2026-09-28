@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Keychain Study</title>
+  <style>
+    :root { color-scheme: dark; }
+    html, body { margin: 0; height: 100%; background: #0f1014; color: #e9e6df; font: 13px/1.4 system-ui, Segoe UI, sans-serif; overflow: hidden; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    h1 { position: fixed; top: 16px; left: 16px; margin: 0; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #8b8d96; font-weight: 600; }
+    .ui { position: fixed; left: 16px; right: 16px; bottom: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+    button { font: inherit; color: #e9e6df; background: #1b1c21; border: 1px solid #3a3c44; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+    button[aria-pressed="true"] { border-color: #e4cf9f; color: #e4cf9f; }
+    button:focus-visible { outline: 2px solid #e4cf9f; outline-offset: 2px; }
+    .hint { position: fixed; top: 16px; right: 16px; color: #8b8d96; max-width: 260px; text-align: right; }
+  </style>
+</head>
+<body>
+  <h1>Keychain study</h1>
+  <p class="hint">Click the coin to flick it. Drag to orbit, scroll to zoom.</p>
+  <canvas id="c"></canvas>
+  <div class="ui">
+    <button id="poses" aria-pressed="true">Auto poses</button>
+    <button id="shake">Shake device</button>
+    <button id="nudge">Flick coin</button>
+    <button id="view-all">Full view</button>
+    <button id="view-hook">Hook close-up</button>
+    <button id="view-coin">Coin close-up</button>
+  </div>
+  <script type="module" src="/src/lab/keychain.ts"></script>
+</body>
+</html>

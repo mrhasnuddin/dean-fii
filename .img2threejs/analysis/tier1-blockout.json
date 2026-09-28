@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "checks": {
+    "silhouetteIoU": 0.9364,
+    "aspectRatioDelta": 0.0012,
+    "scaleDelta": 0.0117,
+    "bilateralSymmetryError": 0.1299,
+    "colorDelta": {
+      "checked": 17,
+      "maxDeltaE": 29.02,
+      "perComponent": [
+        {
+          "componentId": null,
+          "deltaE": 6.74
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.75
+        },
+        {
+          "componentId": null,
+          "deltaE": 5.49
+        },
+        {
+          "componentId": null,
+          "deltaE": 6.74
+        },
+        {
+          "componentId": null,
+          "deltaE": 29.02
+        },
+        {
+          "componentId": null,
+          "deltaE": 29.02
+        },
+        {
+          "componentId": null,
+          "deltaE": 5.72
+        },
+        {
+          "componentId": null,
+          "deltaE": 29.02
+        },
+        {
+          "componentId": null,
+          "deltaE": 9.23
+        },
+        {
+          "componentId": null,
+          "deltaE": 29.02
+        },
+        {
+          "componentId": null,
+          "deltaE": 5.72
+        },
+        {
+          "componentId": null,
+          "deltaE": 5.72
+        },
+        {
+          "componentId": null,
+          "deltaE": 5.72
+        },
+        {
+          "componentId": null,
+          "deltaE": 5.72
+        },
+        {
+          "componentId": null,
+          "deltaE": 9.23
+        },
+        {
+          "componentId": null,
+          "deltaE": 9.23
+        },
+        {
+          "componentId": null,
+          "deltaE": 2.94
+        }
+      ],
+      "gated": false
+    }
+  },
+  "failures": [],
+  "maskWarnings": [],
+  "renderHash": "5b4150bc230ac9ce",
+  "passId": "blockout",
+  "mapStrippedRender": ".img2threejs\\renders\\blockout-ref-match-stripped.png"
+}

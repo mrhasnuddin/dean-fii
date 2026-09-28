@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Material Study</title>
+  <style>
+    :root { color-scheme: dark; }
+    html, body { margin: 0; height: 100%; background: #0f1014; color: #e9e6df; font: 13px/1.4 system-ui, Segoe UI, sans-serif; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .labels { position: fixed; left: 0; right: 0; bottom: 28px; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; pointer-events: none; }
+    .labels b { display: block; font-weight: 600; }
+    .labels span { color: #8b8d96; }
+    h1 { position: fixed; top: 16px; left: 16px; margin: 0; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #8b8d96; font-weight: 600; }
+    @media (max-width: 700px) { .labels { grid-template-columns: 1fr; gap: 6px; bottom: 12px; } }
+  </style>
+</head>
+<body>
+  <h1>Body finish study</h1>
+  <canvas id="c"></canvas>
+  <div class="labels">
+    <div><b>A · Iridescent graphite</b><span>subtle thin-film sheen</span></div>
+    <div><b>B · Iridescent titanium</b><span>bold, heat-tint sweep</span></div>
+    <div><b>C · Graphite satin</b><span>fallback / low-tier GPU</span></div>
+  </div>
+  <script type="module" src="/src/lab/materials.ts"></script>
+</body>
+</html>

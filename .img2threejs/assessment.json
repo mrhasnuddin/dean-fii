@@ -1,0 +1,606 @@
+{
+  "targetName": "DeanFi hardware wallet",
+  "sourceImage": "references/wallet/1.png",
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "handheld hardware crypto wallet (original derivative of a portrait e-ink wallet form factor)",
+      "primaryDomain": "object",
+      "formLanguage": [
+        "hard-surface",
+        "rounded-rectangular slab",
+        "soft face-to-side edge roll-off"
+      ],
+      "structureKind": [
+        "layered shell",
+        "compound object",
+        "articulated assembly",
+        "repeated modules"
+      ],
+      "motionPotential": [
+        "whole-object transform",
+        "articulated"
+      ],
+      "materialFamilies": [
+        "metal (thin-film iridescent coating)",
+        "glass-like",
+        "plastic",
+        "metal (anodized champagne)"
+      ],
+      "notes": "Form factor measured from references 1-3 (H = 1.5 W, chin 0.30 W, screen 0.79 x 1.07 W). Controls, CMF and branding follow docs/device-design.md and are intentionally NOT the reference's."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 1,
+        "componentCount": 3,
+        "hierarchyDepth": 2,
+        "repetitionDensity": 2,
+        "materialLayerCount": 3,
+        "localDetailDensity": 2,
+        "occlusionRisk": 1,
+        "actionReadinessNeed": 3
+      },
+      "estimatedCounts": {
+        "macroComponents": 4,
+        "mesoComponents": 12,
+        "microFeatureGroups": 7,
+        "materialLayers": 7,
+        "repetitionSystems": 2
+      },
+      "reasoning": [
+        "Silhouette is a plain rounded slab (1); identity lives in proportions, bezel/chin depth and edge roll-off.",
+        "Many discrete, individually animated controls push componentCount and actionReadinessNeed to 3.",
+        "Repetition: knurled roller ridges (~36) and four identical section tabs.",
+        "Materials: iridescent shell, glossy glass, e-ink paper, champagne metal, dark polymer keys, soft-touch back, LED emissive."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Choose simple/moderate/complex/ultra-complex from observed structure, not from a hardcoded domain."
+    },
+    "unknownsToResolveBeforeImplementation": [],
+    "detailInventory": {
+      "scanMethod": "component-zones",
+      "targetMinDetails": 10,
+      "note": "Zones from grid-3x3 scan of ref 2 (.img2threejs/analysis/zones) + design blueprint.",
+      "details": [
+        {
+          "id": "edge-rolloff",
+          "kind": "bevel",
+          "description": "Face-to-side soft radius (~0.03 W) giving a tight bright rim highlight in refs 1/3",
+          "region": {
+            "x": 0.36,
+            "y": 0.09,
+            "width": 0.56,
+            "height": 0.83,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "shell/edge-rolloff"
+          },
+          "evidenceRef": "references/wallet/1.png",
+          "confidence": 0.8
+        },
+        {
+          "id": "corner-radius",
+          "kind": "contour",
+          "description": "Plan-view corner radius ~0.09 W",
+          "region": {
+            "x": 0.36,
+            "y": 0.09,
+            "width": 0.1,
+            "height": 0.1,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "silhouette",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "shell/plan-corners"
+          },
+          "evidenceRef": "references/wallet/2.png",
+          "confidence": 0.85
+        },
+        {
+          "id": "glass-gloss",
+          "kind": "gloss",
+          "description": "Full-face glossy cover glass with sharp reflections (clearcoat)",
+          "region": {
+            "x": 0.37,
+            "y": 0.1,
+            "width": 0.54,
+            "height": 0.8,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "roughness",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "front-glass/cover-gloss"
+          },
+          "evidenceRef": "references/wallet/1.png",
+          "confidence": 0.85
+        },
+        {
+          "id": "window-border",
+          "kind": "linework",
+          "description": "1 px lighter border around the display window inside the black bezel",
+          "region": {
+            "x": 0.4,
+            "y": 0.14,
+            "width": 0.47,
+            "height": 0.62,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "display/window-border"
+          },
+          "evidenceRef": "references/wallet/2.png",
+          "confidence": 0.7
+        },
+        {
+          "id": "display-matte",
+          "kind": "decal",
+          "description": "E-ink active area: matte paper albedo, content from CSS3D HTML",
+          "region": {
+            "x": 0.42,
+            "y": 0.16,
+            "width": 0.44,
+            "height": 0.58,
+            "units": "normalized"
+          },
+          "scale": "macro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "display/eink-surface"
+          },
+          "evidenceRef": "references/wallet/2.png",
+          "confidence": 0.9
+        },
+        {
+          "id": "confirm-key",
+          "kind": "ridge",
+          "description": "Round champagne Confirm key proud of the chin + LED ring groove",
+          "region": {
+            "x": 0.72,
+            "y": 0.8,
+            "width": 0.14,
+            "height": 0.1,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "key-confirm/cap"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.9
+        },
+        {
+          "id": "led-ring",
+          "kind": "emissive",
+          "description": "LED ring around Confirm, fills while holding",
+          "region": {
+            "x": 0.71,
+            "y": 0.79,
+            "width": 0.16,
+            "height": 0.12,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "emissive",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "key-confirm/led-ring"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.9
+        },
+        {
+          "id": "back-key-glyph",
+          "kind": "groove",
+          "description": "Engraved chevron glyph on the Back key",
+          "region": {
+            "x": 0.39,
+            "y": 0.8,
+            "width": 0.08,
+            "height": 0.08,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "normal",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "key-back/glyph"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.8
+        },
+        {
+          "id": "roller-knurl",
+          "kind": "ridge",
+          "description": "Knurled ridges around the thumb roller rim (repetition)",
+          "region": {
+            "x": 0.35,
+            "y": 0.3,
+            "width": 0.03,
+            "height": 0.12,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "roller/knurl"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.85
+        },
+        {
+          "id": "tab-numerals",
+          "kind": "linework",
+          "description": "Engraved 01-04 numerals beside the top-edge tabs",
+          "region": {
+            "x": 0.45,
+            "y": 0.08,
+            "width": 0.4,
+            "height": 0.02,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "tabs/numerals"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.7
+        },
+        {
+          "id": "usb-port",
+          "kind": "hole",
+          "description": "USB-C port recess centred on the bottom edge",
+          "region": {
+            "x": 0.6,
+            "y": 0.9,
+            "width": 0.07,
+            "height": 0.02,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "port/usb-c"
+          },
+          "evidenceRef": "references/wallet/3.png",
+          "confidence": 0.75
+        },
+        {
+          "id": "lanyard-slot",
+          "kind": "hole",
+          "description": "Lanyard slot with bevel lip in the bottom face at x = -0.30 W",
+          "region": {
+            "x": 0.44,
+            "y": 0.9,
+            "width": 0.06,
+            "height": 0.02,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "lanyard-slot/opening"
+          },
+          "evidenceRef": "src/device/keychain.ts",
+          "confidence": 0.9
+        },
+        {
+          "id": "back-logo",
+          "kind": "ridge",
+          "description": "D-star emboss on the back plate",
+          "region": {
+            "x": 0.45,
+            "y": 0.2,
+            "width": 0.25,
+            "height": 0.2,
+            "units": "normalized"
+          },
+          "scale": "meso",
+          "affects": "geometry",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "back-plate/logo-emboss"
+          },
+          "evidenceRef": "docs/device-blueprint.html",
+          "confidence": 0.85
+        },
+        {
+          "id": "back-softtouch",
+          "kind": "stain",
+          "description": "Soft-touch microtexture on the back plate (high roughness, fine noise normal)",
+          "region": {
+            "x": 0.3,
+            "y": 0.1,
+            "width": 0.6,
+            "height": 0.8,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "roughness",
+          "mapsTo": {
+            "type": "material.localOverrides",
+            "ref": "back-softtouch"
+          },
+          "evidenceRef": "references/wallet/3.png",
+          "confidence": 0.7
+        }
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0.0,
+      "proportions": {
+        "headUnit": 0.0,
+        "torso": 0.0,
+        "legs": 0.0,
+        "shoulderWidth": 0.0,
+        "hipWidth": 0.0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0.0,
+        "eyeSpacing": 0.0,
+        "noseBase": 0.0,
+        "mouthLine": 0.0,
+        "hairline": 0.0
+      },
+      "features": [],
+      "confidence": 0.0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "references/wallet/1.png"
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "The rendered model matches the reference silhouette, primary proportions, visible component hierarchy, material response, and most recognizable local features for the selected fidelity tier."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 3,
+      "mesoComponents": 8,
+      "microFeatureGroups": 5,
+      "materialLayers": 3,
+      "repetitionSystems": 1,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Bounding shape, dominant curves, negative spaces, and scale relationships are explicitly described."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic placeholder instead of the reference object",
+          "major proportions are guessed without evidence"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Major parts, joints, seams, contact points, and parent-child relationships are named before code generation."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every visible child appendage, branch, limb, handle, connector, tube, cable, horn, wing, leg, or hinged part has an attachment contract with parent socket, localStart/localEnd, contact type, embed/overlap, and gap tolerance."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Albedo zones, roughness, normal/bump/displacement intent, cavity dirt, edge wear, and local overrides are specified where visible.",
+          "Important materials define independent albedo, roughness, height/normal, and AO responses instead of reusing one texture for unrelated PBR channels.",
+          "Surface response is decomposed into macro, meso, and micro frequency bands with scale and amplitude tied to object scale."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Material-pass names the reference-derived albedo palette, roughness variation, tactile normal/bump/displacement response, and local masks.",
+          "When a source image is available, run reference PBR extraction and require confidence >= 0.7 before treating maps as implementation-ready.",
+          "Lighting-pass names key/fill/rim or environment light, exposure, tone mapping, background, and contact shadow behavior.",
+          "Neutral, grazing-angle, and reference-matched renders prove that surface relief survives relighting and is not painted into albedo."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "colors are a generic average instead of reference-observed local color zones",
+          "lighting is evenly ambient and cannot reproduce the source value range"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "silhouette and negative-space delta",
+      "component hierarchy depth delta",
+      "repetition density and distribution delta",
+      "material albedo/roughness/normal response delta",
+      "local feature placement and scale delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "authoringInstruction": "Fill observed object class, complexity reasoning, featureGroups, visualDeltaChecks, and unknowns before generating or implementing ObjectSculptSpec.",
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "DeanFi hardware wallet rounded rectangle extrude bevel consumer electronics glossy glass bezel clearcoat e-ink display matte soft-touch plastic roughness push button key press thumb wheel knurled iridescence thin film",
+    "index": {
+      "status": "rebuilt",
+      "reason": "missing",
+      "fingerprint": "06f0b2ece2935e441653f5c3533f91b3a4d6163f2aec4267559d7d8419bdd040"
+    },
+    "matches": [
+      {
+        "record_id": "core.pbr-roughness",
+        "file_path": "grimoire/glossary/3d_vocabulary.md",
+        "heading": "Material And PBR",
+        "key_path": null,
+        "score": 14.333025248238,
+        "snippets": [
+          "Roughness is microfacet scatter: high roughness reads matte and low roughness reads glossy. Recognition cues: low roughness reads as a sharp, mirror-like, tight specular highlight; high roughness reads as a blurry, wide, dim highlight and matte ..."
+        ],
+        "source_refs": [
+          {
+            "path": "grimoire/glossary/3d_vocabulary.md",
+            "heading": "Material And PBR",
+            "key_path": null
+          },
+          {
+            "path": "grimoire/intake/image_analysis.md",
+            "heading": "Layer 5 — Materials & surface (PBR)",
+            "key_path": null
+          },
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[1]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "grimoire/glossary/3d_vocabulary.md"
+          },
+          {
+            "kind": "notebooklm-research",
+            "ref": "notebooklm:4b03c2f9-8393-411f-b5b4-039ab9532843",
+            "note": "Validated generic schema vocabulary; numeric claims remain backed by local source_refs."
+          },
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation — merged recognition cues + Three.js target instead of duplicating this entity."
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-clearcoat",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[4]",
+        "score": 7.813457652921,
+        "snippets": [
+          "... on top of a duller or differently-colored base layer; Common on Custom Paint Job / Gunsmith style finishes with a glossy topcoat over illustrative artwork Dấu hiệu nhận diện: Có một điểm sáng thứ cấp sắc nét nằm trên lớp nền mờ hơn ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[4]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-opacity-alpha",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[8]",
+        "score": 6.173944048162,
+        "snippets": [
+          "... làm kênh dữ liệu, không phải độ trong suốt. Recognition cues: Standard opacity: soft edge fade or full transparency in glass/plastic parts; CS2-specific: alpha channel of the base color texture instead encodes a Wearness Mask, not visual ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[8]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+/* Detail panel: left-side sheet on desktop (the wallet stays visible on the right), bottom sheet on phones. */
+.detail {
+  --dt-ease: cubic-bezier(0.32, 0.72, 0, 1); /* drawer curve */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  max-height: none;
+  width: min(620px, 56vw);
+  height: 100dvh;
+  background: transparent;
+  color: var(--ink-light);
+  opacity: 0;
+  transform: translateX(-28px);
+  /* Exit (base state) is the system response: 180 ms. Entry (below) takes 240 ms. */
+  transition: opacity 180ms var(--dt-ease), transform 180ms var(--dt-ease), overlay 180ms allow-discrete, display 180ms allow-discrete;
+}
+.detail[open] {
+  opacity: 1;
+  transform: none;
+  transition: opacity 240ms var(--dt-ease), transform 240ms var(--dt-ease), overlay 240ms allow-discrete, display 240ms allow-discrete;
+}
+@starting-style { .detail[open] { opacity: 0; transform: translateX(-28px); } }
+.detail::backdrop { background: rgb(8 8 10 / 0); transition: background 180ms ease, overlay 180ms allow-discrete, display 180ms allow-discrete; }
+.detail[open]::backdrop { background: rgb(8 8 10 / 0.35); }
+@starting-style { .detail[open]::backdrop { background: rgb(8 8 10 / 0); } }
+
+.dt-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: rgb(19 20 24 / 0.94);
+  backdrop-filter: blur(14px);
+  border-right: 1px solid var(--line);
+}
+.dt-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 28px; border-bottom: 1px solid var(--line); }
+.dt-scroll { overflow-y: auto; padding: 28px 28px 40px; overscroll-behavior: contain; }
+
+.dt-close, .dt-cta, .dt-pager button {
+  font: 500 14px/1 var(--font-ui);
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out);
+}
+.dt-close { background: transparent; color: var(--ink-light); border: 1px solid var(--line); }
+.dt-cta { background: var(--champagne); color: #111; border: 0; text-decoration: none; display: inline-flex; gap: 6px; }
+.dt-close:active, .dt-cta:active, .dt-pager button:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  .dt-close:hover { background: rgb(255 255 255 / 0.06); }
+  .dt-cta:hover { background: var(--champagne-light); }
+  .dt-pager button:hover { color: var(--champagne); }
+}
+:is(.dt-close, .dt-cta, .dt-pager button, .dt-thumb):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+
+.dt-eyebrow { margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.dt-eyebrow strong { color: var(--ink-light); font-weight: 500; }
+.detail h2 { margin: 10px 0 6px; font: 400 clamp(36px, 4.4vw, 56px)/1 var(--font-display); letter-spacing: -0.01em; }
+.dt-roles { margin: 0 0 24px; color: var(--champagne); font: 500 14px/1.4 var(--font-ui); }
+
+.dt-media { display: grid; gap: 10px; margin-bottom: 26px; }
+.dt-main { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; }
+.dt-portrait { aspect-ratio: 4 / 5; max-width: 320px; }
+.dt-thumbs { display: flex; gap: 10px; }
+.dt-thumb { padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; width: 96px; aspect-ratio: 16 / 10; background: none; cursor: pointer; opacity: 0.6; transition: opacity 160ms ease, border-color 160ms ease; }
+.dt-thumb[aria-pressed='true'] { opacity: 1; border-color: var(--champagne); }
+.dt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.dt-desc { margin: 0 0 18px; font: 400 16px/1.6 var(--font-ui); color: #d7d3ca; max-width: 60ch; }
+.dt-h3 { margin: 22px 0 10px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.dt-tools { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.dt-tool { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font: 500 14px/1 var(--font-ui); }
+.dt-tool img { object-fit: contain; }
+
+.dt-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1 var(--font-mono); }
+.dt-pager button { background: none; border: 0; color: var(--ink-light); padding: 8px 4px; max-width: 40%; text-align: left; }
+.dt-pager button:last-child { text-align: right; }
+.dt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .detail { width: 100vw; height: 88dvh; inset: auto 0 0 0; transform: translateY(32px); }
+  @starting-style { .detail[open] { opacity: 0; transform: translateY(32px); } }
+  .dt-panel { border-right: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; }
+  .dt-head, .dt-scroll { padding-left: 18px; padding-right: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail, .detail[open], .detail::backdrop { transition: opacity 150ms ease, overlay 150ms allow-discrete, display 150ms allow-discrete; transform: none; }
+  @starting-style { .detail[open] { transform: none; } }
+  .dt-close, .dt-cta, .dt-pager button { transition: background-color 160ms ease, color 160ms ease; }
+  :is(.dt-close, .dt-cta, .dt-pager button):active { transform: none; }
+}

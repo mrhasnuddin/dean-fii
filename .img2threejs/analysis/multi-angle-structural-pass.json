@@ -1,0 +1,20 @@
+{
+  "referenceAreaFraction": 0.4662344056902171,
+  "angles": [
+    {
+      "path": ".img2threejs\\renders\\structural-pass-three-quarter.png",
+      "areaFraction": 0.2637975,
+      "ratio": 0.5658044468199899,
+      "degenerate": false
+    },
+    {
+      "path": ".img2threejs\\renders\\structural-pass-rear.png",
+      "areaFraction": 0.29012125,
+      "ratio": 0.6222647802461129,
+      "degenerate": false
+    }
+  ],
+  "degenerate": false,
+  "collapseRatio": 0.15,
+  "note": "deterministic; zero token; a flat-plane-faking-a-volume collapses in silhouette area when orbited"
+}

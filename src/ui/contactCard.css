@@ -1,0 +1,133 @@
+/* Contact card face: 320 × 320 CSS px (0.81 W square on the device scale). */
+.contact-card {
+  --cc-bg: #16171b;
+  --cc-ink: #e9e6df;
+  --cc-muted: #a9a69f;
+  --cc-champ: #e4cf9f;
+  --cc-line: #3f424b;
+  --cc-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  box-sizing: border-box;
+  width: 320px;
+  height: 320px;
+  padding: 28px 26px 22px;
+  border-radius: 16px;
+  background: var(--cc-bg) radial-gradient(120% 90% at 20% 0%, #1f2026 0%, transparent 60%);
+  box-shadow: inset 0 0 0 1px #2a2c33;
+  color: var(--cc-ink);
+  font: 13px/1.35 ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  display: flex;
+  flex-direction: column;
+}
+.contact-card p { margin: 0; }
+
+.cc-corner { position: absolute; width: 14px; height: 14px; border: 0 solid var(--cc-champ); }
+.cc-tl { top: 14px; left: 14px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.cc-tr { top: 14px; right: 14px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.cc-bl { bottom: 14px; left: 14px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.cc-br { bottom: 14px; right: 14px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+.cc-logo { width: 34px; height: 34px; fill: var(--cc-champ); }
+.cc-stars { position: absolute; top: 34px; right: 30px; width: 130px; height: 44px; }
+.cc-stars path { fill: none; stroke: var(--cc-line); stroke-width: 0.7; }
+.cc-stars circle { fill: #6b6e79; }
+
+.cc-id { margin-top: auto; }
+.cc-name { font: 600 22px/1.1 system-ui, 'Segoe UI', sans-serif; letter-spacing: -0.01em; }
+.cc-studio { color: var(--cc-muted); margin-top: 2px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 11px; }
+
+.cc-links { list-style: none; margin: 14px 0 0; padding: 10px 0 0; border-top: 1px dashed var(--cc-line); display: grid; gap: 2px; }
+.cc-links li { display: flex; align-items: center; gap: 4px; }
+.cc-link {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 0 6px;
+  margin: 0 -6px;
+  border-radius: 8px;
+  color: var(--cc-ink);
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.cc-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-link svg, .cc-copy svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.cc-link svg { color: var(--cc-champ); }
+
+.cc-copy {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cc-muted);
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--cc-ease-out);
+}
+.cc-copy:active { transform: scale(0.97); }
+/* Icon swap (copy ↔ ✓): each new svg enters from 0.9 + transparent; interruptible, no keyframes. */
+.cc-copy svg {
+  transition: opacity 150ms var(--cc-ease-out), transform 150ms var(--cc-ease-out);
+  @starting-style { opacity: 0; transform: scale(0.9); }
+}
+.cc-copy[data-state='done'] { color: var(--cc-champ); }
+.cc-copy[data-state='fail'] { color: #e59a8a; }
+
+@media (hover: hover) and (pointer: fine) {
+  .cc-link:hover { background: #22242b; }
+  .cc-link:hover span { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--cc-champ); }
+  .cc-copy:hover { background: #22242b; color: var(--cc-ink); }
+}
+.cc-link:focus-visible, .cc-copy:focus-visible { outline: 2px solid var(--cc-champ); outline-offset: 1px; }
+
+.cc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.cc-status { position: absolute; left: 38px; bottom: 9px; font-size: 11px; color: var(--cc-champ); min-height: 1em; }
+
+/* Overlay variant: details written inside the matte key card's star frame (240 × 128 px on 0.56 W). */
+.contact-card--overlay {
+  --cc-ink: #ece6d8;
+  --cc-muted: #a19c90;
+  width: 240px;
+  height: 128px;
+  padding: 6px 8px;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  justify-content: center;
+  font-size: 12px;
+  text-shadow: none;
+}
+.contact-card--overlay .cc-id { margin-top: 0; display: flex; align-items: baseline; gap: 10px; }
+.contact-card--overlay .cc-name { font-size: 18px; }
+.contact-card--overlay .cc-studio { display: none; } /* engraved on the card already */
+.contact-card--overlay .cc-links { margin-top: 6px; padding-top: 5px; gap: 0; border-top-color: transparent; transition: border-top-color 200ms ease 180ms; }
+.contact-card--overlay[data-written] .cc-links { border-top-color: rgba(228, 207, 159, 0.35); }
+.contact-card--overlay .cc-link { min-height: 25px; gap: 8px; }
+.contact-card--overlay .cc-copy { width: 25px; height: 25px; }
+.contact-card--overlay .cc-status { left: 16px; bottom: -4px; font-size: 10px; }
+
+/* Written line by line: each line wipes in left→right, 80 ms apart (the "receipt" moment).
+   Exit is the system response: all lines clear together, fast, no stagger. */
+.contact-card--overlay .cc-write {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 150ms var(--cc-ease-out);
+}
+.contact-card--overlay[data-written] .cc-write {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 280ms var(--cc-ease-out) calc(var(--i) * 80ms);
+}
+
+/* Reduced motion: keep colour and opacity feedback, drop scale. */
+@media (prefers-reduced-motion: reduce) {
+  .cc-copy { transition: background-color 160ms ease, color 160ms ease; }
+  .cc-copy:active { transform: none; }
+  .cc-copy svg { transition: opacity 150ms ease; @starting-style { opacity: 0; transform: none; } }
+  .contact-card--overlay .cc-write { clip-path: none; opacity: 0; transition: opacity 150ms ease; }
+  .contact-card--overlay[data-written] .cc-write { opacity: 1; transition: opacity 200ms ease; }
+}

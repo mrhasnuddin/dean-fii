@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "interior-difference",
+  "baseline": "references\\wallet\\1.png",
+  "render": ".img2threejs\\renders\\blockout-ref-match.png",
+  "band": {
+    "from": 0.08,
+    "to": 0.72
+  },
+  "grid": 192,
+  "cellsCompared": 16689,
+  "warnings": [],
+  "interiorDifference": 0.1247187494247904,
+  "status": "measured"
+}

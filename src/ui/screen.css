@@ -1,0 +1,33 @@
+/* Site screen modes, layered on the e-ink base (einkScreen.css). 360 × 480 CSS px. */
+.screen { position: relative; font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; user-select: none; }
+
+/* Idle mark (Hello, and the overlay after IDLE_MS): pixel D-star over a dashed rule and the name. */
+.px-logo { display: block; image-rendering: pixelated; }
+.sc-home { align-items: center; justify-content: flex-end; padding-bottom: 0; }
+.sc-mark { flex: 1; display: grid; place-items: center; }
+.sc-caption { width: 100%; border-top: 1px dashed var(--rule); padding: 12px 0 14px; text-align: center; font-size: 14px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
+.sc-saver { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; padding: 38px 18px 0; background: var(--paper); }
+.sc-saver[hidden] { display: none; }
+.screen .ek-view { display: flex; min-height: 0; }
+.screen .ek-list li { cursor: pointer; }
+
+.sc-center { align-items: center; justify-content: center; text-align: center; }
+.sc-logo { width: 150px; height: 150px; fill: var(--ink); }
+.sc-kicker { font-weight: 700; letter-spacing: 0.16em; margin-top: 10px; }
+
+.sc-list { padding-top: 12px; gap: 8px; }
+.sc-well { margin: 0; border: 1.5px solid var(--ink); position: relative; height: 150px; overflow: hidden; flex: none; }
+.sc-well img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; mix-blend-mode: multiply; }
+.sc-well figcaption { position: absolute; left: 0; bottom: 0; background: var(--ink); color: var(--paper); font-size: 11px; letter-spacing: 0.08em; padding: 3px 8px; text-transform: uppercase; }
+.sc-rows li { padding: 5px 8px; }
+
+.sc-about { gap: 8px; }
+.sc-id { display: flex; gap: 14px; align-items: center; }
+.sc-portrait { width: 104px; height: 130px; image-rendering: pixelated; mix-blend-mode: multiply; border: 1.5px solid var(--ink); }
+.sc-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.sc-chips span { border: 1.5px solid var(--ink); padding: 1px 7px; font-size: 13px; }
+
+/* Contact "reading" bar: stepped clip-path reveal (no layout property). */
+.screen .sc-reading .ek-bar i { clip-path: inset(0 100% 0 0); transition: clip-path 750ms steps(8); }
+.screen .sc-reading.go .ek-bar i { clip-path: inset(0 0 0 0); }
+@media (prefers-reduced-motion: reduce) { .screen .sc-reading .ek-bar i { transition: none; } }

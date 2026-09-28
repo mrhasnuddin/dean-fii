@@ -1,0 +1,14 @@
+[
+  {
+    "id": "overall-silhouette",
+    "score": 0.86,
+    "tier": "critical",
+    "notes": "Slab 1:1.5 outline, plan corners and thickness read correctly at the fitted pose (Tier-1 IoU 0.936). Hard 90° face-to-side edges: the 0.03 W roll-off is a form-refinement hand refinement."
+  },
+  {
+    "id": "face-layout",
+    "score": 0.82,
+    "tier": "critical",
+    "notes": "Measured on cmp-blockout-front.png (px normalised to body width): top bezel ref 0.096 vs render 0.106 W; screen width ref 0.785 vs 0.80 W; chin ref 0.33 vs 0.337 W. Screen corners are square (ref ≈0.025 W radius) and the lighter window lip is missing."
+  }
+]
