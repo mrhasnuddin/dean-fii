@@ -1,4 +1,4 @@
-// D-star coin keychain: lanyard bar (on the device) → 4 cable links → jump ring → coin (bail + body).
+// D-star coin keychain: lanyard bar (on the device) → 2 cable links → jump ring → coin (bail + body).
 //
 // Geometry and physics share one contact model so the parts interlock without intersecting:
 // consecutive elements touch at a node. The lower element's wire sits `t` above the node and the
@@ -7,15 +7,15 @@
 import * as THREE from 'three';
 import { coinFaceMaps, reedingMap } from './coinTextures';
 
+// A small charm, secondary to the wallet: the coin is the size of the ✓ key (Ø 0.17 W ≈ 9 mm at
+// device scale; was 0.48 W, then 0.28 W), and every part of the chain is scaled with it.
 export const KC = {
-  barRadius: 0.009,
-  // 2 links (was 4): the whole charm hangs inside the frame under the larger hero wallet. An even
-  // count keeps the coin facing front (neighbours alternate 90°, see the interlock rule).
-  link: { count: 2, t: 0.0075, r: 0.026, L: 0.06 }, // inner width 2(r−t) = 0.037 > any wire it carries
-  jump: { R: 0.03, t: 0.007 },
-  bail: { R: 0.024, t: 0.007 },
-  // Ø 0.28 W (≈15 mm at device scale): a charm, secondary to the wallet (was Ø 0.48 W).
-  coin: { R: 0.14, rim: 0.02, h: 0.018, field: 0.012, edge: 0.006 },
+  barRadius: 0.006,
+  // 2 links: an even count keeps the coin facing front (neighbours alternate 90°, interlock rule).
+  link: { count: 2, t: 0.005, r: 0.018, L: 0.042 }, // inner width 2(r−t) = 0.026 > any wire it carries
+  jump: { R: 0.021, t: 0.005 },
+  bail: { R: 0.017, t: 0.005 },
+  coin: { R: 0.085, rim: 0.012, h: 0.012, field: 0.008, edge: 0.004 },
 } as const;
 
 const LINK_S = KC.link.L + 2 * KC.link.t - 2 * KC.link.r; // straight length of each link
@@ -91,9 +91,9 @@ function createCoin(metal: THREE.MeshStandardMaterial): THREE.Group {
   body.add(new THREE.Mesh(rimFront, rimMat), new THREE.Mesh(rimBack, rimMat));
 
   const bandMat = metal.clone();
-  bandMat.bumpMap = reedingMap(130); // same ridge pitch as before on the smaller edge
+  bandMat.bumpMap = reedingMap(80); // same ridge pitch on the smaller edge
   bandMat.bumpScale = 1.2;
-  const band = new THREE.CylinderGeometry(R, R, 2 * (h - edge), 200, 1, true).rotateX(Math.PI / 2);
+  const band = new THREE.CylinderGeometry(R, R, 2 * (h - edge), 120, 1, true).rotateX(Math.PI / 2);
   body.add(new THREE.Mesh(band, bandMat));
 
   for (const face of ['front', 'back'] as const) {
@@ -159,14 +159,14 @@ export class Keychain {
   constructor(opts: KeychainOptions) {
     this.anchor = opts.anchor;
     this.collider = opts.collider;
-    this.gravity = opts.gravity ?? 55;
+    this.gravity = opts.gravity ?? 42;
     this.reducedMotion = opts.reducedMotion ?? false;
     this.group.name = 'keychain';
 
     const n = KC.link.count;
     this.segLen = [...Array(n).fill(KC.link.L), JUMP_L, COIN_D];
     this.invMass = [0, ...Array(n).fill(1), 1.4, 0.15];
-    this.radius = [0, ...Array(n).fill(0.035), 0.03, KC.coin.R - 0.02];
+    this.radius = [0, ...Array(n).fill(0.025), 0.021, KC.coin.R - 0.012];
 
     const metal = makeMetal();
     for (let i = 0; i < n; i++) this.elements.push(createLinkMesh(metal));
@@ -378,7 +378,7 @@ export class Keychain {
  * upper arc passes into it. It must stay within the flat part of the bottom face:
  * |z| ≤ bodyHalfThickness − edgeRadius.
  */
-export const SLOT = { halfX: 0.028, halfZ: 0.04, depthAboveFace: 0.02 } as const;
+export const SLOT = { halfX: 0.02, halfZ: 0.03, depthAboveFace: 0.02 } as const;
 
 export function createLanyardSlot(): THREE.Group {
   const g = new THREE.Group();
@@ -399,8 +399,8 @@ export function createLanyardSlot(): THREE.Group {
   const face = -SLOT.depthAboveFace;
   const lipMat = new THREE.MeshStandardMaterial({ color: '#3a3b42', metalness: 0.6, roughness: 0.35, polygonOffset: true, polygonOffsetFactor: -1 });
   const holeMat = new THREE.MeshBasicMaterial({ color: '#040405', polygonOffset: true, polygonOffsetFactor: -2 });
-  const lip = new THREE.Mesh(new THREE.ShapeGeometry(rr(SLOT.halfX + 0.004, SLOT.halfZ + 0.004, 0.01), 4), lipMat);
-  const hole = new THREE.Mesh(new THREE.ShapeGeometry(rr(SLOT.halfX, SLOT.halfZ, 0.008), 4), holeMat);
+  const lip = new THREE.Mesh(new THREE.ShapeGeometry(rr(SLOT.halfX + 0.003, SLOT.halfZ + 0.003, 0.008), 4), lipMat);
+  const hole = new THREE.Mesh(new THREE.ShapeGeometry(rr(SLOT.halfX, SLOT.halfZ, 0.006), 4), holeMat);
   for (const m of [lip, hole]) {
     m.rotation.x = Math.PI / 2; // shape XY → faces −Y (out of the bottom face)
     m.position.y = face - 0.0004;

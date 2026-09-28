@@ -24,10 +24,10 @@ export function runtimeOf(root: THREE.Object3D): WalletRuntime {
 }
 
 /** Rounded rectangle centred on the origin (optionally elliptical corners for unit-scaled parents). */
-export function roundedRectShape(w: number, h: number, r: number): THREE.Shape {
+export function roundedRectShape(w: number, h: number, r: number, cx = 0, cy = 0): THREE.Shape {
   const s = new THREE.Shape();
-  const x = -w / 2;
-  const y = -h / 2;
+  const x = cx - w / 2;
+  const y = cy - h / 2;
   s.moveTo(x + r, y);
   s.lineTo(x + w - r, y);
   s.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false);
@@ -141,10 +141,11 @@ export function refineForm(root: THREE.Object3D): void {
   }));
 
   // Roller: smooth 96-segment disc + 72 knurl ridges (repetition system roller-knurl), riding the disc.
-  swap(meshes['roller'], new THREE.CylinderGeometry(0.18, 0.18, 0.05, 96));
+  // DC-2: 0.06 W thick and 0.05 W proud of the side, so it reads (and hits) as a scroll wheel.
+  swap(meshes['roller'], new THREE.CylinderGeometry(0.18, 0.18, 0.06, 96));
   const rollerMesh = meshes['roller'];
   if (rollerMesh) {
-    const ridge = new THREE.BoxGeometry(0.006, 0.05, 0.009);
+    const ridge = new THREE.BoxGeometry(0.006, 0.06, 0.009);
     const knurl = new THREE.InstancedMesh(ridge, rollerMesh.material as THREE.Material, 72);
     const m = new THREE.Matrix4();
     const q = new THREE.Quaternion();
@@ -156,29 +157,105 @@ export function refineForm(root: THREE.Object3D): void {
     }
     knurl.name = 'roller-knurl';
     knurl.userData.explodeWithParent = true;
+    knurl.userData.handBuilt = true;
     rollerMesh.add(knurl);
   }
 
   // Tabs, switch, card: rounded boxes at their real sizes (generator geometry was unit boxes pre-scaled).
-  for (const id of ['tab-01', 'tab-02', 'tab-03', 'tab-04']) swap(meshes[id], new RoundedBoxGeometry(0.12, 0.03, 0.08, 3, 0.008));
+  // DC-2 (surface pass): tabs 0.08 W tall with the section number engraved on the front face.
+  const glyphMat = new THREE.MeshStandardMaterial({
+    color: '#7a7b83', roughness: 0.6, transparent: true, polygonOffset: true, polygonOffsetFactor: -2,
+  });
+  for (let i = 1; i <= 4; i++) {
+    const tab = meshes[`tab-0${i}`];
+    swap(tab, new RoundedBoxGeometry(0.12, 0.08, 0.08, 3, 0.01));
+    if (!tab) continue;
+    // Mid grey reads engraved on both finishes: light on the dark polymer, dark on champagne (active).
+    const numeral = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.05), glyphMat.clone());
+    (numeral.material as THREE.MeshStandardMaterial).alphaMap = textTexture(`0${i}`, 256, 160, { size: 118, spacing: 6 });
+    numeral.name = `tab-0${i}-numeral`;
+    numeral.position.set(0, 0.004, 0.0402);
+    numeral.userData.explodeWithParent = true;
+    tab.add(numeral);
+  }
   swap(meshes['tabs'], new RoundedBoxGeometry(0.62, 0.004, 0.086, 2, 0.0019));
-  swap(meshes['switch-motion'], new RoundedBoxGeometry(0.03, 0.06, 0.03, 3, 0.006));
-  swap(meshes['contact-card'], new RoundedBoxGeometry(0.81, 0.81, 0.02, 3, 0.008));
+  // The generator emits repetition systems as radial InstancedMesh stand-ins at the parent's centre
+  // (its "section-tabs" cluster showed as a stray block mid-rail at 0.08 W tall). The real tabs are
+  // components and the knurl is built above, so the stand-ins are hidden.
+  root.traverse((o) => {
+    if ((o as THREE.InstancedMesh).isInstancedMesh && !o.userData.handBuilt) o.visible = false;
+  });
+  // View switch knob: 0.035 × 0.07 × 0.04 with three grip ridges on its outer face.
+  const knob = meshes['switch-view'];
+  swap(knob, new RoundedBoxGeometry(0.035, 0.07, 0.04, 3, 0.008));
+  if (knob) {
+    for (const dy of [-0.016, 0, 0.016]) {
+      const ridge = new THREE.Mesh(new RoundedBoxGeometry(0.006, 0.006, 0.03, 2, 0.0025), knob.material as THREE.Material);
+      ridge.name = 'switch-grip';
+      ridge.position.set(0.0185, dy, 0);
+      ridge.userData.explodeWithParent = true;
+      knob.add(ridge);
+    }
+  }
+  swap(meshes['contact-card'], new RoundedBoxGeometry(0.86, 0.54, 0.02, 3, 0.008));
 
   // Recesses on the flat side bands (dark rounded-rect decals just proud of the face).
   const shellNode = nodes['shell'];
   const recessMat = new THREE.MeshBasicMaterial({ color: '#050506', polygonOffset: true, polygonOffsetFactor: -2 });
-  const recess = (name: string, w: number, h: number, pos: THREE.Vector3, rotY: number) => {
-    const m = new THREE.Mesh(new THREE.ShapeGeometry(roundedRectShape(w, h, Math.min(w, h) * 0.45), 8), recessMat);
+  const onSide = (m: THREE.Object3D, name: string, pos: THREE.Vector3, rotY: number) => {
     m.name = name;
     m.position.copy(pos);
     m.rotation.y = rotY;
     m.userData.explodeWithParent = true;
     shellNode?.add(m);
+    return m;
   };
+  const recess = (name: string, w: number, h: number, pos: THREE.Vector3, rotY: number) =>
+    onSide(new THREE.Mesh(new THREE.ShapeGeometry(roundedRectShape(w, h, Math.min(w, h) * 0.45), 8), recessMat), name, pos, rotY);
   const zMid = BODY.t / 2; // shell node frame spans z 0..t
-  recess('roller-slot', 0.06, 0.23, new THREE.Vector3(-0.5 - 0.0004, 0.29, zMid), -Math.PI / 2);
-  recess('switch-slot', 0.04, 0.1, new THREE.Vector3(0.5 + 0.0004, 0.475, zMid), Math.PI / 2);
+  const L = -0.5 - 0.0004;
+  const R = 0.5 + 0.0004;
+  recess('roller-slot', 0.07, 0.27, new THREE.Vector3(L, 0.29, zMid), -Math.PI / 2);
+  recess('switch-slot', 0.05, 0.19, new THREE.Vector3(R, 0.47, zMid), Math.PI / 2);
+
+  // Side glyphs (engraved, 0.001 W decals): ▲ ▼ around the roller; device / list icons at the
+  // switch's two ends (up = the 3D device view, down = the list view).
+  const glyph = (name: string, shape: THREE.Shape | THREE.Shape[], pos: THREE.Vector3, rotY: number) =>
+    onSide(new THREE.Mesh(new THREE.ShapeGeometry(shape, 4), glyphMat), name, pos, rotY);
+  const tri = (up: boolean) => {
+    const s = new THREE.Shape();
+    const k = up ? 1 : -1;
+    s.moveTo(0, 0.013 * k);
+    s.lineTo(0.013, -0.009 * k);
+    s.lineTo(-0.013, -0.009 * k);
+    s.closePath();
+    return s;
+  };
+  // On the −X face (rotY −π/2) shape +X points toward +Z, so the glyph's X is across the band.
+  glyph('roller-arrow-up', tri(true), new THREE.Vector3(L, 0.29 + 0.165, zMid), -Math.PI / 2);
+  glyph('roller-arrow-down', tri(false), new THREE.Vector3(L, 0.29 - 0.165, zMid), -Math.PI / 2);
+  const deviceIcon = roundedRectShape(0.024, 0.034, 0.005);
+  deviceIcon.holes.push(roundedRectShape(0.014, 0.018, 0.002, 0, 0.004) as unknown as THREE.Path);
+  glyph('switch-icon-device', deviceIcon, new THREE.Vector3(R, 0.47 + 0.13, zMid), Math.PI / 2);
+  glyph('switch-icon-list', [-0.009, 0, 0.009].map((y) => roundedRectShape(0.026, 0.0045, 0.002, 0, y)),
+    new THREE.Vector3(R, 0.47 - 0.13, zMid), Math.PI / 2);
+
+  // Card reader (DC-2): a deep dark mouth with a champagne lip, and a status LED above it that shares
+  // the Confirm ring's emissive material, so one tween lights both.
+  const slotMesh0 = meshes['card-slot'];
+  if (slotMesh0) slotMesh0.visible = false;
+  const slotLipShape = roundedRectShape(0.042, 0.594, 0.018);
+  slotLipShape.holes.push(roundedRectShape(0.03, 0.58, 0.012) as unknown as THREE.Path);
+  const slotLip = new THREE.Mesh(new THREE.ShapeGeometry(slotLipShape, 8), new THREE.MeshStandardMaterial({
+    // Champagne (as the shared material, envMapIntensity 1.7) but with its own depth offset: it is a
+    // decal 0.0004 W off the side face.
+    color: '#e3c894', metalness: 1, roughness: 0.3, envMapIntensity: 1.7, polygonOffset: true, polygonOffsetFactor: -2,
+  }));
+  onSide(slotLip, 'card-slot-lip', new THREE.Vector3(R, -0.02, zMid), Math.PI / 2);
+  recess('card-slot-mouth', 0.03, 0.58, new THREE.Vector3(R + 0.0002, -0.02, zMid), Math.PI / 2);
+  const readerLed = new THREE.Mesh(new THREE.CircleGeometry(0.008, 24), new THREE.MeshStandardMaterial());
+  readerLed.userData.led = true; // refineMaterials swaps in the shared LED material
+  onSide(readerLed, 'card-reader-led', new THREE.Vector3(R + 0.0002, 0.31, zMid), Math.PI / 2);
 
   // USB-C: stadium opening + tongue on the bottom face (replaces the generator's box).
   const port = meshes['port'];
@@ -289,7 +366,15 @@ export function refineMaterials(root: THREE.Object3D, tier: GpuTier = 'high', en
   set('key-confirm', champagne);
   set('roller', champagne);
   set('tab-01', champagne);
-  for (const id of ['tab-02', 'tab-03', 'tab-04', 'key-back', 'switch-motion']) set(id, polymer);
+  for (const id of ['tab-02', 'tab-03', 'tab-04', 'key-back', 'switch-view']) set(id, polymer);
+  // Surface-pass parts that share a material: the card reader LED is the Confirm ring's emissive (one
+  // tween lights both); the switch grips follow the knob.
+  root.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    if (m.userData.led) m.material = led;
+    if (m.name === 'switch-grip') m.material = polymer;
+  });
   set('tabs', dark);
   set('confirm-led-ring', led);
   set('contact-card', card);
@@ -326,7 +411,7 @@ export function applyRestState(root: THREE.Object3D): void {
 }
 
 /** White-on-black text mask sized to the plane's aspect (w:h), for alphaMap decals. */
-function textTexture(text: string, w: number, h: number): THREE.CanvasTexture {
+function textTexture(text: string, w: number, h: number, o: { size?: number; spacing?: number } = {}): THREE.CanvasTexture {
   const c = document.createElement('canvas');
   c.width = w;
   c.height = h;
@@ -334,8 +419,8 @@ function textTexture(text: string, w: number, h: number): THREE.CanvasTexture {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = '#fff';
-  ctx.font = `600 ${Math.round(h * 0.6)}px ui-monospace, Consolas, monospace`;
-  ctx.letterSpacing = `${Math.round(h * 0.28)}px`;
+  ctx.font = `600 ${Math.round(o.size ?? h * 0.6)}px ui-monospace, Consolas, monospace`;
+  ctx.letterSpacing = `${Math.round(o.spacing ?? h * 0.28)}px`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, w / 2, h / 2);

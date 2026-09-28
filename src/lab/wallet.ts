@@ -32,6 +32,10 @@ const VIEWS: Record<string, { az: number; el: number; dist?: number; size?: [num
   top: { az: 0, el: 89 },
   bottom: { az: 0, el: -89 },
   'chin-closeup': { az: -18, el: -8, dist: 2.2 },
+  // Surface pass (DC-2): the affordance details up close.
+  'right-closeup': { az: 62, el: 6, dist: 2.6 }, // card slot + lip + reader LED, view switch + icons
+  'left-closeup': { az: -62, el: 6, dist: 2.6 }, // roller + ▲▼ marks
+  'top-closeup': { az: 0, el: 28, dist: 1.5, fy: 0.66 }, // numbered tabs 01–04, focused on the top edge
   'underside': { az: -30, el: -40, dist: 3.2 },
   // Showcase: site hero pose with room for the keychain below.
   hero: { az: -28, el: 6, dist: 6.2, tilt: -4, size: [900, 1200], fy: -0.35 },

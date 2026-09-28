@@ -329,7 +329,7 @@
         {
           "id": "tab-numerals",
           "kind": "linework",
-          "description": "Engraved 01-04 numerals beside the top-edge tabs",
+          "description": "01-04 engraved on the front face of each top-edge tab (DC-2)",
           "region": {
             "x": 0.45,
             "y": 0.08,
@@ -341,7 +341,7 @@
           "affects": "albedo",
           "mapsTo": {
             "type": "component.localFeatures",
-            "ref": "tabs/numerals"
+            "ref": "tab-01/numeral"
           },
           "evidenceRef": "docs/device-blueprint.html",
           "confidence": 0.7,
@@ -429,6 +429,90 @@
           },
           "evidenceRef": "references/wallet/3.png",
           "confidence": 0.7,
+          "realization": "unreported"
+        },
+        {
+          "id": "roller-arrows",
+          "kind": "linework",
+          "description": "▲ ▼ marks above and below the roller on the -X face",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "shell/roller-arrows"
+          },
+          "evidenceRef": "docs/device-design.md#10",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "switch-icons",
+          "kind": "linework",
+          "description": "Device glyph and list glyph at the ends of the view-switch slot",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "shell/switch-icons"
+          },
+          "evidenceRef": "docs/device-design.md#10",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "card-slot-mouth",
+          "kind": "hole",
+          "description": "Card reader mouth with champagne lip on the +X face",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "card-slot/mouth"
+          },
+          "evidenceRef": "docs/device-design.md#10",
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "card-reader-led",
+          "kind": "emissive",
+          "description": "Status LED dot above the card slot",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "units": "normalized"
+          },
+          "scale": "micro",
+          "affects": "albedo",
+          "mapsTo": {
+            "type": "component.localFeatures",
+            "ref": "card-slot/reader-led"
+          },
+          "evidenceRef": "docs/device-design.md#10",
+          "confidence": 0.9,
           "realization": "unreported"
         }
       ]
@@ -750,7 +834,29 @@
         "roller",
         "key-confirm",
         "key-back",
-        "switch-motion"
+        "switch-view"
+      ],
+      "evidenceRefs": [
+        "blueprint"
+      ]
+    },
+    {
+      "id": "control-affordances",
+      "name": "Controls say what they do: tab numerals, roller arrows, view-switch icons, card slot",
+      "tier": "critical",
+      "passIds": [
+        "surface-pass"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "tab-01",
+        "tab-02",
+        "tab-03",
+        "tab-04",
+        "roller",
+        "switch-view",
+        "card-slot"
       ],
       "evidenceRefs": [
         "blueprint"
@@ -809,20 +915,24 @@
       "interaction-pass",
       "optimization-pass"
     ],
-    "currentPass": "surface-pass",
+    "currentPass": "lighting-pass",
     "completedPasses": [
       "blockout",
       "structural-pass",
       "form-refinement",
-      "material-pass"
+      "material-pass",
+      "surface-pass"
     ],
-    "lastCompletedPass": "material-pass",
+    "lastCompletedPass": "surface-pass",
     "blockedReason": "",
     "nextRequiredEvidence": [
-      "Every required material feature group has local overrides or surfaceDetail tied to evidenceRefs.",
-      "A grazing-angle close-up proves that normal/height detail breaks highlights naturally and does not read as smooth plastic.",
+      "lightingFromPhoto identifies key light direction/color/intensity, fill light, rim or environment light, and ambient color.",
+      "Exposure, tone mapping, background color/gradient, shadow softness, and contact shadow behavior are specified.",
+      "Lighting does not hide geometry/material gaps and screenshots can be compared fairly to the reference.",
+      "Neutral, grazing, and reference-matched lighting checks distinguish material errors from lighting errors.",
       "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold.",
-      "component surfaceDetail for tactile normal/bump/displacement and locality",
+      "lightingFromPhoto with key/fill/rim or environment light",
+      "exposure, tone mapping, background, shadow softness, and contact shadow behavior",
       "browser render screenshot from your agent's browser/screenshot tool",
       "side-by-side reference/render comparison sheet for AI vision review",
       "banded interior difference vs the reference baseline (forge/stage4_review/interior_difference.py --from/--to per region)",
@@ -938,6 +1048,7 @@
   "assumptions": [
     "Thickness 0.15 W (refs 1/3 suggest 0.14-0.16 W) and a flat back are design decisions (single-view limit).",
     "USB-C port centred on the bottom edge (design change 7); control side profiles authored from docs/device-blueprint.html v0.3.",
+    "DC-2 (2026-09-28): taller numbered tabs, more exposed roller, Device/List view switch and a +X card-reader slot were added after the site review; they change the top silhouette by 0.05 W.",
     "Controls, colour/material/finish and branding intentionally differ from the reference (docs/device-design.md); reviews score form factor against the photo and everything else against the blueprint."
   ],
   "coordinateFrame": {
@@ -1247,17 +1358,18 @@
             "notes": "src/device/keychain.ts anchor; X = bar axis"
           },
           {
-            "id": "card-dock",
+            "id": "card-slot",
             "localPosition": [
-              0,
-              0,
-              -0.035
+              0.5,
+              -0.02,
+              0.075
             ],
             "normal": [
+              1,
               0,
-              0,
-              -1
-            ]
+              0
+            ],
+            "notes": "Card reader mouth on the +X face; the key card's short edge enters along -X"
           }
         ],
         "collider": {
@@ -1306,12 +1418,22 @@
         {
           "id": "left-roller-slot",
           "kind": "hole",
-          "description": "Dark recess on the -X face behind the exposed roller rim: 0.23 x 0.06 W"
+          "description": "Dark recess on the -X face behind the exposed roller rim: 0.27 x 0.07 W"
+        },
+        {
+          "id": "roller-arrows",
+          "kind": "linework",
+          "description": "▲ above and ▼ below the roller slot on the -X face: it reads as a scroll wheel, not a volume rocker"
         },
         {
           "id": "right-switch-slot",
           "kind": "hole",
-          "description": "Dark recess on the +X face: 0.1 x 0.04 W at y = 0.475"
+          "description": "Dark recess on the +X face: 0.19 x 0.05 W at y = 0.47"
+        },
+        {
+          "id": "switch-icons",
+          "kind": "linework",
+          "description": "Device glyph above the switch slot (3D view), list glyph below it (list view)"
         },
         {
           "id": "top-tab-slots",
@@ -1321,13 +1443,13 @@
       ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.03,
+        "bumpAmplitude": 0.001,
+        "normalPattern": "none on the finish; engraved ▲▼ roller marks and view-switch glyphs are 0.001 W deep decals on the side bands",
         "displacementPattern": "",
-        "occlusionPattern": "",
+        "occlusionPattern": "dark recess decals behind roller, switch and card slot (cavity read without real holes)",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object",
@@ -2012,13 +2134,13 @@
       ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
-        "displacementPattern": "",
+        "microRoughness": 0.04,
+        "bumpAmplitude": 0.004,
+        "normalPattern": "engraved DEAN STUDIO text (alpha decal)",
+        "displacementPattern": "raised D-star emboss (0.004 W extrude, bevelled)",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -2198,13 +2320,13 @@
       ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.02,
+        "bumpAmplitude": 0.0016,
+        "normalPattern": "engraved D-star cap face (coin face bump map)",
         "displacementPattern": "",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -2495,13 +2617,13 @@
       ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.03,
+        "bumpAmplitude": 0.0014,
+        "normalPattern": "engraved chevron glyph (blurred canvas bump map)",
         "displacementPattern": "",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -2527,9 +2649,9 @@
       "confidence": 0.8,
       "primitive": "cylinder",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Disc (axis Z) mostly inside the body; rim protrudes 0.03 W from the -X face giving a 0.2 W visible chord.",
+      "topologyRationale": "Disc (axis Z) mostly inside the body; rim protrudes 0.05 W from the -X face giving a 0.26 W visible chord (DC-2: was 0.03, too little to find or hit).",
       "geometryDescriptor": {
-        "topologyIntent": "Disc (axis Z) mostly inside the body; rim protrudes 0.03 W from the -X face giving a 0.2 W visible chord.",
+        "topologyIntent": "Disc (axis Z) mostly inside the body; rim protrudes 0.05 W from the -X face giving a 0.26 W visible chord (DC-2: was 0.03, too little to find or hit).",
         "edgeTreatment": {
           "type": "none",
           "bevelRadius": 0.0,
@@ -2557,26 +2679,26 @@
           "blueprint"
         ],
         "localStart": [
-          -0.35,
+          -0.37,
           0.29,
-          0.05
+          0.045
         ],
         "localEnd": [
-          -0.35,
+          -0.37,
           0.29,
-          0.1
+          0.105
         ]
       },
       "dimensions": {
         "width": 0.36,
         "height": 0.36,
-        "depth": 0.05,
+        "depth": 0.06,
         "units": "W",
         "confidence": 0.8
       },
       "transform": {
         "position": [
-          -0.35,
+          -0.37,
           0.29,
           0.075
         ],
@@ -2659,13 +2781,13 @@
       ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
+        "microRoughness": 0.02,
         "bumpAmplitude": 0.0,
-        "normalPattern": "",
-        "displacementPattern": "",
+        "normalPattern": "ridge edges catch the rim light",
+        "displacementPattern": "72 knurl ridges as instanced geometry every 5°",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -2790,9 +2912,9 @@
       "seams": [],
       "localFeatures": [
         {
-          "id": "numerals",
-          "kind": "linework",
-          "description": "01 02 03 04 engraved on the top face beside each tab"
+          "id": "rail",
+          "kind": "hole",
+          "description": "Dark strip the tabs rise from"
         }
       ],
       "surfaceDetail": {
@@ -2822,19 +2944,19 @@
     },
     {
       "id": "tab-01",
-      "name": "Section tab 01",
+      "name": "Section tab 01 (Works)",
       "level": "meso",
       "role": "button",
       "importance": 0.8,
       "confidence": 0.8,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "topologyRationale": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
       "geometryDescriptor": {
-        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "topologyIntent": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
         "edgeTreatment": {
           "type": "chamfer",
-          "bevelRadius": 0.008,
+          "bevelRadius": 0.01,
           "segments": 3
         },
         "deformationStack": [],
@@ -2845,7 +2967,7 @@
       "attachment": null,
       "dimensions": {
         "width": 0.12,
-        "height": 0.03,
+        "height": 0.08,
         "depth": 0.08,
         "units": "W",
         "confidence": 0.8
@@ -2853,7 +2975,7 @@
       "transform": {
         "position": [
           -0.25,
-          0.0015,
+          0.0185,
           0
         ],
         "rotation": [
@@ -2863,7 +2985,7 @@
         ],
         "scale": [
           0.12,
-          0.03,
+          0.08,
           0.08
         ]
       },
@@ -2926,16 +3048,22 @@
       "deformations": [],
       "joints": [],
       "seams": [],
-      "localFeatures": [],
+      "localFeatures": [
+        {
+          "id": "numeral",
+          "kind": "groove",
+          "description": "'01' engraved on the +Z face, 0.04 W tall, so the tab reads from the front"
+        }
+      ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.03,
+        "bumpAmplitude": 0.0012,
+        "normalPattern": "engraved '01' on the +Z face (canvas type decal)",
         "displacementPattern": "",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -2954,19 +3082,19 @@
     },
     {
       "id": "tab-02",
-      "name": "Section tab 02",
+      "name": "Section tab 02 (Chronicle)",
       "level": "meso",
       "role": "button",
       "importance": 0.8,
       "confidence": 0.8,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "topologyRationale": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
       "geometryDescriptor": {
-        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "topologyIntent": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
         "edgeTreatment": {
           "type": "chamfer",
-          "bevelRadius": 0.008,
+          "bevelRadius": 0.01,
           "segments": 3
         },
         "deformationStack": [],
@@ -2977,7 +3105,7 @@
       "attachment": null,
       "dimensions": {
         "width": 0.12,
-        "height": 0.03,
+        "height": 0.08,
         "depth": 0.08,
         "units": "W",
         "confidence": 0.8
@@ -2985,7 +3113,7 @@
       "transform": {
         "position": [
           -0.085,
-          0.0135,
+          0.0385,
           0
         ],
         "rotation": [
@@ -2995,7 +3123,7 @@
         ],
         "scale": [
           0.12,
-          0.03,
+          0.08,
           0.08
         ]
       },
@@ -3058,16 +3186,22 @@
       "deformations": [],
       "joints": [],
       "seams": [],
-      "localFeatures": [],
+      "localFeatures": [
+        {
+          "id": "numeral",
+          "kind": "groove",
+          "description": "'02' engraved on the +Z face, 0.04 W tall, so the tab reads from the front"
+        }
+      ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.03,
+        "bumpAmplitude": 0.0012,
+        "normalPattern": "engraved '02' on the +Z face (canvas type decal)",
         "displacementPattern": "",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -3086,19 +3220,19 @@
     },
     {
       "id": "tab-03",
-      "name": "Section tab 03",
+      "name": "Section tab 03 (About)",
       "level": "meso",
       "role": "button",
       "importance": 0.8,
       "confidence": 0.8,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "topologyRationale": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
       "geometryDescriptor": {
-        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "topologyIntent": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
         "edgeTreatment": {
           "type": "chamfer",
-          "bevelRadius": 0.008,
+          "bevelRadius": 0.01,
           "segments": 3
         },
         "deformationStack": [],
@@ -3109,7 +3243,7 @@
       "attachment": null,
       "dimensions": {
         "width": 0.12,
-        "height": 0.03,
+        "height": 0.08,
         "depth": 0.08,
         "units": "W",
         "confidence": 0.8
@@ -3117,7 +3251,7 @@
       "transform": {
         "position": [
           0.085,
-          0.0135,
+          0.0385,
           0
         ],
         "rotation": [
@@ -3127,7 +3261,7 @@
         ],
         "scale": [
           0.12,
-          0.03,
+          0.08,
           0.08
         ]
       },
@@ -3190,16 +3324,22 @@
       "deformations": [],
       "joints": [],
       "seams": [],
-      "localFeatures": [],
+      "localFeatures": [
+        {
+          "id": "numeral",
+          "kind": "groove",
+          "description": "'03' engraved on the +Z face, 0.04 W tall, so the tab reads from the front"
+        }
+      ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.03,
+        "bumpAmplitude": 0.0012,
+        "normalPattern": "engraved '03' on the +Z face (canvas type decal)",
         "displacementPattern": "",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -3218,19 +3358,19 @@
     },
     {
       "id": "tab-04",
-      "name": "Section tab 04",
+      "name": "Section tab 04 (Contact)",
       "level": "meso",
       "role": "button",
       "importance": 0.8,
       "confidence": 0.8,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+      "topologyRationale": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
       "geometryDescriptor": {
-        "topologyIntent": "Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
+        "topologyIntent": "Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels).",
         "edgeTreatment": {
           "type": "chamfer",
-          "bevelRadius": 0.008,
+          "bevelRadius": 0.01,
           "segments": 3
         },
         "deformationStack": [],
@@ -3241,7 +3381,7 @@
       "attachment": null,
       "dimensions": {
         "width": 0.12,
-        "height": 0.03,
+        "height": 0.08,
         "depth": 0.08,
         "units": "W",
         "confidence": 0.8
@@ -3249,7 +3389,7 @@
       "transform": {
         "position": [
           0.25,
-          0.0135,
+          0.0385,
           0
         ],
         "rotation": [
@@ -3259,7 +3399,7 @@
         ],
         "scale": [
           0.12,
-          0.03,
+          0.08,
           0.08
         ]
       },
@@ -3322,16 +3462,22 @@
       "deformations": [],
       "joints": [],
       "seams": [],
-      "localFeatures": [],
+      "localFeatures": [
+        {
+          "id": "numeral",
+          "kind": "groove",
+          "description": "'04' engraved on the +Z face, 0.04 W tall, so the tab reads from the front"
+        }
+      ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.03,
+        "bumpAmplitude": 0.0012,
+        "normalPattern": "engraved '04' on the +Z face (canvas type decal)",
         "displacementPattern": "",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -3349,20 +3495,20 @@
       }
     },
     {
-      "id": "switch-motion",
-      "name": "Motion switch",
+      "id": "switch-view",
+      "name": "View switch (Device ↔ List)",
       "level": "meso",
       "role": "switch",
-      "importance": 0.6,
+      "importance": 0.7,
       "confidence": 0.8,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Slider knob proud of the +X face by 0.024 W, travels ±0.03 W along Y.",
+      "topologyRationale": "DC-2: the side switch toggles the 3D device view and the plain list view (Contra's calculator/spreadsheet toggle). Knob proud of the +X face by 0.03 W, travels ±0.045 W along Y: up = device, down = list.",
       "geometryDescriptor": {
-        "topologyIntent": "Slider knob proud of the +X face by 0.024 W, travels ±0.03 W along Y.",
+        "topologyIntent": "DC-2: the side switch toggles the 3D device view and the plain list view (Contra's calculator/spreadsheet toggle). Knob proud of the +X face by 0.03 W, travels ±0.045 W along Y: up = device, down = list.",
         "edgeTreatment": {
           "type": "chamfer",
-          "bevelRadius": 0.006,
+          "bevelRadius": 0.008,
           "segments": 2
         },
         "deformationStack": [],
@@ -3372,16 +3518,16 @@
       "parent": "shell",
       "attachment": null,
       "dimensions": {
-        "width": 0.03,
-        "height": 0.06,
-        "depth": 0.03,
+        "width": 0.035,
+        "height": 0.07,
+        "depth": 0.04,
         "units": "W",
         "confidence": 0.8
       },
       "transform": {
         "position": [
-          0.509,
-          0.475,
+          0.5125,
+          0.515,
           0.075
         ],
         "rotation": [
@@ -3390,9 +3536,9 @@
           0
         ],
         "scale": [
-          0.03,
-          0.06,
-          0.03
+          0.035,
+          0.07,
+          0.04
         ]
       },
       "actionProfile": {
@@ -3454,16 +3600,22 @@
       "deformations": [],
       "joints": [],
       "seams": [],
-      "localFeatures": [],
+      "localFeatures": [
+        {
+          "id": "grip",
+          "kind": "ridge",
+          "description": "Three horizontal grip ridges on the +X face of the knob"
+        }
+      ],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
+        "microRoughness": 0.03,
         "bumpAmplitude": 0.0,
         "normalPattern": "",
-        "displacementPattern": "",
+        "displacementPattern": "three horizontal grip ridges on the +X face",
         "occlusionPattern": "",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -3475,6 +3627,154 @@
         "secondaryAlbedo": "rgba(74, 76, 85, 1.0)",
         "materialClass": "plastic",
         "materialClassConfidence": 0.85,
+        "evidenceRefs": [
+          "docs/device-design.md#body-finish"
+        ]
+      }
+    },
+    {
+      "id": "card-slot",
+      "name": "Card reader slot",
+      "level": "meso",
+      "role": "slot",
+      "importance": 0.8,
+      "confidence": 0.8,
+      "primitive": "plane-card",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "DC-2: the Contact payoff. Dean's key card goes in here (short edge first, 0.5 W deep) and comes back out with the details written on it. Mouth on the +X face below the view switch, centred in the body's thickness.",
+      "geometryDescriptor": {
+        "topologyIntent": "DC-2: the Contact payoff. Dean's key card goes in here (short edge first, 0.5 W deep) and comes back out with the details written on it. Mouth on the +X face below the view switch, centred in the body's thickness.",
+        "edgeTreatment": {
+          "type": "none",
+          "bevelRadius": 0.0,
+          "segments": 1
+        },
+        "deformationStack": [],
+        "uvStrategy": "generated procedural coordinates",
+        "normalStrategy": "vertex normals from generated geometry"
+      },
+      "parent": "shell",
+      "attachment": null,
+      "dimensions": {
+        "width": 0.03,
+        "height": 0.58,
+        "depth": 1,
+        "units": "W",
+        "confidence": 0.8
+      },
+      "transform": {
+        "position": [
+          0.5004,
+          -0.02,
+          0.075
+        ],
+        "rotation": [
+          0,
+          1.5708,
+          0
+        ],
+        "scale": [
+          0.03,
+          0.58,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "static-child",
+        "pivot": {
+          "mode": "center",
+          "localPosition": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.8
+        },
+        "transformChannels": {
+          "translate": false,
+          "rotate": false,
+          "scale": false,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": false,
+          "materialState": false
+        },
+        "sockets": [],
+        "collider": {
+          "type": "box",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "isTrigger": false,
+          "notes": "static proxy"
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "shell",
+          "seamRefs": [],
+          "detachableFragments": [],
+          "breakImpulse": 0.0,
+          "debrisMaterial": "port-dark"
+        }
+      },
+      "material": "port-dark",
+      "materialLayers": [
+        "port-dark"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "mouth",
+          "kind": "hole",
+          "description": "0.58 x 0.03 W dark opening"
+        },
+        {
+          "id": "lip",
+          "kind": "bevel",
+          "description": "Chamfered champagne lip around the mouth so the slot reads from a three-quarter view"
+        },
+        {
+          "id": "reader-led",
+          "kind": "emissive",
+          "description": "Status LED dot above the mouth: blinks while reading, holds when written"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.0,
+        "microRoughness": 0.0,
+        "bumpAmplitude": 0.0,
+        "normalPattern": "",
+        "displacementPattern": "",
+        "occlusionPattern": "mouth reads as a deep dark cavity; champagne lip catches light",
+        "edgeWearPattern": "",
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [],
+      "fidelityTier": "hero",
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(6, 6, 7, 1.0)",
+        "secondaryAlbedo": "rgba(58, 59, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
         "evidenceRefs": [
           "docs/device-design.md#body-finish"
         ]
@@ -3642,8 +3942,8 @@
       "parent": "shell",
       "attachment": null,
       "dimensions": {
-        "width": 0.064,
-        "height": 0.088,
+        "width": 0.046,
+        "height": 0.066,
         "depth": 1,
         "units": "W",
         "confidence": 0.8
@@ -3660,8 +3960,8 @@
           0
         ],
         "scale": [
-          0.064,
-          0.088,
+          0.046,
+          0.066,
           1
         ]
       },
@@ -3728,7 +4028,7 @@
         {
           "id": "opening",
           "kind": "hole",
-          "description": "0.056 x 0.08 W opening + 0.004 W lip, within the flat part of the bottom face"
+          "description": "0.04 x 0.06 W opening + 0.003 W lip (smaller charm, DC-2), within the flat part of the bottom face"
         }
       ],
       "surfaceDetail": {
@@ -3758,16 +4058,16 @@
     },
     {
       "id": "contact-card",
-      "name": "NFC key card (detachable)",
+      "name": "Key card (inserted pose)",
       "level": "macro",
       "role": "card",
       "importance": 0.7,
       "confidence": 0.8,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Dean's NFC key (src/device/keyCard.ts), recovery-key card language in Dean's branding: charcoal matte soft-touch, four-point-star marks in stepped clusters at the top-left and bottom-right corners, four larger stars framing the centre (instead of Ledger's bracket corners), DEAN STUDIO engraved; debossed D-star on the back. Details are written inside the frame. Not in the viewport until the visitor presses Contact me / the wallet's ✓ (Contact sequence, lab/contact.html).",
+      "topologyRationale": "Dean's key card (src/device/keyCard.ts), recovery-key card language in Dean's branding at bank-card proportions (DC-2, ISO ID-1 ratio): charcoal matte soft-touch, four-point-star marks in stepped clusters at two corners, four larger stars framing the centre, DEAN STUDIO engraved; debossed D-star on the back. Shown here fully inserted in the card-slot (0.5 W deep, 0.36 W proud). It enters blank and ejects with the details written inside the frame. Not in the viewport until the visitor asks to contact Dean.",
       "geometryDescriptor": {
-        "topologyIntent": "Dean's NFC key (src/device/keyCard.ts), recovery-key card language in Dean's branding: charcoal matte soft-touch, four-point-star marks in stepped clusters at the top-left and bottom-right corners, four larger stars framing the centre (instead of Ledger's bracket corners), DEAN STUDIO engraved; debossed D-star on the back. Details are written inside the frame. Not in the viewport until the visitor presses Contact me / the wallet's ✓ (Contact sequence, lab/contact.html).",
+        "topologyIntent": "Dean's key card (src/device/keyCard.ts), recovery-key card language in Dean's branding at bank-card proportions (DC-2, ISO ID-1 ratio): charcoal matte soft-touch, four-point-star marks in stepped clusters at two corners, four larger stars framing the centre, DEAN STUDIO engraved; debossed D-star on the back. Shown here fully inserted in the card-slot (0.5 W deep, 0.36 W proud). It enters blank and ejects with the details written inside the frame. Not in the viewport until the visitor asks to contact Dean.",
         "edgeTreatment": {
           "type": "chamfer",
           "bevelRadius": 0.01,
@@ -3780,17 +4080,17 @@
       "parent": "shell",
       "attachment": null,
       "dimensions": {
-        "width": 0.81,
-        "height": 0.81,
+        "width": 0.86,
+        "height": 0.54,
         "depth": 0.02,
         "units": "W",
         "confidence": 0.8
       },
       "transform": {
         "position": [
-          0,
-          0.05,
-          -0.045
+          0.43,
+          -0.02,
+          0.075
         ],
         "rotation": [
           0,
@@ -3798,8 +4098,8 @@
           0
         ],
         "scale": [
-          0.81,
-          0.81,
+          0.86,
+          0.54,
           0.02
         ]
       },
@@ -3842,7 +4142,7 @@
               0,
               1
             ],
-            "notes": "320 x 320 CSS px face"
+            "notes": "details overlay inside the star frame"
           }
         ],
         "collider": {
@@ -3882,13 +4182,13 @@
       "localFeatures": [],
       "surfaceDetail": {
         "macroRoughness": 0.0,
-        "microRoughness": 0.0,
-        "bumpAmplitude": 0.0,
-        "normalPattern": "",
+        "microRoughness": 0.12,
+        "bumpAmplitude": 0.0012,
+        "normalPattern": "seeded soft-touch grain; star marks raised, engraving recessed",
         "displacementPattern": "",
-        "occlusionPattern": "",
+        "occlusionPattern": "engraved letters darker in the cavity",
         "edgeWearPattern": "",
-        "notes": ""
+        "notes": "Surface pass DC-2, realised in src/device/walletRefine.ts"
       },
       "evidenceRefs": [
         "full-object"
@@ -4596,7 +4896,7 @@
         "primitive": "box",
         "size": [
           0.12,
-          0.03,
+          0.08,
           0.08
         ]
       },
@@ -4608,7 +4908,8 @@
       "material": "key-polymer",
       "evidenceRefs": [
         "docs/device-blueprint.html"
-      ]
+      ],
+      "notes": "Linear, but the generator lays repetition clusters out radially at the parent centre; the tabs are real components (tab-01..04) and walletRefine hides the stand-in cluster."
     }
   ],
   "buildPasses": [
@@ -4644,7 +4945,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -4673,7 +4975,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -4701,7 +5004,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -4735,7 +5039,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -4763,7 +5068,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -4793,7 +5099,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -4821,7 +5128,8 @@
         "tab-02",
         "tab-03",
         "tab-04",
-        "switch-motion",
+        "switch-view",
+        "card-slot",
         "port",
         "lanyard-slot",
         "contact-card"
@@ -5014,6 +5322,92 @@
       "renderScreenshot": ".img2threejs/renders/material-pass-ref-match.png",
       "comparisonImage": ".img2threejs/analysis/cmp-material-pass.png",
       "cameraView": "ref-match",
+      "notes": "",
+      "aiVisionNotes": ""
+    },
+    {
+      "timestamp": "2026-09-28T03:43:55.823749+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.85,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.9,
+        "componentStructure": 0.88,
+        "formDetail": 0.86,
+        "materialSurface": 0.82,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [
+        {
+          "id": "control-affordances",
+          "featureId": "control-affordances",
+          "score": 0.86,
+          "passed": true,
+          "notes": "Tabs 0.08 W tall with 01-04 engraved on the front faces, readable at the top close-up and from the site's Console pose; roller 0.05 W proud with ▲▼ marks on the -X face; view switch knob with three grip ridges, list glyph below the slot (device glyph above, out of the right close-up frame); card slot mouth 0.58 W with champagne lip and reader LED. Measured on site at 1440x900: every small control's hit area >= 2,880 px² (tabs 2,880-4,304, switch 3,680, roller 4,656)."
+        },
+        {
+          "id": "reference-material-system",
+          "featureId": "reference-material-system",
+          "score": 0.82,
+          "passed": true,
+          "notes": "Material system unchanged from the accepted material pass (iridescent shell, black glass, unlit e-ink, champagne accents). Plain physical materials without physical features became MeshStandardMaterial (identical at IOR 1.5) to cut shader compile time."
+        },
+        {
+          "id": "underside-details",
+          "featureId": "underside-details",
+          "score": 0.78,
+          "passed": true,
+          "notes": "USB-C unchanged; lanyard slot scaled to the smaller keychain (0.04 x 0.06 W opening); back emboss unchanged."
+        }
+      ],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/surface-pass-ref-match-nokc.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-surface-pass.png",
+      "cameraView": "",
+      "notes": "",
+      "aiVisionNotes": ""
+    },
+    {
+      "timestamp": "2026-09-28T04:05:23.588106+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.85,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.9,
+        "componentStructure": 0.88,
+        "formDetail": 0.86,
+        "materialSurface": 0.82,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [
+        {
+          "id": "control-affordances",
+          "featureId": "control-affordances",
+          "score": 0.86,
+          "passed": true,
+          "notes": "Tabs 0.08 W tall with 01-04 engraved on the front faces, readable at the top close-up and from the site's Console pose; roller 0.05 W proud with ▲▼ marks on the -X face; view switch knob with three grip ridges, list glyph below the slot (device glyph above, out of the right close-up frame); card slot mouth 0.58 W with champagne lip and reader LED. Measured on site at 1440x900: every small control's hit area >= 2,880 px² (tabs 2,880-4,304, switch 3,680, roller 4,656)."
+        },
+        {
+          "id": "reference-material-system",
+          "featureId": "reference-material-system",
+          "score": 0.82,
+          "passed": true,
+          "notes": "Material system unchanged from the accepted material pass (iridescent shell, black glass, unlit e-ink, champagne accents). Plain physical materials without physical features became MeshStandardMaterial (identical at IOR 1.5) to cut shader compile time."
+        },
+        {
+          "id": "underside-details",
+          "featureId": "underside-details",
+          "score": 0.78,
+          "passed": true,
+          "notes": "USB-C unchanged; lanyard slot scaled to the smaller keychain (0.04 x 0.06 W opening); back emboss unchanged."
+        }
+      ],
+      "referenceScreenshot": "references/wallet/1.png",
+      "renderScreenshot": ".img2threejs/renders/surface-pass-ref-match-nokc.png",
+      "comparisonImage": ".img2threejs/analysis/cmp-surface-pass.png",
+      "cameraView": "",
       "notes": "",
       "aiVisionNotes": ""
     }
@@ -5349,6 +5743,110 @@
         "notes": "",
         "aiVisionNotes": ""
       }
+    },
+    {
+      "timestamp": "2026-09-28T03:43:55.823749+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.85,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.9,
+        "componentStructure": 0.88,
+        "formDetail": 0.86,
+        "materialSurface": 0.82,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [
+        {
+          "id": "control-affordances",
+          "featureId": "control-affordances",
+          "score": 0.86,
+          "passed": true,
+          "notes": "Tabs 0.08 W tall with 01-04 engraved on the front faces, readable at the top close-up and from the site's Console pose; roller 0.05 W proud with ▲▼ marks on the -X face; view switch knob with three grip ridges, list glyph below the slot (device glyph above, out of the right close-up frame); card slot mouth 0.58 W with champagne lip and reader LED. Measured on site at 1440x900: every small control's hit area >= 2,880 px² (tabs 2,880-4,304, switch 3,680, roller 4,656)."
+        },
+        {
+          "id": "reference-material-system",
+          "featureId": "reference-material-system",
+          "score": 0.82,
+          "passed": true,
+          "notes": "Material system unchanged from the accepted material pass (iridescent shell, black glass, unlit e-ink, champagne accents). Plain physical materials without physical features became MeshStandardMaterial (identical at IOR 1.5) to cut shader compile time."
+        },
+        {
+          "id": "underside-details",
+          "featureId": "underside-details",
+          "score": 0.78,
+          "passed": true,
+          "notes": "USB-C unchanged; lanyard slot scaled to the smaller keychain (0.04 x 0.06 W opening); back emboss unchanged."
+        }
+      ],
+      "action": "request-input",
+      "summary": "Surface pass DC-2 (Dean's 2026-09-28 review): numbered tabs 0.08 W tall, roller 0.05 W proud with ▲▼ marks, Device/List view switch with icons, +X card-reader slot with champagne lip and reader LED, bank-ratio key card, smaller keychain. Tier-1 on the keychain-free ref-match render: IoU 0.9475 (material pass 0.9464), scale 0.012, multi-angle no degenerate view. Two Tier-1 failures, both explained: aspect delta 0.052 > 0.05 is the approved taller tabs (+0.05 W on the top edge; the Ledger reference has none; material pass was 0.027), and per-part colour dE 23.75 is the same structural k=5 cluster limit the user accepted on the material pass. Generator repetition stand-ins (radial clusters at the parent centre) were hidden after one showed mid-rail. Needs the user to accept the aspect deviation caused by the approved design change.",
+      "matched": [],
+      "mismatches": [],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [],
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/surface-pass-ref-match-nokc.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-surface-pass.png",
+        "cameraView": "",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
+    },
+    {
+      "timestamp": "2026-09-28T04:05:23.588106+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.85,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.9,
+        "componentStructure": 0.88,
+        "formDetail": 0.86,
+        "materialSurface": 0.82,
+        "lightingCamera": 0.7
+      },
+      "featureReviews": [
+        {
+          "id": "control-affordances",
+          "featureId": "control-affordances",
+          "score": 0.86,
+          "passed": true,
+          "notes": "Tabs 0.08 W tall with 01-04 engraved on the front faces, readable at the top close-up and from the site's Console pose; roller 0.05 W proud with ▲▼ marks on the -X face; view switch knob with three grip ridges, list glyph below the slot (device glyph above, out of the right close-up frame); card slot mouth 0.58 W with champagne lip and reader LED. Measured on site at 1440x900: every small control's hit area >= 2,880 px² (tabs 2,880-4,304, switch 3,680, roller 4,656)."
+        },
+        {
+          "id": "reference-material-system",
+          "featureId": "reference-material-system",
+          "score": 0.82,
+          "passed": true,
+          "notes": "Material system unchanged from the accepted material pass (iridescent shell, black glass, unlit e-ink, champagne accents). Plain physical materials without physical features became MeshStandardMaterial (identical at IOR 1.5) to cut shader compile time."
+        },
+        {
+          "id": "underside-details",
+          "featureId": "underside-details",
+          "score": 0.78,
+          "passed": true,
+          "notes": "USB-C unchanged; lanyard slot scaled to the smaller keychain (0.04 x 0.06 W opening); back emboss unchanged."
+        }
+      ],
+      "action": "continue",
+      "summary": "User accepted the surface pass on 2026-09-28 ('proceed'). Tier-1 aspect delta 0.052 > 0.05 is caused by the approved DC-2 taller tabs (the Ledger reference has none); the per-part colour check still fails structurally (k=5 whole-render clusters cannot resolve small champagne accents), as accepted on the material pass. Geometry: IoU 0.9475, scale 0.012, multi-angle clean.",
+      "matched": [],
+      "mismatches": [],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [],
+      "visualEvidence": {
+        "referenceScreenshot": "references/wallet/1.png",
+        "renderScreenshot": ".img2threejs/renders/surface-pass-ref-match-nokc.png",
+        "comparisonImage": ".img2threejs/analysis/cmp-surface-pass.png",
+        "cameraView": "",
+        "notes": "",
+        "aiVisionNotes": ""
+      }
     }
   ],
   "lodPlan": [
@@ -5417,12 +5915,13 @@
   ],
   "animationAnchors": [
     "shell root: scroll-driven pose (yaw/pitch/position) per section",
-    "tab-01..04: press -Y 0.012 W; active tab champagne",
+    "tab-01..04: press -Y 0.02 W; active tab champagne; click selects that section",
     "roller: rotate about Z, 5° per list step (one knurl)",
     "key-confirm: press -Z 0.004 W; led ring emissive 0.15 → 2.2 over the hold",
     "key-back: press -Z 0.003 W",
-    "switch-motion: slide ±0.03 W along Y",
-    "contact-card: slide out -Z then rotate to face camera",
+    "switch-view: slide ±0.045 W along Y (up = device view, down = list view)",
+    "contact-card: enters the card-slot along -X (short edge first, 0.5 W), ejects along +X, then turns to face the camera",
+    "card-slot reader LED: blinks while reading, holds when written",
     "keychain-anchor socket: src/device/keychain.ts"
   ],
   "destructionAnchors": [
@@ -6631,6 +7130,196 @@
       "maskWarnings": [],
       "renderHash": "3d4ca688501f7b16",
       "passId": "material-pass"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9377,
+        "aspectRatioDelta": 0.1244,
+        "scaleDelta": 0.0696,
+        "bilateralSymmetryError": 0.1464,
+        "colorDelta": {
+          "checked": 18,
+          "maxDeltaE": 23.75,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 8.85
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.9
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.85
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.82
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.82
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.82
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.82
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.82
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.33
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [
+        "aspect-ratio delta 0.124 exceeds threshold 0.05",
+        "max per-part color delta-E 23.75 exceeds threshold 20.0"
+      ],
+      "maskWarnings": [],
+      "renderHash": "237508ee1bea50b7",
+      "passId": "surface-pass"
+    },
+    {
+      "passed": false,
+      "checks": {
+        "silhouetteIoU": 0.9475,
+        "aspectRatioDelta": 0.0522,
+        "scaleDelta": 0.0119,
+        "bilateralSymmetryError": 0.1378,
+        "colorDelta": {
+          "checked": 18,
+          "maxDeltaE": 23.75,
+          "perComponent": [
+            {
+              "componentId": null,
+              "deltaE": 8.86
+            },
+            {
+              "componentId": null,
+              "deltaE": 6.23
+            },
+            {
+              "componentId": null,
+              "deltaE": 1.88
+            },
+            {
+              "componentId": null,
+              "deltaE": 8.86
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.83
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 23.75
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.83
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.83
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.83
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.83
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 7.67
+            },
+            {
+              "componentId": null,
+              "deltaE": 2.33
+            }
+          ],
+          "gated": true
+        }
+      },
+      "failures": [
+        "aspect-ratio delta 0.052 exceeds threshold 0.05",
+        "max per-part color delta-E 23.75 exceeds threshold 20.0"
+      ],
+      "maskWarnings": [],
+      "renderHash": "37c1811712aa1f66",
+      "passId": "surface-pass"
     }
   ]
 }

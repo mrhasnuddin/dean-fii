@@ -24,10 +24,10 @@ export const profile = {
   name: 'Dean',
   studio: 'Dean Studio',
   roles: ['UI/UX Designer', 'Frontend Developer', 'Creative Designer'],
-  // Existing copy from DeanFi2 (AboutObservatory.tsx), unchanged.
+  // Dean's own bio (2026-09-28, lightly edited for flow; no claims added). Design/build, then speaking.
   bio: [
-    'I turn complex Web3 ideas into interfaces people can understand and enjoy. My work spans high-fidelity landing pages and the frontend code that brings them to life.',
-    'Beyond the screen, I present projects, lead conversations, and share what I’ve learned with the Web3 community in English and conversational Mandarin.',
+    'UI/UX designer, frontend developer (vibe coding) and creative designer, focused on user interfaces, landing pages and frontend builds that are easy to understand.',
+    'An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics.',
   ],
   toolGroups: [
     { title: 'Web Design & Creative', tools: ['figma', 'photoshop'] as ToolId[] },

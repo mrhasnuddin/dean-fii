@@ -1,6 +1,13 @@
 /* Site screen modes, layered on the e-ink base (einkScreen.css). 360 × 480 CSS px. */
 .screen { position: relative; font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; user-select: none; }
 
+/* Softkey labels under the four top tabs (positions from the spec). The active one is inverted and
+   names its section; the others show their number. Tappable: they select the section too. */
+.ek-soft { position: relative; height: 38px; padding: 0; }
+.ek-soft span { position: absolute; top: 9px; transform: translateX(-50%); padding: 3px 6px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer; white-space: nowrap; }
+.ek-soft span.on { background: var(--ink); color: var(--paper); }
+.ek-soft span.on::before { content: ''; position: absolute; left: 50%; top: -9px; margin-left: -5px; border: 5px solid transparent; border-bottom-color: var(--ink); }
+
 /* Idle mark (Hello, and the overlay after IDLE_MS): pixel D-star over a dashed rule and the name. */
 .px-logo { display: block; image-rendering: pixelated; }
 .sc-home { align-items: center; justify-content: flex-end; padding-bottom: 0; }

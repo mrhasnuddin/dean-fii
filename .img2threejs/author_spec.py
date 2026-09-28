@@ -25,10 +25,16 @@ WINDOW = dict(w=0.836, h=1.11, cy=0.113)            # glass window incl. lighter
 CHIN_Y = -0.59
 CONFIRM = dict(x=0.30, y=CHIN_Y, r=0.085, ring=0.105)
 BACK_KEY = dict(x=-0.32, y=CHIN_Y, r=0.06)
-ROLLER = dict(x=-0.35, y=0.29, r=0.18, t=0.05, protrude=0.03)
+# Design change DC-2 (2026-09-28, Dean's review; docs/device-design.md §10): controls must be hittable and
+# say what they do. Tabs 0.03 → 0.08 W tall with engraved numerals; roller rim 0.03 → 0.05 W proud with ▲▼
+# marks; the side switch becomes the Device ↔ List view switch (bigger, icon at each end); a card-reader
+# slot on the +X face below it replaces the NFC tap; the key card takes bank-card proportions.
+ROLLER = dict(x=-0.37, y=0.29, r=0.18, t=0.06, protrude=0.05)
 TABS_X = [-0.25, -0.085, 0.085, 0.25]
-TAB = dict(w=0.12, h=0.03, d=0.08)
-SWITCH = dict(y=0.475, travel=0.03)
+TAB = dict(w=0.12, h=0.08, d=0.08)
+SWITCH = dict(y=0.47, travel=0.045, slot_len=0.19, slot_w=0.05, knob=(0.035, 0.07, 0.04))
+CARD_SLOT = dict(y=-0.02, len=0.58, gap=0.03)          # opening on the +X face (length along Y, gap along Z)
+CARD = dict(w=0.86, h=0.54, t=0.02, insert=0.5)        # ISO ID-1 ratio 1.59; short edge enters, 0.5 W deep
 LANYARD = dict(x=-0.30, above=0.02)
 
 
@@ -136,11 +142,14 @@ C.append(comp(
     sockets=[{"id": "front-face", "localPosition": [0, 0, BODY["t"]], "normal": [0, 0, 1]},
              {"id": "keychain-anchor", "localPosition": [LANYARD["x"], -0.75 + LANYARD["above"], FRONT_Z], "normal": [0, -1, 0],
               "notes": "src/device/keychain.ts anchor; X = bar axis"},
-             {"id": "card-dock", "localPosition": [0, 0, -0.035], "normal": [0, 0, -1]}],
+             {"id": "card-slot", "localPosition": [0.5, CARD_SLOT["y"], FRONT_Z], "normal": [1, 0, 0],
+              "notes": "Card reader mouth on the +X face; the key card's short edge enters along -X"}],
     features=[feat("edge-rolloff", "bevel", "0.03 W face-to-side radius, 4 segments"),
               feat("plan-corners", "contour", "0.09 W plan-view corner radius"),
-              feat("left-roller-slot", "hole", "Dark recess on the -X face behind the exposed roller rim: 0.23 x 0.06 W"),
-              feat("right-switch-slot", "hole", "Dark recess on the +X face: 0.1 x 0.04 W at y = 0.475"),
+              feat("left-roller-slot", "hole", "Dark recess on the -X face behind the exposed roller rim: 0.27 x 0.07 W"),
+              feat("roller-arrows", "linework", "▲ above and ▼ below the roller slot on the -X face: it reads as a scroll wheel, not a volume rocker"),
+              feat("right-switch-slot", "hole", f"Dark recess on the +X face: {SWITCH['slot_len']} x {SWITCH['slot_w']} W at y = {SWITCH['y']}"),
+              feat("switch-icons", "linework", "Device glyph above the switch slot (3D view), list glyph below it (list view)"),
               feat("top-tab-slots", "hole", "Four tab openings in the top face")],
     rec=IRID, importance=1.0, confidence=0.85, evidence=("full-object", "front-ortho")))
 
@@ -199,7 +208,7 @@ C.append(comp(
 C.append(comp(
     "roller", "Thumb roller", "meso", "shell", "cylinder", (ROLLER["r"] * 2, ROLLER["r"] * 2, ROLLER["t"]),
     (ROLLER["x"], ROLLER["y"], 0), "champagne-metal", role="wheel", topo="assembled-solid",
-    why="Disc (axis Z) mostly inside the body; rim protrudes 0.03 W from the -X face giving a 0.2 W visible chord.",
+    why="Disc (axis Z) mostly inside the body; rim protrudes 0.05 W from the -X face giving a 0.26 W visible chord (DC-2: was 0.03, too little to find or hit).",
     anim="control-rotate", axis=(0, 0, 1), pivot=(0, 0, 0), channels=("rotate",), collider="cylinder",
     features=[feat("knurl", "ridge", "72 radial ridges around the rim (repetition system roller-knurl)")],
     rec=CHAMP, attach=axle("shell", "left-face", ROLLER["r"], ROLLER["t"], embed=0.15), importance=0.85))
@@ -207,25 +216,42 @@ C.append(comp(
 C.append(comp(
     "tabs", "Section tab rail", "meso", "shell", "box", (0.62, 0.004, 0.09), (0, 0.75 + 0.0015, 0), "port-dark",
     role="rail", topo="surface-relief", why="Dark strip on the top face that the four tabs rise from.",
-    features=[feat("numerals", "linework", "01 02 03 04 engraved on the top face beside each tab")],
+    features=[feat("rail", "hole", "Dark strip the tabs rise from")],
     rec=DARK, importance=0.6))
 
+LABELS = ["WORKS", "CHRONICLE", "ABOUT", "CONTACT"]
 for i, x in enumerate(TABS_X, start=1):
     active = i == 1
-    lift = TAB["h"] / 2 - (0.012 if active else 0)
+    lift = TAB["h"] / 2 - (0.02 if active else 0)
     C.append(comp(
-        f"tab-0{i}", f"Section tab 0{i}", "meso", "tabs", "box", (TAB["w"], TAB["h"], TAB["d"]),
+        f"tab-0{i}", f"Section tab 0{i} ({LABELS[i - 1].title()})", "meso", "tabs", "box", (TAB["w"], TAB["h"], TAB["d"]),
         (x, 0.75 + lift, 0), "champagne-metal" if active else "key-polymer",
-        role="button", topo="assembled-solid", why="Rounded key cap rising 0.03 W from the rail; pressed = 0.018 W.",
-        edge={"type": "chamfer", "bevelRadius": 0.008, "segments": 3},
+        role="button", topo="assembled-solid",
+        why=("Rounded key cap rising 0.08 W from the rail (DC-2: was 0.03 W, a sliver seen edge-on); pressed = active section, "
+             "sunk 0.02 W. The screen's top row labels each tab directly beneath it (softkey labels)."),
+        edge={"type": "chamfer", "bevelRadius": 0.01, "segments": 3},
         anim="control-press", axis=(0, -1, 0), channels=("translate", "materialState"), collider="box",
+        features=[feat("numeral", "groove", f"'0{i}' engraved on the +Z face, 0.04 W tall, so the tab reads from the front")],
         rec=CHAMP if active else POLY, importance=0.8))
 
 C.append(comp(
-    "switch-motion", "Motion switch", "meso", "shell", "box", (0.03, 0.06, 0.03), (0.5 + 0.009, SWITCH["y"], 0), "key-polymer",
-    role="switch", topo="assembled-solid", why="Slider knob proud of the +X face by 0.024 W, travels ±0.03 W along Y.",
-    edge={"type": "chamfer", "bevelRadius": 0.006, "segments": 2},
-    anim="control-slide", axis=(0, 1, 0), channels=("translate",), collider="box", rec=POLY, importance=0.6))
+    "switch-view", "View switch (Device ↔ List)", "meso", "shell", "box", SWITCH["knob"], (0.5 + 0.0125, SWITCH["y"] + SWITCH["travel"], 0),
+    "key-polymer", role="switch", topo="assembled-solid",
+    why=("DC-2: the side switch toggles the 3D device view and the plain list view (Contra's calculator/spreadsheet toggle). "
+         "Knob proud of the +X face by 0.03 W, travels ±0.045 W along Y: up = device, down = list."),
+    edge={"type": "chamfer", "bevelRadius": 0.008, "segments": 2},
+    anim="control-slide", axis=(0, 1, 0), channels=("translate",), collider="box",
+    features=[feat("grip", "ridge", "Three horizontal grip ridges on the +X face of the knob")], rec=POLY, importance=0.7))
+
+C.append(comp(
+    "card-slot", "Card reader slot", "meso", "shell", "plane-card", (CARD_SLOT["gap"], CARD_SLOT["len"], 1),
+    (0.5 + 0.0004, CARD_SLOT["y"], 0), "port-dark", rot=(0, HALF_PI, 0), role="slot", topo="surface-relief",
+    why=("DC-2: the Contact payoff. Dean's key card goes in here (short edge first, 0.5 W deep) and comes back out with the "
+         "details written on it. Mouth on the +X face below the view switch, centred in the body's thickness."),
+    features=[feat("mouth", "hole", f"{CARD_SLOT['len']} x {CARD_SLOT['gap']} W dark opening"),
+              feat("lip", "bevel", "Chamfered champagne lip around the mouth so the slot reads from a three-quarter view"),
+              feat("reader-led", "emissive", "Status LED dot above the mouth: blinks while reading, holds when written")],
+    rec=DARK, importance=0.8))
 
 C.append(comp(
     "port", "USB-C port", "micro", "shell", "box", (0.15, 0.004, 0.04), (0, -0.75 - 0.0015, 0), "port-dark",
@@ -233,22 +259,24 @@ C.append(comp(
     features=[feat("usb-c", "hole", "0.15 x 0.04 W stadium opening + 0.09 W tongue")], rec=DARK, importance=0.4))
 
 C.append(comp(
-    "lanyard-slot", "Lanyard slot", "micro", "shell", "plane-card", (0.064, 0.088, 1), (LANYARD["x"], -0.75 - 0.0004, 0), "port-dark",
+    "lanyard-slot", "Lanyard slot", "micro", "shell", "plane-card", (0.046, 0.066, 1), (LANYARD["x"], -0.75 - 0.0004, 0), "port-dark",
     rot=(HALF_PI, 0, 0), role="slot", topo="surface-relief",
     why="Flush rounded-rect opening with bevel lip (createLanyardSlot in src/device/keychain.ts); the keychain bar sits 0.02 W inside.",
-    features=[feat("opening", "hole", "0.056 x 0.08 W opening + 0.004 W lip, within the flat part of the bottom face")],
+    features=[feat("opening", "hole", "0.04 x 0.06 W opening + 0.003 W lip (smaller charm, DC-2), within the flat part of the bottom face")],
     rec=DARK, importance=0.6))
 
 C.append(comp(
-    "contact-card", "NFC key card (detachable)", "macro", "shell", "box", (0.81, 0.81, 0.02), (0, 0.05, -0.12), "key-card-matte",
+    "contact-card", "Key card (inserted pose)", "macro", "shell", "box", (CARD["w"], CARD["h"], CARD["t"]),
+    (0.5 - CARD["insert"] + CARD["w"] / 2, CARD_SLOT["y"], 0), "key-card-matte",
     role="card", topo="assembled-solid",
-    why=("Dean's NFC key (src/device/keyCard.ts), recovery-key card language in Dean's branding: charcoal matte soft-touch, "
-         "four-point-star marks in stepped clusters at the top-left and bottom-right corners, four larger stars framing the centre "
-         "(instead of Ledger's bracket corners), DEAN STUDIO engraved; debossed D-star on the back. Details are written inside the "
-         "frame. Not in the viewport until the visitor presses Contact me / the wallet's ✓ (Contact sequence, lab/contact.html)."),
+    why=("Dean's key card (src/device/keyCard.ts), recovery-key card language in Dean's branding at bank-card proportions (DC-2, "
+         "ISO ID-1 ratio): charcoal matte soft-touch, four-point-star marks in stepped clusters at two corners, four larger stars "
+         "framing the centre, DEAN STUDIO engraved; debossed D-star on the back. Shown here fully inserted in the card-slot "
+         "(0.5 W deep, 0.36 W proud). It enters blank and ejects with the details written inside the frame. Not in the viewport "
+         "until the visitor asks to contact Dean."),
     edge={"type": "chamfer", "bevelRadius": 0.01, "segments": 2},
     anim="detachable", channels=("translate", "rotate", "detach", "visibility"), collider="box",
-    sockets=[{"id": "css3d-card", "localPosition": [0, 0, 0.0105], "normal": [0, 0, 1], "notes": "320 x 320 CSS px face"}],
+    sockets=[{"id": "css3d-card", "localPosition": [0, 0, 0.0105], "normal": [0, 0, 1], "notes": "details overlay inside the star frame"}],
     rec=recipe("rgba(22, 23, 27, 1.0)", "rgba(228, 207, 159, 1.0)", "plastic", 0.8), importance=0.7))
 C[-1]["actionProfile"]["destruction"]["detachableFragments"] = ["contact-card"]
 
@@ -336,7 +364,8 @@ s["repetitionSystems"] = [
      "variation": {"scale": 0.0, "rotation": 0.0}, "material": "champagne-metal", "evidenceRefs": ["docs/device-blueprint.html"]},
     {"id": "section-tabs", "parent": "tabs", "distribution": "linear", "count": 4, "instances": 4, "buildsGeometry": True,
      "geometry": {"primitive": "box", "size": [TAB["w"], TAB["h"], TAB["d"]]}, "placement": f"x = {TABS_X}",
-     "variation": {"scale": 0.0, "rotation": 0.0}, "material": "key-polymer", "evidenceRefs": ["docs/device-blueprint.html"]},
+     "variation": {"scale": 0.0, "rotation": 0.0}, "material": "key-polymer", "evidenceRefs": ["docs/device-blueprint.html"],
+     "notes": "Linear, but the generator lays repetition clusters out radially at the parent centre; the tabs are real components (tab-01..04) and walletRefine hides the stand-in cluster."},
 ]
 
 # ---------------------------------------------------------------- framing / evidence
@@ -364,6 +393,7 @@ s["referenceCamera"]["note"] = "Form-factor review uses a front three-quarter ca
 s["assumptions"] = [
     "Thickness 0.15 W (refs 1/3 suggest 0.14-0.16 W) and a flat back are design decisions (single-view limit).",
     "USB-C port centred on the bottom edge (design change 7); control side profiles authored from docs/device-blueprint.html v0.3.",
+    "DC-2 (2026-09-28): taller numbered tabs, more exposed roller, Device/List view switch and a +X card-reader slot were added after the site review; they change the top silhouette by 0.05 W.",
     "Controls, colour/material/finish and branding intentionally differ from the reference (docs/device-design.md); reviews score form factor against the photo and everything else against the blueprint.",
 ]
 s["risks"] = [
@@ -380,12 +410,13 @@ s["lightingFromPhoto"] = [
 ]
 s["animationAnchors"] = [
     "shell root: scroll-driven pose (yaw/pitch/position) per section",
-    "tab-01..04: press -Y 0.012 W; active tab champagne",
+    "tab-01..04: press -Y 0.02 W; active tab champagne; click selects that section",
     "roller: rotate about Z, 5° per list step (one knurl)",
     "key-confirm: press -Z 0.004 W; led ring emissive 0.15 → 2.2 over the hold",
     "key-back: press -Z 0.003 W",
-    "switch-motion: slide ±0.03 W along Y",
-    "contact-card: slide out -Z then rotate to face camera",
+    "switch-view: slide ±0.045 W along Y (up = device view, down = list view)",
+    "contact-card: enters the card-slot along -X (short edge first, 0.5 W), ejects along +X, then turns to face the camera",
+    "card-slot reader LED: blinks while reading, holds when written",
     "keychain-anchor socket: src/device/keychain.ts",
 ]
 s["lookDevTargets"]["qualityPriority"] = "balanced"
@@ -409,7 +440,10 @@ s["featureReviewTargets"] = [
      "passIds": ["blockout", "structural-pass"], "minimumScore": 0.8, "mustPass": True, "componentRefs": ["front-glass", "display"], "evidenceRefs": ["front-ortho"]},
     {"id": "control-set", "name": "Controls placed per blueprint (tabs, roller, keys, switch)", "tier": "critical",
      "passIds": ["structural-pass", "form-refinement"], "minimumScore": 0.8, "mustPass": True,
-     "componentRefs": ["tab-01", "tab-02", "tab-03", "tab-04", "roller", "key-confirm", "key-back", "switch-motion"], "evidenceRefs": ["blueprint"]},
+     "componentRefs": ["tab-01", "tab-02", "tab-03", "tab-04", "roller", "key-confirm", "key-back", "switch-view"], "evidenceRefs": ["blueprint"]},
+    {"id": "control-affordances", "name": "Controls say what they do: tab numerals, roller arrows, view-switch icons, card slot", "tier": "critical",
+     "passIds": ["surface-pass"], "minimumScore": 0.8, "mustPass": True,
+     "componentRefs": ["tab-01", "tab-02", "tab-03", "tab-04", "roller", "switch-view", "card-slot"], "evidenceRefs": ["blueprint"]},
     {"id": "reference-material-system", "name": "Iridescent shell, black glass, e-ink, champagne accents", "tier": "critical",
      "passIds": ["material-pass", "surface-pass"], "minimumScore": 0.75, "mustPass": True,
      "componentRefs": ["shell", "front-glass", "display", "key-confirm"], "evidenceRefs": ["blueprint", "full-object"]},
@@ -417,6 +451,49 @@ s["featureReviewTargets"] = [
      "passIds": ["form-refinement", "surface-pass"], "minimumScore": 0.65, "mustPass": False,
      "componentRefs": ["port", "lanyard-slot", "back-plate"], "evidenceRefs": ["blueprint"]},
 ]
+
+# DC-2: the numerals moved from the rail onto each tab's face; the new affordance details are
+# inventoried so each maps to a localFeature (no prose-only details).
+_di = s["preSpecAssessment"]["detailInventory"]["details"]
+for d in _di:
+    if d["id"] == "tab-numerals":
+        d["description"] = "01-04 engraved on the front face of each top-edge tab (DC-2)"
+        d["mapsTo"] = {"type": "component.localFeatures", "ref": "tab-01/numeral"}
+_known = {d["id"] for d in _di}
+for did, kind, desc, ref in [
+    ("roller-arrows", "linework", "▲ ▼ marks above and below the roller on the -X face", "shell/roller-arrows"),
+    ("switch-icons", "linework", "Device glyph and list glyph at the ends of the view-switch slot", "shell/switch-icons"),
+    ("card-slot-mouth", "hole", "Card reader mouth with champagne lip on the +X face", "card-slot/mouth"),
+    ("card-reader-led", "emissive", "Status LED dot above the card slot", "card-slot/reader-led"),
+]:
+    if did not in _known:
+        _di.append({"id": did, "kind": kind, "description": desc, "region": {"x": 0, "y": 0, "width": 0, "height": 0, "units": "normalized"},
+                    "scale": "micro", "affects": "albedo", "mapsTo": {"type": "component.localFeatures", "ref": ref},
+                    "evidenceRef": "docs/device-design.md#10", "confidence": 0.9, "realization": "unreported"})
+
+# ---------------------------------------------------------------- surface pass (DC-2): per-part relief
+# What the surface pass realises in src/device/walletRefine.ts: engraved glyphs are bump maps (canvas,
+# from deanfi.svg paths or type), recesses are dark occlusion decals, ridges are real geometry.
+SURFACE = {
+    "shell": dict(microRoughness=0.03, normalPattern="none on the finish; engraved ▲▼ roller marks and view-switch glyphs are 0.001 W deep decals on the side bands",
+                  occlusionPattern="dark recess decals behind roller, switch and card slot (cavity read without real holes)", bumpAmplitude=0.001),
+    "back-plate": dict(bumpAmplitude=0.004, displacementPattern="raised D-star emboss (0.004 W extrude, bevelled)",
+                       normalPattern="engraved DEAN STUDIO text (alpha decal)", microRoughness=0.04),
+    "key-confirm": dict(bumpAmplitude=0.0016, normalPattern="engraved D-star cap face (coin face bump map)", microRoughness=0.02),
+    "key-back": dict(bumpAmplitude=0.0014, normalPattern="engraved chevron glyph (blurred canvas bump map)", microRoughness=0.03),
+    "roller": dict(displacementPattern="72 knurl ridges as instanced geometry every 5°", normalPattern="ridge edges catch the rim light", microRoughness=0.02),
+    "switch-view": dict(displacementPattern="three horizontal grip ridges on the +X face", microRoughness=0.03),
+    "card-slot": dict(occlusionPattern="mouth reads as a deep dark cavity; champagne lip catches light", bumpAmplitude=0.0),
+    "contact-card": dict(bumpAmplitude=0.0012, microRoughness=0.12, normalPattern="seeded soft-touch grain; star marks raised, engraving recessed",
+                         occlusionPattern="engraved letters darker in the cavity"),
+}
+for i in range(1, 5):
+    SURFACE[f"tab-0{i}"] = dict(bumpAmplitude=0.0012, normalPattern=f"engraved '0{i}' on the +Z face (canvas type decal)", microRoughness=0.03)
+for c in s["componentTree"]:
+    extra = SURFACE.get(c["id"])
+    if extra:
+        c["surfaceDetail"].update(extra)
+        c["surfaceDetail"]["notes"] = "Surface pass DC-2, realised in src/device/walletRefine.ts"
 
 P.write_text(json.dumps(s, indent=2, ensure_ascii=False), encoding="utf-8")
 print("spec authored:", len(C), "components,", len(s["materials"]), "materials")

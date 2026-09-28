@@ -261,6 +261,27 @@ def s_swish():  # card swinging out or being put away: power2.out, fastest first
     return edges(air(speed, q=1.2))
 
 
+def s_insert():  # key card pushed into the side reader: card-stock friction rising, then the latch
+    d = 0.42
+    x = zeros(d)
+    t = tt(0.3)
+    fr = bp(noise(0.3), 1800, 6500) * (0.25 + 0.75 * (t / 0.3) ** 1.3) * (1 + 0.3 * np.sin(2 * np.pi * 31 * t))
+    place(x, edges(norm(fr), fin=0.01, fout=0.008), 0, 0.45)
+    latch = click([(2800, 0.006, 1.0), (4500, 0.004, 0.6), (1300, 0.012, 0.5)], 0.1, tr=(0.0015, 2500, 12000), tr_amp=0.9, thump=(260, 0.012, 0.6))
+    place(x, latch, 0.3)
+    return edges(x)
+
+
+def s_eject():  # reader spring pushes the written key back out: a soft thunk, then a short slide
+    d = 0.4
+    x = zeros(d)
+    place(x, click([(320, 0.02, 1.0), (1200, 0.01, 0.5), (2600, 0.005, 0.3)], 0.12, tr=(0.002, 400, 5000), tr_amp=0.5), 0)
+    t = tt(0.3)
+    fr = bp(noise(0.3), 1600, 6000) * (1 - t / 0.3) ** 1.6
+    place(x, edges(norm(fr), fin=0.004, fout=0.01), 0.02, 0.35)
+    return edges(x)
+
+
 def s_tap():  # card meets the back plate: metal shell ring + card thump
     return click([(1350, 0.035, 1.0), (2700, 0.022, 0.6), (4100, 0.014, 0.45), (5600, 0.009, 0.3)], 0.22,
                  tr=(0.0015, 1200, 12000), tr_amp=1.0, thump=(240, 0.018, 0.9))
@@ -304,6 +325,7 @@ SOUNDS = {
     "tick": (s_tick, -21), "tab": (s_tab, -15), "key": (s_key, -14), "bump": (s_bump, -13),
     "switch": (s_switch, -15), "eink": (s_eink, -26), "write": (s_write, -22), "open": (s_open, -17),
     "close": (s_close, -20), "whoosh": (s_whoosh, -15), "swish": (s_swish, -18), "tap": (s_tap, -9),
+    "insert": (s_insert, -13), "eject": (s_eject, -14),
     "verified": (s_verified, -14),
     "jingle": (s_jingle, -12), "clink": (s_clink, -12), "boot": (s_boot, -14),
 }

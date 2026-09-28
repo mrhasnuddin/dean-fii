@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "checks": {
+    "silhouetteIoU": 0.9475,
+    "aspectRatioDelta": 0.0522,
+    "scaleDelta": 0.0119,
+    "bilateralSymmetryError": 0.1378,
+    "colorDelta": {
+      "checked": 18,
+      "maxDeltaE": 23.75,
+      "perComponent": [
+        {
+          "componentId": null,
+          "deltaE": 8.86
+        },
+        {
+          "componentId": null,
+          "deltaE": 6.23
+        },
+        {
+          "componentId": null,
+          "deltaE": 1.88
+        },
+        {
+          "componentId": null,
+          "deltaE": 8.86
+        },
+        {
+          "componentId": null,
+          "deltaE": 23.75
+        },
+        {
+          "componentId": null,
+          "deltaE": 23.75
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.83
+        },
+        {
+          "componentId": null,
+          "deltaE": 23.75
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.67
+        },
+        {
+          "componentId": null,
+          "deltaE": 23.75
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.83
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.83
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.83
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.83
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.67
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.67
+        },
+        {
+          "componentId": null,
+          "deltaE": 7.67
+        },
+        {
+          "componentId": null,
+          "deltaE": 2.33
+        }
+      ],
+      "gated": true
+    }
+  },
+  "failures": [
+    "aspect-ratio delta 0.052 exceeds threshold 0.05",
+    "max per-part color delta-E 23.75 exceeds threshold 20.0"
+  ],
+  "maskWarnings": [],
+  "renderHash": "37c1811712aa1f66",
+  "passId": "surface-pass"
+}

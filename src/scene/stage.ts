@@ -1,7 +1,8 @@
-// The fixed 3D stage: renderer + CSS3D layer, dark studio environment, the wallet (rig → tilt →
-// actor → wallet.root), keychain, key card, the e-ink screen and the card's written details.
-// `rig` is posed by scroll (choreography); `tilt` follows the cursor, floats, and carries the intro;
-// `actor` holds transient offsets (contact sequence, recoil). No two systems share a transform.
+// The fixed 3D stage: renderer + CSS3D layer, dark studio environment, the wallet (rig → pose →
+// tilt → actor → wallet.root), keychain, key card, the e-ink screen and the card's written details.
+// `rig` is posed by scroll (Hero ↔ Console); `pose` holds the section move (choreography); `tilt`
+// follows the cursor, floats, and carries the intro; `actor` holds transient offsets (contact
+// sequence, recoil). No two systems share a transform.
 import * as THREE from 'three';
 import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { createWallet, type Wallet } from '../device/wallet';
@@ -20,6 +21,7 @@ export interface Stage {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   rig: THREE.Group;
+  pose: THREE.Group;
   tilt: THREE.Group;
   actor: THREE.Group;
   /** Intro offsets (tweened to 0 as the loader lifts): drop in W, turn in rad, scale delta. */
@@ -30,6 +32,8 @@ export interface Stage {
   hold(on: boolean): void;
   /** Resolves once shaders are compiled and the first frame is on screen. */
   ready: Promise<void>;
+  /** Run or pause the render loop (list view pauses it: no 3D is shown). */
+  setActive(on: boolean): void;
   wallet: Wallet;
   keychain: Keychain;
   card: KeyCard;
@@ -75,11 +79,14 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
 
   const rig = new THREE.Group();
   rig.name = 'wallet-rig';
+  const pose = new THREE.Group();
+  pose.name = 'wallet-pose';
   const tilt = new THREE.Group();
   tilt.name = 'wallet-tilt';
   const actor = new THREE.Group();
   actor.name = 'wallet-actor';
-  rig.add(tilt);
+  rig.add(pose);
+  pose.add(tilt);
   tilt.add(actor);
   scene.add(rig);
   const wallet = createWallet({ envMap: env, tier: gpuTier(renderer) });
@@ -126,7 +133,7 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
     // screen (phones bring the card forward over the wallet), hide the screen's HTML.
     if (card.group.visible && cssScreen.element.style.visibility === '') {
       const a = projectedRect(wallet.screenSocket, 0.4, 0.53);
-      const b = projectedRect(card.group, CARD.size / 2, CARD.size / 2);
+      const b = projectedRect(card.group, CARD.w / 2, CARD.h / 2);
       const overlap = a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
       if (overlap && b.depth < a.depth) cssScreen.element.style.visibility = 'hidden';
     }
@@ -206,6 +213,13 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
   let resolveReady: () => void = () => {};
   const ready = new Promise<void>((r) => (resolveReady = r));
   let frames = 0;
+  let compiled = false;
+  let active = true;
+  // One place decides whether frames run: compiled, visible, and not paused by the list view.
+  const loop = () => {
+    renderer.setAnimationLoop(compiled && active && !document.hidden ? frame : null);
+    clock.getDelta();
+  };
   function frame() {
     const dt = Math.min(clock.getDelta(), 0.1);
     followStep(dt);
@@ -231,20 +245,25 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
         performance.mark('stage:compiled');
         scene.add(card.group);
         clock.getDelta();
-        if (!document.hidden) renderer.setAnimationLoop(frame);
+        compiled = true;
+        loop();
         return ready.then(() => renderer.compileAsync(scene, camera)).catch(() => {});
       });
   });
   // Pause rendering while the tab is hidden; resume without a time jump (keychain re-hangs on big dt).
   document.addEventListener('visibilitychange', () => {
-    renderer.setAnimationLoop(document.hidden ? null : frame);
+    loop();
     clock.getDelta();
   });
 
   const stage: Stage = {
-    renderer, scene, camera, rig, tilt, actor, wallet, keychain, card, screen, label, intro, ready,
+    renderer, scene, camera, rig, pose, tilt, actor, wallet, keychain, card, screen, label, intro, ready,
     follow: (on) => (followOn = on),
     hold: (on) => (held = on),
+    setActive(on) {
+      active = on;
+      loop();
+    },
     halfWidthAt: (z) => Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect * (camera.position.z - z),
     onFrame: (cb) => frameCbs.push(cb),
     onResize: (cb) => resizeCbs.push(cb),

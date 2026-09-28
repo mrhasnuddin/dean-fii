@@ -137,7 +137,7 @@ The page scroll is **never** captured. The roller only responds to wheel input w
 
 This is not legal advice. The changes above are meant to make the device clearly Dean's own design, not to guarantee that no trade-dress claim is possible.
 
-## 8. Contact: NFC key tap (built 2026-09-27, lab `lab/contact.html`; card revised the same day)
+## 8. Contact: NFC key tap (built 2026-09-27; superseded 2026-09-28 by the card reader, §10)
 
 **Object:** Dean's key card (`src/device/keyCard.ts`), 0.81 × 0.81 × 0.02 W. It follows the recovery-key card language but uses Dean's branding.
 - **Surface:** charcoal matte soft-touch (#2a2b30, roughness ≈0.86, faint sheen, seeded grain).
@@ -179,3 +179,32 @@ This is not legal advice. The changes above are meant to make the device clearly
 **Loader (`index.html`, inline):** the D rises out of a mask like set type (760 ms, strong ease-out), the sparkle appears (from 0.5 scale + fade, slight overshoot), then twinkles (quarter turn + breath, 1.8 s cycle) until the page is ready. Transform/opacity only on separate elements, so it is composited and stays smooth while three.js is parsed and shaders compile. It is CSS rather than GSAP on purpose: it has to run before the 250 KB bundle arrives. It lifts after at least 1.35 s (the mark completes), once fonts, shader compile and the first frame are done (8 s cap). The wallet then rises and turns in underneath it (1.4 s expo out, most of the travel inside the 420 ms fade). Reduced motion: a still mark and a fade.
 
 **Load cost measured (RTX 3060, ANGLE D3D11):** shader compile was the loader's wait: 13 programs, 3.85 s. Plain `MeshPhysicalMaterial`s without physical features (champagne, keychain, card edge, cap faces) became `MeshStandardMaterial` (identical at IOR 1.5; they now share programs), and the key card compiles in the background after the loader: 2.2 s. Repeat loads in the test browser were not faster, so no shader cache is assumed.
+
+## 10. Button-driven site + device revision DC-2 (2026-09-28, Dean's review)
+
+**Why:** the scroll storyline made the device's buttons redundant, and they were too small to hit (measured at 1440×900: top tabs 225–650 px², side switch 0–125 px², against a ~1,900 px² (44 × 44) target).
+
+**Structure (Contra's model):** Hero → Console, and the page ends there. The footer was removed the same day at Dean's request: it cut the viewport in half and broke the device's frame (on phones, Share moved beside the Contact button). Scroll only moves between the Hero (three-quarter pose) and the Console (the wallet faces you, tipped back so the tabs read); if a scroll settles in between, it finishes the move in the direction it was going. In the Console the section is chosen by the wallet's top tabs, the on-page tab bar (an accessible `tablist`, and the thumb control on phones), keys 1–4, the screen's softkeys, or a deep link (`#/work`, `#/stage`, `#/contact`; detail links also select their section). The page title (bottom-left) and text (bottom-right) cross-fade with the section. Each section has a short device move (yaw 0.55 s, interruptible); About spins once per page view.
+
+**Every control has a job:**
+
+| Control | Job | Hit area now (1440×900) |
+|---|---|---|
+| Top tabs 01–04 (0.08 W tall, numerals engraved) | Works / Chronicle / About / Contact. The screen's top row labels each tab right under it (softkeys) | 2,880–4,300 px² |
+| Roller (0.05 W proud, ▲▼ marks) | Browse the list | 4,656 px² |
+| ✓ / Back | Open / close | 1,700–3,400 px² |
+| Side switch (Device ↔ List icons) | List view (same as the bottom-right switch) | 3,680 px² |
+| Card slot (right side, lip + reader LED) | The Contact payoff | — |
+| Keychain coin (now Ø 0.17 W, the ✓ key's size; 2 links) | Back to the top | — |
+
+Invisible hit boxes parented to the small controls give those areas; the nearest-hit rule keeps the glass and screen winning where they are in front. The wallet holds still while the pointer is on it.
+
+**Card reader (Contact):** a blank key (bank-card ratio, 0.86 × 0.54 W) flies to the right-side slot as the wallet turns its reader toward you, slides in and latches (recoil, LED), the screen writes the details (printhead ticks), the card ejects on the reader's spring and floats out beside the wallet with the details written (phones: in front). Sounds: whoosh, insert, write ×4, eject, verified, swish. Put away 0.4 s.
+
+**List view:** the whole portfolio as a plain page (works grid, chronicle, About, contact card), same routes; 3D paused. Chosen with the bottom-right Device / List switch or the wallet's side switch; remembered; automatic without WebGL.
+
+**Preferences:** Sound and Motion are animated icon buttons. Sound: a level meter that breathes slowly and jumps while a sound plays; flat when off. Motion: a dot orbiting its ring (6 s); parked, ring dashed, when off. Both hold still when motion is off or reduced.
+
+**img2threejs:** DC-2 is recorded in the spec (author_spec.py constants, card-slot component, switch-view, detail inventory, per-part surfaceDetail) and built as the surface pass (`src/device/generated/walletSurfacePass.ts` + walletRefine). Review recorded as request-input: Tier-1 IoU 0.9475, scale 0.012, multi-angle clean; aspect delta 0.052 > 0.05 is the approved taller tabs, and the per-part colour limit is the one already accepted on the material pass. The generator's radial repetition stand-ins are hidden (one showed as a block mid-rail).
+
+**Copy (2026-09-28):** the About bio is Dean's own text, lightly edited for flow with nothing added: "UI/UX designer, frontend developer (vibe coding) and creative designer, focused on user interfaces, landing pages and frontend builds that are easy to understand." / "An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics." Site copy refers to Dean by name, never by pronoun.

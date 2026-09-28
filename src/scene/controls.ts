@@ -1,5 +1,6 @@
-// Physical controls on the wallet + keyboard. Every control maps to one job (docs/device-design.md §2):
-// tabs 01–04 → sections · roller → browse · ✓ → open · Back → close · switch → motion · coin → top.
+// Physical controls on the wallet + keyboard. Every control maps to one job (docs/device-design.md §2, §10):
+// tabs 01–04 → sections · roller → browse · ✓ → open · Back → close · side switch → Device / List view ·
+// coin → top.
 // The wheel turns the roller only while the pointer is over the wallet and the list can still move;
 // at a list end the wheel scrolls the page (no scroll trap).
 import * as THREE from 'three';
@@ -9,19 +10,20 @@ import { motion } from '../motion';
 import { sfx } from '../audio/sfx';
 
 export interface ControlHandlers {
-  gotoSection(index: number): void; // 1–4
+  selectTab(index: number): void; // 1–4
   roll(delta: number): boolean; // returns false at a list end
   canRoll(delta: number): boolean; // would roll(delta) move the selection?
   confirm(): void;
   back(): void;
-  toggleMotion(): void;
+  toggleView(): void;
   toTop(): void;
 }
 
 export interface Controls {
   /** Lenis asks this before scrolling on a wheel event. */
   wheelConsumed(): boolean;
-  setMotionSwitch(on: boolean): void;
+  /** Knob up = device view, down = list view. */
+  setViewSwitch(list: boolean): void;
 }
 
 export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: ControlHandlers): Controls {
@@ -35,9 +37,33 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     { id: 'roller', obj: meshes['roller'] },
     { id: 'key-confirm', obj: meshes['key-confirm'] },
     { id: 'key-back', obj: meshes['key-back'] },
-    { id: 'switch-motion', obj: meshes['switch-motion'] },
+    { id: 'switch-view', obj: meshes['switch-view'] },
     { id: 'coin', obj: keychain.coin },
   ].filter((p) => p.obj);
+
+  // Hit areas: invisible boxes parented to the small controls (so they press/slide with them) make
+  // every target at least ~44 px on a laptop screen. The raycaster ignores `visible`, the renderer
+  // doesn't draw them; the nearest-hit rule below still lets the body and screen win where they are
+  // in front (a proxy never steals a click from the glass).
+  const proxyMat = new THREE.MeshBasicMaterial();
+  const proxy = (id: string, size: [number, number, number], at: [number, number, number]) => {
+    const mesh = meshes[id];
+    if (!mesh) return;
+    const p = new THREE.Mesh(new THREE.BoxGeometry(...size), proxyMat);
+    p.name = `${id}-hit`;
+    p.position.set(...at);
+    p.visible = false;
+    mesh.add(p);
+  };
+  for (const id of ['tab-01', 'tab-02', 'tab-03', 'tab-04']) proxy(id, [0.15, 0.15, 0.13], [0, 0.03, 0]);
+  proxy('switch-view', [0.1, 0.22, 0.14], [0.03, 0, 0]);
+  // The roller disc is Y-up in its mesh frame (the node turns it to face ±Z); a slightly larger disc.
+  if (meshes['roller']) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.12, 24), proxyMat);
+    p.name = 'roller-hit';
+    p.visible = false;
+    meshes['roller'].add(p);
+  }
 
   // Raycast the whole wallet + keychain and take the NEAREST hit, then walk up to a part: the roller
   // disc sits mostly inside the body, so testing parts alone would let clicks on the screen hit it.
@@ -88,7 +114,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     if (!hit) return;
     switch (hit.id) {
       case 'tab-01': case 'tab-02': case 'tab-03': case 'tab-04':
-        h.gotoSection(Number(hit.id.slice(-1)));
+        h.selectTab(Number(hit.id.slice(-1)));
         break;
       case 'roller': {
         // Upper half of the exposed rim steps back, lower half steps forward. At a list end the
@@ -107,8 +133,8 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         sfx.play('key', { rate: 0.82 }); // same mechanism as ✓, pitched down: going back sounds like it
         h.back();
         break;
-      case 'switch-motion':
-        h.toggleMotion();
+      case 'switch-view':
+        h.toggleView();
         break;
       case 'coin':
         keychain.nudge(1.2);
@@ -158,7 +184,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     const t = e.target as HTMLElement;
     if (t.closest('input, textarea, select, dialog, [contenteditable]')) return;
     if (/^[1-4]$/.test(e.key)) {
-      h.gotoSection(Number(e.key));
+      h.selectTab(Number(e.key));
       e.preventDefault();
     } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !t.closest('a, button')) {
       if (roll(e.key === 'ArrowDown' ? 1 : -1)) e.preventDefault();
@@ -168,14 +194,14 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     }
   });
 
-  // Motion switch knob: up = motion on, down = off.
-  const knob = nodes['switch-motion'];
-  const knobRest = knob?.position.y ?? 0;
+  // View switch knob: rests up (device view); down 0.09 W = list view (±0.045 W about the slot centre).
+  const knob = nodes['switch-view'];
+  const knobUp = knob?.position.y ?? 0;
   return {
     wheelConsumed: () => consumed,
-    setMotionSwitch(on) {
+    setViewSwitch(list) {
       if (!knob) return;
-      gsap.to(knob.position, { y: knobRest + (on ? 0.015 : -0.015), duration: motion.reduced() ? 0 : 0.2, ease: 'power2.out' });
+      gsap.to(knob.position, { y: knobUp - (list ? 0.09 : 0), duration: motion.reduced() ? 0 : 0.18, ease: 'power2.out' });
     },
   };
 }

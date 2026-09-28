@@ -24,7 +24,8 @@ body { margin: 0; background: var(--bg); color: var(--ink-light); font: 400 16px
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.sr { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#live { position: fixed; top: 0; left: 0; } /* never extends the page: the Console is its end */
 .skip { position: fixed; left: 12px; top: 12px; z-index: 50; transform: translateY(-160%); background: var(--champagne); color: #111; padding: 10px 14px; border-radius: 999px; font-weight: 600; text-decoration: none; }
 .skip:focus-visible { transform: none; outline: 2px solid var(--champagne-light); outline-offset: 3px; }
 
@@ -55,20 +56,49 @@ html.lenis, html.lenis body { height: auto; }
   .share:hover { color: var(--champagne-light); }
 }
 
-/* ---------- preferences (sound, motion): bottom-right ---------- */
-.prefs { position: fixed; z-index: 10; right: var(--gutter); bottom: 24px; display: flex; gap: 8px; }
-.pill { display: inline-flex; align-items: center; gap: 7px; font: 500 13px/1 var(--font-ui); color: var(--ink-light); background: rgb(236 232 223 / 0.06); border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; cursor: pointer; backdrop-filter: blur(10px); transition: background-color 160ms ease, border-color 160ms ease, transform 160ms var(--ease-out); }
-.pill[aria-pressed='true'] { border-color: var(--champagne); color: var(--champagne); }
-.pill:active { transform: scale(0.97); }
-.pill-icon { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.pill[aria-pressed='false'] .pill-on { display: none; } /* sound waves / speed lines only while on */
-@media (hover: hover) and (pointer: fine) { .pill:hover { background: rgb(236 232 223 / 0.1); } }
-:is(.pill, .brand, .cta, .share, .section a):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+/* ---------- bottom-right: Device / List switch, then Sound and Motion as animated icons ---------- */
+.prefs { position: fixed; z-index: 10; right: var(--gutter); bottom: 22px; display: flex; align-items: center; gap: 10px; }
+.view-switch { display: inline-flex; align-items: center; gap: 10px; background: none; border: 0; padding: 8px 4px; color: var(--muted); font: 500 12px/1 var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
+.vs-track { position: relative; width: 44px; height: 24px; border-radius: 999px; border: 1px solid var(--champagne); background: rgb(228 207 159 / 0.08); }
+.vs-track i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--champagne-light); transition: transform 200ms var(--ease-out); }
+.view-switch[aria-checked='true'] .vs-track i { transform: translateX(20px); }
+.view-switch[aria-checked='false'] .vs-device, .view-switch[aria-checked='true'] .vs-list { color: var(--champagne); }
+.icon-btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: rgb(236 232 223 / 0.05); color: var(--muted); cursor: pointer; backdrop-filter: blur(10px); transition: border-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out); }
+.icon-btn[aria-pressed='true'] { border-color: var(--champagne); color: var(--champagne); }
+.icon-btn:active, .view-switch:active .vs-track { transform: scale(0.95); }
+/* Sound: a level meter. On, the bars breathe slowly; while a sound is actually playing they jump
+   (main.ts adds .is-playing for a moment per sound), so the liveliness means something. Off: flat. */
+.eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+.eq i { width: 3px; height: 14px; border-radius: 2px; background: currentColor; transform-origin: bottom; transform: scaleY(0.18); transition: transform 200ms var(--ease-out); }
+.icon-btn[aria-pressed='true'] .eq i { animation: eq 2.6s ease-in-out infinite alternate; }
+.icon-btn[aria-pressed='true'] .eq i:nth-child(2) { animation-duration: 2.1s; animation-delay: -0.7s; }
+.icon-btn[aria-pressed='true'] .eq i:nth-child(3) { animation-duration: 3s; animation-delay: -1.4s; }
+.icon-btn[aria-pressed='true'] .eq i:nth-child(4) { animation-duration: 2.3s; animation-delay: -0.4s; }
+.icon-btn.is-playing[aria-pressed='true'] .eq i { animation-name: eq-live; animation-duration: 0.32s; }
+.icon-btn.is-playing[aria-pressed='true'] .eq i:nth-child(2) { animation-duration: 0.26s; }
+.icon-btn.is-playing[aria-pressed='true'] .eq i:nth-child(3) { animation-duration: 0.38s; }
+@keyframes eq { from { transform: scaleY(0.5); } to { transform: scaleY(0.9); } }
+@keyframes eq-live { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
+/* Motion: a dot orbiting its ring while motion is on; parked at the top, ring dashed, when off. */
+.orbit { position: relative; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid currentColor; }
+.orbit i { position: absolute; inset: -1.5px; border-radius: 50%; }
+.orbit i::after { content: ''; position: absolute; left: 50%; top: -3px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: currentColor; }
+.icon-btn[aria-pressed='true'] .orbit i { animation: orbit 6s linear infinite; }
+.icon-btn[aria-pressed='false'] .orbit { border-style: dashed; }
+@keyframes orbit { to { transform: rotate(1turn); } }
+/* Still icons when motion is off or reduced: the state reads from colour, fill and bar height. */
+html.motion-off .icon-btn .eq i, html.motion-off .icon-btn .orbit i { animation: none; }
+html.motion-off .icon-btn[aria-pressed='true'] .eq i:nth-child(odd) { transform: scaleY(0.6); }
+html.motion-off .icon-btn[aria-pressed='true'] .eq i:nth-child(even) { transform: scaleY(1); }
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn:hover { background: rgb(236 232 223 / 0.1); }
+  .view-switch:hover { color: var(--ink-light); }
+}
+:is(.icon-btn, .view-switch, .brand, .cta, .share, .section a, .tabbar button, .share-inline):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
 
 /* ---------- sections: title bottom-left, supporting text bottom-right ---------- */
 main { position: relative; z-index: 2; pointer-events: none; }
 .section { position: relative; min-height: 100svh; display: flex; align-items: flex-end; padding: 0 var(--gutter) var(--copy-bottom); }
-.section[data-section='works'], .section[data-section='chronicle'] { min-height: 130svh; }
 /* Copy overlaps the wallet (it is centred and large), so text never takes pointer events: every
    key, the roller and the touch screen stay clickable underneath. Only real controls opt back in. */
 .section-copy { position: sticky; bottom: var(--copy-bottom); width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; pointer-events: none; }
@@ -86,7 +116,38 @@ main { position: relative; z-index: 2; pointer-events: none; }
 .lede { margin: 0; color: #d8d3c9; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.45; }
 .hint { margin: 14px 0 0; font: 400 13px/1.5 var(--font-mono); color: var(--muted); }
 .hint kbd { font: inherit; color: var(--ink-light); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
-.copy-side .cta { margin-top: 20px; }
+.copy-side > .cta { margin-top: 20px; }
+
+/* Console: tab bar (mirrors the wallet's top tabs, and the thumb-sized control on phones), the
+   active section's big title bottom-left and its text bottom-right. Titles and panels share one grid
+   cell and cross-fade: the outgoing one leaves fast, the incoming one arrives just after. */
+.tabbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 20px; }
+.tabbar [role='tab'] { display: inline-flex; align-items: center; gap: 7px; font: 500 13px/1 var(--font-ui); color: var(--ink-light); background: rgb(236 232 223 / 0.05); border: 1px solid var(--line); border-radius: 999px; padding: 9px 13px; cursor: pointer; backdrop-filter: blur(10px); transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease; }
+.tabbar [role='tab'] b { font: 500 11px/1 var(--font-mono); color: var(--champagne); }
+.tabbar [aria-selected='true'] { background: var(--champagne); border-color: var(--champagne); color: #111; }
+.tabbar [aria-selected='true'] b { color: #111; }
+@media (hover: hover) and (pointer: fine) { .tabbar [aria-selected='false']:hover { border-color: var(--champagne); } }
+.titles, .panels { display: grid; align-items: end; }
+.panel-title, .panel { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 140ms var(--ease-out), transform 140ms var(--ease-out), visibility 0s linear 140ms; }
+.panel-title[data-active], .panel[data-active] { opacity: 1; visibility: visible; transform: none; transition: opacity 240ms var(--ease-out) 60ms, transform 240ms var(--ease-out) 60ms, visibility 0s; }
+.panel-title { margin: 0; font: 400 clamp(48px, 6.2vw, 112px)/0.92 var(--font-display); letter-spacing: -0.02em; text-wrap: balance; }
+
+/* Contact actions: the CTA, plus Share on phones (the header has no room for it there). */
+.panel-actions { display: flex; align-items: center; gap: 18px; margin-top: 20px; }
+.panel-actions .cta { margin-top: 0; }
+.share-inline { display: none; color: var(--champagne); background: none; border: 0; padding: 12px 2px; font: 500 15px/1 var(--font-ui); cursor: pointer; }
+
+/* Without smooth scroll (motion off), native snapping does the Hero ↔ Console settle instead. */
+html:not(.lenis) { scroll-snap-type: y proximity; }
+#hello, #console { scroll-snap-align: start; }
+
+/* List view: no 3D; the plain page replaces the Hero and the Console. */
+html.is-list .stage, html.is-list #hello, html.is-list #console { display: none; }
+/* Switching views: the incoming one fades in (no jarring swap). @starting-style covers display:none →
+   shown. The outgoing view leaves at once: it is display:none on the next frame. */
+.stage, .list-view { transition: opacity 220ms var(--ease-out); }
+@starting-style { .stage, .list-view:not([hidden]) { opacity: 0; } }
+.no-webgl .view-switch { display: none; }
 
 /* Scroll cue (hero only): a wheel capsule whose dot drops and fades now and then, then reappears. */
 .scroll-cue { display: inline-flex; align-items: center; gap: 12px; margin: 22px 0 0; font: 500 13px/1 var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-light); }
@@ -117,9 +178,16 @@ main { position: relative; z-index: 2; pointer-events: none; }
   .share { width: 40px; height: 40px; justify-content: center; border: 1px solid var(--line); border-radius: 50%; padding: 0; }
   .share-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .cta-head { padding: 12px 16px; font-size: 14px; }
-  .prefs { top: 14px; bottom: auto; right: auto; left: calc(var(--gutter) + 50px); }
-  .pill { width: 40px; height: 40px; padding: 0; justify-content: center; }
-  .pill-label, .pill [data-sound-label], .pill [data-motion-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  /* Header: brand + view switch + sound + motion on the left, the primary action on the right.
+     Share moves beside the Contact button here. */
+  .share { display: none; }
+  .share-inline { display: inline-block; }
+  .prefs { top: 14px; bottom: auto; right: auto; left: calc(var(--gutter) + 50px); gap: 8px; }
+  .view-switch { padding: 8px 0; }
+  .vs-opt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .tabbar { flex-wrap: nowrap; gap: 5px; }
+  .tabbar [role='tab'] { flex: 1; justify-content: center; padding: 11px 6px; font-size: 12px; min-height: 40px; }
+  .panel-title { font-size: clamp(42px, 12vw, 62px); }
   .copy-main, .copy-side { max-width: none; width: 100%; }
   .section h1 { font-size: clamp(52px, 15vw, 76px); }
   .section h2 { font-size: clamp(42px, 12vw, 62px); }
@@ -128,12 +196,13 @@ main { position: relative; z-index: 2; pointer-events: none; }
   .lede { font-size: 15px; }
   .scroll-cue { margin-top: 16px; font-size: 12px; }
   /* The key card comes forward over the copy: keep only the button readable. */
-  #contact .section-copy :is(.copy-main, .lede) { transition: opacity 200ms ease; }
-  #contact:is([data-card='running'], [data-card='ready']) .section-copy :is(.copy-main, .lede) { opacity: 0.08; }
+  #console .section-copy :is(.titles, .panel .lede) { transition: opacity 200ms ease; }
+  #console:is([data-card='running'], [data-card='ready']) .section-copy :is(.titles, .panel .lede) { opacity: 0.08; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pill, .cta { transition: background-color 160ms ease, opacity 160ms ease; }
-  .pill:active, .cta:active { transform: none; }
+  .icon-btn, .cta { transition: background-color 160ms ease, opacity 160ms ease; }
+  .icon-btn:active, .cta:active, .view-switch:active .vs-track { transform: none; }
+  .vs-track i, .panel-title, .panel { transition-property: opacity, visibility; }
   .cue-icon i { animation: none; }
 }
 

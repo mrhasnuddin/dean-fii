@@ -39,6 +39,7 @@ let gestured = false;
 let pending: { name: SfxName; o: PlayOptions; at: number } | null = null;
 const last = new Map<SfxName, number>();
 const subs: ((on: boolean) => void)[] = [];
+const playSubs: ((name: SfxName) => void)[] = [];
 
 const activated = () => gestured || navigator.userActivation?.hasBeenActive === true;
 
@@ -70,6 +71,7 @@ function start(name: SfxName, { rate = 1, volume = 1 }: PlayOptions) {
   const id = howl.play(name);
   howl.rate(rate * (1 + (Math.random() * 2 - 1) * spread), id);
   howl.volume(MASTER * Math.max(0, Math.min(1, volume)), id);
+  playSubs.forEach((cb) => cb(name));
 }
 
 function onGesture() {
@@ -113,5 +115,9 @@ export const sfx = {
   },
   subscribe(cb: (on: boolean) => void) {
     subs.push(cb);
+  },
+  /** Called whenever a sound actually starts (the header's level meter reacts to it). */
+  onPlay(cb: (name: SfxName) => void) {
+    playSubs.push(cb);
   },
 };

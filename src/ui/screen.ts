@@ -20,6 +20,7 @@ export type ScreenIntent =
   | { type: 'about' }
   | { type: 'contact' }
   | { type: 'channel'; channel: 'email' | 'whatsapp' | 'linkedin' }
+  | { type: 'tab'; tab: 'works' | 'chronicle' | 'about' | 'contact' }
   | { type: 'none' };
 
 export interface Screen {
@@ -47,14 +48,25 @@ const CHANNELS = [
   { id: 'linkedin', name: 'LinkedIn', detail: contact.linkedin.label },
 ] as const;
 const VISIBLE_ROWS = 6;
+// Softkey labels: the top row sits directly under the wallet's four top tabs (x in W from the spec's
+// TABS_X; the screen is 0.795 W = 360 px wide), so each label names the tab above it.
+const SOFTKEYS = [
+  { tab: 'works', x: -0.25 },
+  { tab: 'chronicle', x: -0.085 },
+  { tab: 'about', x: 0.085 },
+  { tab: 'contact', x: 0.25 },
+] as const;
+const PX_PER_W = 360 / 0.795;
 const IDLE_MS = 25_000;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
-const nfcGlyph = `
+// Card reader glyph: the wallet in profile with the key half inserted in its side slot; the arrow
+// blinks in e-ink steps.
+const readerGlyph = `
 <svg class="ek-nfc" viewBox="0 0 120 90" aria-hidden="true">
-  <rect x="8" y="22" width="44" height="58" rx="6" class="ek-nfc-wallet"/>
-  <rect x="62" y="30" width="38" height="38" rx="4" class="ek-nfc-card"/>
-  <path class="ek-arc a1" d="M58 40a14 14 0 0 1 0 18"/><path class="ek-arc a2" d="M54 33a24 24 0 0 1 0 32"/><path class="ek-arc a3" d="M50 26a34 34 0 0 1 0 46"/>
+  <rect x="10" y="6" width="46" height="78" rx="7" class="ek-nfc-wallet"/>
+  <rect x="44" y="38" width="58" height="22" rx="3" class="ek-nfc-card"/>
+  <path class="ek-arc a1" d="M114 49h-8m0 0 5-5m-5 5 5 5"/>
 </svg>`;
 
 export function createScreen(): Screen {
@@ -130,6 +142,13 @@ export function createScreen(): Screen {
     return items.slice(start, start + VISIBLE_ROWS).map((item, k) => ({ item, i: start + k }));
   }
 
+  function softkeys() {
+    return `<header class="ek-sb ek-soft">${SOFTKEYS.map(({ tab, x }, i) => {
+      const on = tab === current;
+      return `<span data-softkey="${tab}" class="${on ? 'on' : ''}" style="left:${(180 + x * PX_PER_W).toFixed(1)}px">0${i + 1}${on ? ` ${LABEL[tab]}` : ''}</span>`;
+    }).join('')}</header>`;
+  }
+
   function footer(left: string, mid: string, right: string) {
     return `<footer class="ek-ab"><span>${left}</span><span>${mid}</span><span class="ek-hold">${right}</span></footer>`;
   }
@@ -144,14 +163,14 @@ export function createScreen(): Screen {
           <svg class="sc-logo" viewBox="0 0 100 100" aria-hidden="true">${LOGO_PATHS.map((d) => `<path d="${d}"/>`).join('')}</svg>
           <p class="sc-kicker">DEAN STUDIO</p></section>`;
         break;
-      case 'hello': // home screen: the pixel D-star idles here
+      case 'hello': // home screen: the pixel D-star idles here (status bar only: no section yet)
         html = `${sb()}<section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>
           ${footer('01 Works', 'Scroll ↓', '04 Contact')}`;
         break;
       case 'works': {
         const sel = index.works;
         const p = projects[sel];
-        html = `${sb(`<span>${String(sel + 1).padStart(2, '0')}/${projects.length}</span>`)}
+        html = `${softkeys()}
           <section class="ek-view sc-list">
             <figure class="sc-well"><img src="${p.eink}" alt="" draggable="false"><figcaption>${esc(p.category)}</figcaption></figure>
             <ul class="ek-list sc-rows">${windowed(projects, sel)
@@ -163,7 +182,7 @@ export function createScreen(): Screen {
       case 'chronicle': {
         const sel = index.chronicle;
         const e = events[sel];
-        html = `${sb(`<span>${String(sel + 1).padStart(2, '0')}/${events.length}</span>`)}
+        html = `${softkeys()}
           <section class="ek-view sc-list">
             <figure class="sc-well"><img src="${e.eink}" alt="" draggable="false"><figcaption>${esc(countries[e.country].toUpperCase())} · ${e.country}</figcaption></figure>
             <ul class="ek-list sc-rows">${windowed(events, sel)
@@ -173,7 +192,7 @@ export function createScreen(): Screen {
         break;
       }
       case 'about':
-        html = `${sb()}<section class="ek-view sc-about">
+        html = `${softkeys()}<section class="ek-view sc-about">
           <div class="sc-id"><img class="sc-portrait" src="${profile.portrait.eink}" alt="" draggable="false"><p>${profile.roles.join('<br>')}</p></div>
           <p class="ek-grp">TOOLS</p><p class="sc-chips">${profile.toolGroups.flatMap((g) => g.tools).map((t) => `<span>${toolNames[t]}</span>`).join('')}</p>
           <p class="ek-grp">LANGUAGES</p><p class="sc-chips">${profile.languages.map((l) => `<span>${l.name}</span>`).join('')}</p></section>
@@ -181,14 +200,14 @@ export function createScreen(): Screen {
         break;
       case 'contact':
         if (contactState === 'prompt') {
-          html = `${sb()}<section class="ek-view sc-center">${nfcGlyph}<p class="ek-title">Contact Dean</p><p class="ek-sub">Press ✓ and Dean’s key will tap in.</p></section>
-            ${footer('‹ Back', '—', 'or press ✓')}`;
+          html = `${softkeys()}<section class="ek-view sc-center">${readerGlyph}<p class="ek-title">Contact Dean</p><p class="ek-sub">Press ✓ and Dean’s key goes into the reader.</p></section>
+            ${footer('‹ Back', '—', 'Insert ✓')}`;
         } else if (contactState === 'reading') {
-          html = `${sb()}<section class="ek-view sc-center sc-reading"><p class="ek-title">Reading key…</p><div class="ek-bar"><i></i></div><p class="ek-sub">Keep it close.</p></section>
+          html = `${softkeys()}<section class="ek-view sc-center sc-reading"><p class="ek-title">Writing details…</p><div class="ek-bar"><i></i></div><p class="ek-sub">Keep the key in.</p></section>
             ${footer('‹ Back', '—', '…')}`;
         } else {
           const sel = index.contact;
-          html = `${sb()}<section class="ek-view sc-list"><p class="ek-title">Key verified <span aria-hidden="true">✓</span></p><p class="ek-grp">SEND VIA</p>
+          html = `${softkeys()}<section class="ek-view sc-list"><p class="ek-title">Key written <span aria-hidden="true">✓</span></p><p class="ek-grp">SEND VIA</p>
             <ul class="ek-list">${CHANNELS.map((c, i) => `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${c.name}</span><small>${esc(c.detail)}</small></li>`).join('')}</ul></section>
             ${footer('‹ Back', `${sel + 1} of 3`, 'Open ✓')}`;
         }
@@ -216,6 +235,8 @@ export function createScreen(): Screen {
   }
 
   el.addEventListener('click', (e) => {
+    const soft = (e.target as HTMLElement).closest<HTMLElement>('[data-softkey]');
+    if (soft) return intentCb({ type: 'tab', tab: soft.dataset.softkey as (typeof SOFTKEYS)[number]['tab'] });
     const row = (e.target as HTMLElement).closest<HTMLElement>('[data-index]');
     const key = listKey();
     if (!row || !key) {

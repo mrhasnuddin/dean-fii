@@ -1,160 +1,200 @@
-// Scroll choreography: each section has a wallet pose; scrolling between sections interpolates the
-// rig (GSAP ScrollTrigger, scrubbed). Entering a section presses its tab, swaps the screen mode.
-// Chronicle → About spins the wallet once, showing the D-star on the back as About arrives.
+// Button-driven choreography (docs/device-design.md §10). The page has two places: the Hero (the
+// wallet at a three-quarter angle) and the Console (the wallet facing you, pinned while the page
+// text follows it). Scroll only moves between the two; inside the Console the wallet's own top tabs
+// (and keys 1–4, the on-page tab bar, deep links) choose the section, and each section has its own
+// short device move. Layers: `rig` = scroll pose, `pose` = section move, then tilt/actor (stage.ts).
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Stage } from './stage';
-import type { ScreenMode } from '../ui/screen';
 import { CARD } from '../device/keyCard';
 import { motion } from '../motion';
 import { sfx } from '../audio/sfx';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const SECTIONS = ['hello', 'works', 'chronicle', 'about', 'contact'] as const;
-export type SectionId = (typeof SECTIONS)[number];
+export const TABS = ['works', 'chronicle', 'about', 'contact'] as const;
+export type TabId = (typeof TABS)[number];
+export type Place = 'hero' | 'console';
 
 type Pose = { x: number; y: number; z: number; rx: number; ry: number; rz: number };
-const CARD_W = CARD.size;
-const TAB_FOR: Partial<Record<SectionId, string>> = { works: 'tab-01', chronicle: 'tab-02', about: 'tab-03', contact: 'tab-04' };
+const TAB_MESH: Record<TabId, string> = { works: 'tab-01', chronicle: 'tab-02', about: 'tab-03', contact: 'tab-04' };
 // Tab click pitch rises 01 → 04 (D, E, F♯, A), so the sound tells you where you are.
-const TAB_RATE: Partial<Record<SectionId, number>> = { works: 1, chronicle: 2 ** (2 / 12), about: 2 ** (4 / 12), contact: 2 ** (7 / 12) };
+const TAB_RATE: Record<TabId, number> = { works: 1, chronicle: 2 ** (2 / 12), about: 2 ** (4 / 12), contact: 2 ** (7 / 12) };
+// Section moves (yaw, on top of the Console pose). Works faces you; Chronicle turns a little;
+// About spins once to show the D-star on the back; Contact turns its right side (the card reader) in.
+const TAB_YAW: Record<TabId, number> = { works: 0.08, chronicle: -0.14, about: 0.16, contact: -0.36 };
+const TAB_PRESS = 0.02; // the active tab sits sunk into the rail (W)
 
 export interface Choreography {
-  active(): SectionId;
-  onActive(cb: (id: SectionId) => void): void;
-  /** Contact layout: where the card flies in from and settles (world space). */
+  place(): Place;
+  tab(): TabId;
+  /** Choose a section. Only acts on the device in the Console; the caller scrolls there first. */
+  setTab(tab: TabId): void;
+  onTab(cb: (tab: TabId) => void): void;
+  onPlace(cb: (place: Place) => void): void;
+  /** Contact layout (world space): where the card flies in from and where the written card settles. */
   cardEntry: THREE.Vector3;
   cardFinal: THREE.Vector3;
 }
 
-export function createChoreography(stage: Stage, sections: HTMLElement[]): Choreography {
-  const { rig, wallet, screen } = stage;
-  let poses: Record<SectionId, Pose>;
+export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: HTMLElement): Choreography {
+  const { rig, pose, wallet, screen } = stage;
   const cardEntry = new THREE.Vector3();
   const cardFinal = new THREE.Vector3();
+  // Hero: three-quarter from above, showing the top tabs and the roller edge (the controls).
+  // Console: facing you, tipped back a little so the numbered tabs read from the front.
+  const HERO: Pose = { x: 0, y: -0.04, z: 0, rx: 0.3, ry: 0.52, rz: -0.12 };
+  const CONSOLE: Pose = { x: 0, y: -0.06, z: 0, rx: 0.14, ry: 0, rz: 0 }; // lower: the tipped-back top rises
 
-  // The wallet is the hero: centred and framed by the camera (stage.ts), so poses are mostly
-  // rotations. Hero: a three-quarter view from above that shows the top tabs and the roller edge
-  // (the controls). Lists face front so the screen reads. Contact steps left to give the card room.
-  function computePoses() {
+  function computeCard() {
     const portrait = stage.portrait();
-    poses = {
-      // The tilt brings the top edge forward (and up on screen): sit a little lower to keep a margin.
-      hello: { x: 0, y: -0.04, z: 0, rx: 0.3, ry: 0.52, rz: -0.12 },
-      works: { x: 0, y: 0, z: 0, rx: 0.06, ry: 0.12, rz: 0 },
-      chronicle: { x: 0, y: 0, z: 0, rx: 0.06, ry: -0.14, rz: 0 },
-      // −2π: one full turn from Chronicle, so the back (D-star) faces the visitor mid-way.
-      // Reduced motion drops the spin: a scroll-linked 360° turn is a vestibular trigger.
-      about: { x: 0, y: 0, z: 0, rx: 0.1, ry: 0.3 - (motion.reduced() ? 0 : Math.PI * 2), rz: -0.04 },
-      // Centred like every section (the title keeps the bottom-left clear); turned toward the card.
-      contact: { x: 0, y: 0, z: 0, rx: 0.04, ry: 0.26, rz: 0 },
-    };
     const cam = stage.camera;
     const t = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2));
-    // Where the written card settles, as a screen position + size, then back to world space.
-    // Phones: in front of the wallet, ~83 % of the width (details near their design size).
-    // Landscape: in the space right of the wallet: 40 % of the height, or smaller if that would
-    // cross the right gutter (narrow landscape windows).
+    // Phones: in front of the wallet, ~86 % of the width (details near their design size).
+    // Landscape: right of the wallet, ~32 % of the width, smaller if it would cross the gutter.
     let d: number;
     let ndc: { x: number; y: number };
     if (portrait) {
-      d = CARD_W / (2 * 0.83 * t * cam.aspect);
-      ndc = { x: 0, y: 0.1 };
+      d = CARD.w / (2 * 0.86 * t * cam.aspect);
+      ndc = { x: 0, y: 0.08 };
     } else {
-      const walletEdge = 0.56 / (t * cam.aspect * cam.position.z); // half-width incl. the ry turn, NDC
-      const room = 0.93 - walletEdge - 0.05; // NDC width between wallet (+gap) and the gutter
-      d = Math.max(CARD_W / (2 * 0.4 * t), CARD_W / (room * t * cam.aspect));
-      const half = CARD_W / (2 * t * cam.aspect * d);
-      ndc = { x: walletEdge + 0.05 + half, y: 0.12 };
+      const walletEdge = 0.56 / (t * cam.aspect * cam.position.z); // half-width incl. a turn, NDC
+      const room = 0.93 - walletEdge - 0.05;
+      d = Math.max(CARD.w / (0.64 * t * cam.aspect), CARD.w / (room * t * cam.aspect));
+      const half = CARD.w / (2 * t * cam.aspect * d);
+      ndc = { x: walletEdge + 0.05 + half, y: 0.1 };
     }
     cardFinal.set(ndc.x * t * cam.aspect * d, cam.position.y + ndc.y * t * d, cam.position.z - d);
-    cardEntry.set(stage.halfWidthAt(0.8) + 1.0, -0.7, 0.8);
+    cardEntry.set(stage.halfWidthAt(0.4) + 0.9, cam.position.y + 0.1, 0.4);
   }
 
-  const apply = (pp: Pose) => {
-    rig.position.set(pp.x, pp.y, pp.z);
-    rig.rotation.set(pp.rx, pp.ry, pp.rz);
+  // ---------------------------------------------------------------- scroll: Hero ↔ Console
+  let progress = 0; // 0 = Hero pose, 1 = Console pose
+  const apply = () => {
+    const k = progress;
+    rig.position.set(HERO.x + (CONSOLE.x - HERO.x) * k, HERO.y + (CONSOLE.y - HERO.y) * k, 0);
+    rig.rotation.set(HERO.rx + (CONSOLE.rx - HERO.rx) * k, HERO.ry + (CONSOLE.ry - HERO.ry) * k, HERO.rz + (CONSOLE.rz - HERO.rz) * k);
   };
-
-  let tweens: gsap.core.Tween[] = [];
+  let trigger: ScrollTrigger | null = null;
   function build() {
-    tweens.forEach((t) => t.scrollTrigger?.kill());
-    tweens.forEach((t) => t.kill());
-    tweens = [];
-    computePoses();
-    apply(poses.hello);
+    trigger?.kill();
+    computeCard();
     // Lenis already smooths the scroll; a long scrub on top of it double-smooths and feels floaty.
-    const scrub = motion.reduced() ? true : 0.35;
-    for (let i = 1; i < SECTIONS.length; i++) {
-      const from = poses[SECTIONS[i - 1]];
-      const to = poses[SECTIONS[i]];
-      const proxy = { ...from };
-      tweens.push(
-        gsap.to(proxy, {
-          ...to,
-          ease: 'none', // the scrub smoothing is the easing; a curve here would double it
-          immediateRender: false,
-          onUpdate: () => apply(proxy),
-          scrollTrigger: { trigger: sections[i], start: 'top bottom', end: 'top 20%', scrub },
-        }),
-      );
-    }
+    trigger = ScrollTrigger.create({
+      trigger: consoleEl,
+      start: 'top bottom',
+      end: 'top top',
+      scrub: motion.reduced() ? true : 0.35,
+      onUpdate: (self) => {
+        progress = self.progress;
+        apply();
+      },
+    });
+    progress = trigger.progress;
+    apply();
     ScrollTrigger.refresh();
   }
 
-  // Active section: press its tab, swap the screen mode.
-  let active: SectionId = 'hello';
-  const listeners: ((id: SectionId) => void)[] = [];
-  const tabRestY = wallet.runtime.nodes['tab-02']?.position.y ?? 0;
-  const mats = wallet.root.userData.materials as { champagne: THREE.Material; polymer: THREE.Material };
-  function pressTab(id: SectionId) {
-    for (const t of ['tab-01', 'tab-02', 'tab-03', 'tab-04']) {
-      const node = wallet.runtime.nodes[t];
-      const mesh = wallet.runtime.meshes[t];
-      if (!node || !mesh) continue;
-      const on = TAB_FOR[id] === t;
-      mesh.material = on ? mats.champagne : mats.polymer;
-      gsap.to(node.position, { y: on ? tabRestY - 0.012 : tabRestY, duration: motion.reduced() ? 0 : 0.18, ease: 'power2.out' });
+  // ---------------------------------------------------------------- section moves (the `pose` layer)
+  // Yaw eases toward the section's value (interruptible: gsap retargets from the current angle);
+  // the About spin is a separate channel so a quick tab change can cut it short cleanly. Both fade
+  // in with the scroll progress, so the Hero pose is never offset by the last section.
+  const move = { yaw: 0, spin: 0 };
+  let spinTween: gsap.core.Tween | null = null;
+  // The About spin is a first-visit delight: once per page view. Repeating it (tab, key 3) would hide
+  // the About screen behind 0.8 s of spin every time the visitor asks for it.
+  let aboutSpun = false;
+  stage.onFrame(() => pose.rotation.set(0, move.yaw * progress + move.spin, 0));
+  function moveTo(tab: TabId) {
+    const reduced = motion.reduced();
+    gsap.to(move, { yaw: TAB_YAW[tab], duration: reduced ? 0 : 0.55, ease: 'power3.out', overwrite: 'auto' });
+    spinTween?.kill();
+    if (tab === 'about' && !reduced && !aboutSpun) {
+      aboutSpun = true;
+      spinTween = gsap.fromTo(move, { spin: 0 }, { spin: -Math.PI * 2, duration: 0.8, ease: 'power3.inOut', onComplete: () => void (move.spin = 0) });
+    } else if (move.spin !== 0) {
+      // Interrupted mid-spin: finish the nearer way round, quickly.
+      const to = move.spin < -Math.PI ? -Math.PI * 2 : 0;
+      spinTween = gsap.to(move, { spin: to, duration: reduced ? 0 : 0.3, ease: 'power2.out', onComplete: () => void (move.spin = 0) });
     }
   }
-  function setActive(id: SectionId) {
-    if (id === active) return;
-    active = id;
-    screen.setMode(id as ScreenMode);
-    pressTab(id);
-    if (TAB_RATE[id]) sfx.play('tab', { rate: TAB_RATE[id] });
-    listeners.forEach((l) => l(id));
-  }
-  sections.forEach((el, i) =>
-    ScrollTrigger.create({
-      trigger: el,
-      start: 'top 55%',
-      end: 'bottom 55%',
-      onToggle: (self) => self.isActive && setActive(SECTIONS[i]),
-    }),
-  );
 
-  // Outgoing copy fades as its section leaves, so two headings never stack under the header.
-  // Triggered by the SECTION: the copy is position: sticky, whose measured position shifts with scroll.
-  sections.forEach((el, i) => {
-    const copy = el.querySelector<HTMLElement>('.section-copy');
-    if (!copy || i === sections.length - 1) return;
-    gsap.fromTo(copy, { opacity: 1 }, {
-      opacity: 0, ease: 'none', immediateRender: false,
-      scrollTrigger: { trigger: el, start: 'bottom 60%', end: 'bottom 30%', scrub: true },
-    });
+  // ---------------------------------------------------------------- tabs: press + screen + page
+  const tabRestY: Record<TabId, number> = Object.fromEntries(TABS.map((t) => [t, wallet.runtime.nodes[TAB_MESH[t]]?.position.y ?? 0])) as Record<TabId, number>;
+  const mats = wallet.root.userData.materials as { champagne: THREE.Material; polymer: THREE.Material };
+  function pressTab(active: TabId | null) {
+    for (const t of TABS) {
+      const node = wallet.runtime.nodes[TAB_MESH[t]];
+      const mesh = wallet.runtime.meshes[TAB_MESH[t]];
+      if (!node || !mesh) continue;
+      const on = t === active;
+      mesh.material = on ? mats.champagne : mats.polymer;
+      gsap.to(node.position, { y: tabRestY[t] - (on ? TAB_PRESS : 0), duration: motion.reduced() ? 0 : 0.16, ease: 'power2.out' });
+    }
+  }
+
+  let place: Place = 'hero';
+  let tab: TabId = 'works';
+  const tabCbs: ((t: TabId) => void)[] = [];
+  const placeCbs: ((p: Place) => void)[] = [];
+
+  function setPlace(p: Place) {
+    if (p === place) return;
+    place = p;
+    if (p === 'console') {
+      pressTab(tab);
+      screen.setMode(tab);
+      moveTo(tab);
+    } else {
+      pressTab(null);
+      screen.setMode('hello');
+    }
+    placeCbs.forEach((cb) => cb(p));
+  }
+  // Enter / leave-back, not onToggle: the Console is the end of the page, and ScrollTrigger counts the
+  // exact end of its range as "left", which would flip the screen back to Hello at the bottom.
+  ScrollTrigger.create({
+    trigger: consoleEl,
+    start: 'top 55%',
+    onEnter: () => setPlace('console'),
+    onLeaveBack: () => setPlace('hero'),
+    onRefresh: (self) => setPlace(self.progress > 0 || scrollY >= self.start ? 'console' : 'hero'),
   });
 
-  pressTab('hello');
+  function setTab(next: TabId) {
+    if (next === tab) return;
+    tab = next;
+    if (place === 'console') {
+      pressTab(tab);
+      screen.setMode(tab);
+      moveTo(tab);
+      sfx.play('tab', { rate: TAB_RATE[tab] });
+    }
+    tabCbs.forEach((cb) => cb(tab));
+  }
+
+  // The Hero copy fades as the Console arrives, so the two titles never stack. Triggered by the
+  // SECTION: the copy is position: sticky, whose measured position shifts with scroll.
+  const heroCopy = hero.querySelector<HTMLElement>('.section-copy');
+  if (heroCopy) {
+    gsap.fromTo(heroCopy, { opacity: 1 }, {
+      opacity: 0, ease: 'none', immediateRender: false,
+      scrollTrigger: { trigger: hero, start: 'bottom 70%', end: 'bottom 35%', scrub: true },
+    });
+  }
+
+  pressTab(null);
   build();
   stage.onResize(build);
   motion.subscribe(build);
 
   return {
-    active: () => active,
-    onActive: (cb) => listeners.push(cb),
+    place: () => place,
+    tab: () => tab,
+    setTab,
+    onTab: (cb) => tabCbs.push(cb),
+    onPlace: (cb) => placeCbs.push(cb),
     cardEntry,
     cardFinal,
   };

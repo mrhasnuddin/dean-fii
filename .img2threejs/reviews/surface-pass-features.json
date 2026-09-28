@@ -1,0 +1,23 @@
+[
+  {
+    "id": "control-affordances",
+    "featureId": "control-affordances",
+    "score": 0.86,
+    "passed": true,
+    "notes": "Tabs 0.08 W tall with 01-04 engraved on the front faces, readable at the top close-up and from the site's Console pose; roller 0.05 W proud with ▲▼ marks on the -X face; view switch knob with three grip ridges, list glyph below the slot (device glyph above, out of the right close-up frame); card slot mouth 0.58 W with champagne lip and reader LED. Measured on site at 1440x900: every small control's hit area >= 2,880 px² (tabs 2,880-4,304, switch 3,680, roller 4,656)."
+  },
+  {
+    "id": "reference-material-system",
+    "featureId": "reference-material-system",
+    "score": 0.82,
+    "passed": true,
+    "notes": "Material system unchanged from the accepted material pass (iridescent shell, black glass, unlit e-ink, champagne accents). Plain physical materials without physical features became MeshStandardMaterial (identical at IOR 1.5) to cut shader compile time."
+  },
+  {
+    "id": "underside-details",
+    "featureId": "underside-details",
+    "score": 0.78,
+    "passed": true,
+    "notes": "USB-C unchanged; lanyard slot scaled to the smaller keychain (0.04 x 0.06 W opening); back emboss unchanged."
+  }
+]
