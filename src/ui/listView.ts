@@ -34,7 +34,7 @@ export function buildListView(root: HTMLElement): void {
       <h1 class="lv-title"><span class="h-sans">Dean</span> <span class="h-serif">Studio.</span></h1>
       <p class="lv-lede">UI/UX designer, frontend developer and creative designer, focused on making complex Web3 products understandable through interfaces, landing pages and frontend implementation.</p>
       <nav class="lv-nav" aria-label="Sections">
-        <a href="#lv-works">Works</a><a href="#lv-chronicle">Chronicle</a><a href="#lv-about">About</a><a href="#lv-contact">Contact</a>
+        <a href="#lv-works">Works</a><a href="#lv-chronicle">Events</a><a href="#lv-about">About</a><a href="#lv-contact">Contact</a>
       </nav>
     </header>
 
@@ -50,7 +50,7 @@ export function buildListView(root: HTMLElement): void {
     </section>
 
     <section class="lv-sec" id="lv-chronicle" aria-labelledby="lv-chronicle-h">
-      <h2 id="lv-chronicle-h">The chronicle</h2>
+      <h2 id="lv-chronicle-h">Events</h2>
       <ul class="lv-rows">${events
         .map((e) => `<li><a href="#/stage/${e.id}">
           <span class="lv-meta">${esc(e.place)}, ${esc(countries[e.country] ?? e.country)}</span>

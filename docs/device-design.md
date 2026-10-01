@@ -18,7 +18,7 @@ Unit **W** = body width. Measured reference proportions come from `.img2threejs/
 
 | # | Change | Job (IA / interaction) | Contra equivalent | Also differentiates from Ledger |
 |---|---|---|---|---|
-| 1 | **Four section tabs on the top edge** (01–04) | Section switcher: Works, Chronicle, About, Contact. The active tab sits pressed-in and lit. Scrolling the page presses the matching tab. Clicking a tab scrolls to that section. | `top1–3` tabs | Ledger has nothing on the top edge |
+| 1 | **Four section tabs on the top edge** (01–04) | Section switcher: Works, Events, About, Contact. The active tab sits pressed-in and lit. Scrolling the page presses the matching tab. Clicking a tab scrolls to that section. | `top1–3` tabs | Ledger has nothing on the top edge |
 | 2 | **Thumb roller on the left edge** (upper third), knurled champagne | Browse the list on screen: previous/next project or event. Also spins when you use arrow keys or touch, so it always shows the motion. | The big dial | Ledger has a flat side button |
 | 3 | **Two chin keys**: large round **Confirm** (right, lit ring) + small round **Back** (left) | Confirm = open the selected item's popup, with hold-to-confirm and the ring filling. Back = close the popup or step back. | ACCEPT + RESET | Ledger has one pill key and a bracket logo on the chin |
 | 4 | **Motion switch on the right edge** (where Ledger's side button sits) | Motion on/off, which DeanFi2 already has (`localStorage['dean-motion']`). | ON/OFF switch | New function in that position |
@@ -68,7 +68,7 @@ Rule for future changes: **a new control needs a job in the IA, or it doesn't sh
 - **Anatomy:** status bar (section name · position `03 / 10` · battery glyph), then content, then action bar (`‹ Back` · pager · `Hold ✓`).
 - **Type:** a free monospace font for the UI, since Contra's PP Neue Montreal Mono is paid. Images are **dithered to 1-bit** on the screen and shown in full colour in the popup, as a deliberate reveal.
 - **Idle (2026-09-28, `src/ui/pixelLogo.ts`):** the Hello screen is the D-star as 1-bit e-ink pixels (50 × 50 grid, 3 px dots) over a dashed rule and "Dean Studio". Every 3.2 s the sparkle twinkles (quarter turn while it breathes in, four glint dots), drawn as stepped 10 fps frames like e-ink partial refreshes. Any other screen falls back to the same mark after 25 s with no input anywhere (appears silently) and wakes on the next pointer move, key, wheel, scroll or touch (with the refresh swish). Reduced motion: the mark holds still.
-- **States:** Boot (preloader) → Hello (hero) → Works list → Chronicle list (grouped CN / ID / MY) → About (portrait, tools, languages) → Contact (channel list: Email / LinkedIn / WhatsApp; the roller picks one, hold to confirm opens it, and the card slides out).
+- **States:** Boot (preloader) → Hello (hero) → Works list → Events list (grouped CN / ID / MY) → About (portrait, tools, languages) → Contact (channel list: Email / LinkedIn / WhatsApp; the roller picks one, hold to confirm opens it, and the card slides out).
 - All screen copy is placeholder until it goes through the `humanize` pass.
 - **Dropped:** DeanFi2's About matching mini-game (REVAMP-HANDOFF.md §About) is not carried over. Dean's call, 2026-09-28.
 
@@ -192,7 +192,7 @@ This is not legal advice. The changes above are meant to make the device clearly
 
 | Control | Job | Hit area now (1440×900) |
 |---|---|---|
-| Top tabs 01–04 (0.08 W tall, numerals engraved) | Works / Chronicle / About / Contact. The screen's top row labels each tab right under it (softkeys) | 2,880–4,300 px² |
+| Top tabs 01–04 (0.08 W tall, numerals engraved) | Works / Events / About / Contact. The screen's top row labels each tab right under it (softkeys) | 2,880–4,300 px² |
 | Roller (0.05 W proud, ▲▼ marks) | Browse the list | 4,656 px² |
 | ✓ / Back | Open / close | 1,700–3,400 px² |
 | Side switch (Device ↔ List icons) | List view (same as the bottom-right switch) | 3,680 px² |
@@ -203,7 +203,7 @@ Invisible hit boxes parented to the small controls give those areas; the nearest
 
 **Card reader (Contact):** a blank key (bank-card ratio, 0.86 × 0.54 W) flies to the right-side slot as the wallet turns its reader toward you, slides in and latches (recoil, LED), the screen writes the details (printhead ticks), the card ejects on the reader's spring and floats out beside the wallet with the details written (phones: in front). Sounds: whoosh, insert, write ×4, eject, verified, swish. Put away 0.4 s.
 
-**List view:** the whole portfolio as a plain page (works grid, chronicle, About, contact card), same routes; 3D paused. Chosen with the bottom-right Device / List switch or the wallet's side switch; remembered; automatic without WebGL.
+**List view:** the whole portfolio as a plain page (works grid, events, About, contact card), same routes; 3D paused. Chosen with the bottom-right Device / List switch or the wallet's side switch; remembered; automatic without WebGL.
 
 **Preferences:** Sound and Motion are animated icon buttons. Sound: a level meter that breathes slowly and jumps while a sound plays; flat when off. Motion: a dot orbiting its ring (6 s); parked, ring dashed, when off. Both hold still when motion is off or reduced.
 
@@ -263,18 +263,59 @@ About and Get in touch share one row, 60 / 40 (About left, the contact card righ
 | `air` | 0.28 s soft swish | the card flying in or out; the wallet settling after a hand turn |
 | `coin` | 0.14 s short metal tick | the coin clicked; the coin swinging into the wallet (quieter, follows the hit) |
 | `peel` | 0.18 s soft crackle | peeling a sticker |
-| `bed` | 24 s seamless loop: D2 and A2 sub, a soft D3, faint F♯4 A4 E5 on slow swells | under everything once sound is allowed; fades in over 1.5 s to 28 %, fades out when switched off, pauses in a hidden tab |
+| ~~`bed`~~ | *Replaced by the lo-fi music, §18: a drone under a real track would muddy it.* | |
 
 The e-ink refresh is silent now (the press that caused it already sounded). A press arriving twice for one action (the key, then the panel it opens) is played once (70 ms throttle).
 
-**Size:** `sfx.webm` 34 KB (was 52 KB), `bed.webm` 129 KB, loaded separately so it never delays the clicks. The bed's loop window is [0.1 s, 24.1 s]; every frequency and slow movement in it repeats exactly in 24 s, and the decoded Opus file joins with a step 0.97× its normal largest step (no click).
+**Size:** `sfx.webm` 34 KB (was 52 KB).
 
 **Audition:** `lab/sound.html` (every sound, where it plays, and the contact sequence at its real timing; the bed runs underneath).
 
-## 16. Local time on the screen (2026-09-28, Dean's request)
+## 16. Local time and battery on every screen (2026-09-28; every screen from 2026-10-01, Dean's request)
 
-The screen's status bar shows Dean's local time, 24-hour, with the zone: "18:33 GMT+8" beside the battery (Malaysia, `Asia/Kuala_Lumpur`, no daylight saving). It is on the Hello screen and on Standby, the idle overlay that covers any section after 25 s without input, so it reads like a phone's lock screen. It changes in place on the minute, with no refresh flash. The section screens keep their softkey row instead of a status bar.
+Every screen now starts the same way: the four softkeys (01–04) directly under the wallet's tab keys, the active one inverted with a caret up to its key (the key row no longer repeats the section's name), then a status strip: the page name on the left (HELLO, WORKS, EVENTS, ABOUT, CONTACT), and on the right Dean's local time, 24-hour, with the zone ("22:29 GMT+8", Malaysia, `Asia/Kuala_Lumpur`, no daylight saving) and the battery. Hello shows the same two rows, and so does the idle Standby overlay (which covers any section after 25 s without input, like a lock screen, labelled "STANDBY"). The clock changes in place on the minute, with no refresh flash.
+
+The extra strip costs 26 px, so the picture strip above the Works and Events lists went from 150 to 138 px (100 px on touch screens, where the five rows are taller). All five lists fit above the footer with room to spare, desktop and touch.
 
 ## 17. Addresses (2026-09-28)
 
 The address bar stays the plain site address. In-page links (the logo, the skip link, List view's section links) scroll without writing `#hello`, `#console` or `#lv-…` into it, and section links from outside (`…/#/contact`, `#/work`, `#/stage`) open their section and then tidy back to the plain address. Only an open detail panel shows a hash (`#/work/eni`, `#/stage/…`, `#/about`): it makes the panel shareable, and Back closes it. Links to panels that don't exist are tidied away. Share always copies the plain address.
+
+## 18. Background music: lo-fi café, polished for a product showcase, with its own switch (2026-10-01, Dean's request)
+
+**Version history, from Dean's feedback.** v1 was lo-fi with a drum kit: the beat sounded like a real drum and was too present. v2 was a calm electronic track with no drums: it didn't match the site's vibe. v3 (this) is "lo-fi café, or lo-fi product showcase": the lo-fi harmony of v1 with a soft electronic beat, a clean, quiet finish and a music-box sparkle.
+
+**The track (`scripts/audio/build_music.py`, composed and rendered from code; nothing sampled):** 16 bars at 76 BPM (50.5 s), lightly swung (56 %), in D major.
+- **Keys:** a warm Rhodes-style electric piano on jazzy rootless chords (Dmaj9 Bm9 Gmaj9 A7, F♯m9 Bm9 Em9 A13, then a variation), strummed a little off the grid, with slow auto-pan and chorus.
+- **Bass and melody:** a soft bass on the roots (kept between D2 and B2: warm and audible, not rumble) and a sparse music-box melody through a dotted-8th ping-pong echo.
+- **The beat is electronic and soft, nothing like a real kit:** a round sine thump with no beater click (beat 1, the "and" of 2, and a third on alternate bars), a muted finger-snap where a snare would be (a woody ping and a puff of air, no rattle, laid back 12 ms), and a swelling shaker instead of a hi-hat. The keys and bass dip a little with each thump.
+- **Finish:** tape warmth (slow wobble, gentle saturation, a roll-off above 7.6 kHz), only a trace of vinyl crackle and hiss, a plate-like reverb, and a quiet level (−19 dBFS rms). Timing, velocity and detune are humanised from a fixed seed, so a rebuild is identical. Tunables are at the top of the script (BPM, swing, the MIX levels, the chord and melody tables).
+
+**Seamless loop:** every note wraps around the loop end, the echo and reverb are circular, filters run on a tiled copy, and the wobble has whole cycles per loop. The file holds the loop with 0.1 s of its own end in front and 0.5 s of its start behind; the player loops the window in between as a Howler sprite, which is sample-accurate. In the encoded Opus file the join steps are 0.03× and 0.53× the normal largest step: no click.
+
+**Measured (no ears involved, so please listen):** peak −8.2 dBFS, rms −19.1 dBFS; the loudness over 400 ms windows has a median of −21.7 dB and a maximum of −17.1; the typical 20 ms swell is 7 dB (99th percentile), the sharpest 18 dB (the strums, where the keys and thump land together). Octave balance falls gently from the mids (−10 dB at 1–2 kHz, −16 at 2–4, −25 at 4–8, −34 at 8–16), and the sub octave is at −11 dB. Two things found by measuring and fixed: the bass roots were so low (41–55 Hz) that the bass dominated the sub range, so they were moved up an octave; and the first soft beat was still too present, so its levels were pulled back.
+
+**Files:** `music.webm` 445 KB (Opus, stereo, 56 kb/s), `music.mp3` 600 KB (fallback), `src/audio/music.json` (the loop window).
+
+**Alternative kept:** `scripts/audio/build_music_calm.py`, the v2 calm electronic loop with no drums. It writes only to `.cache/music-calm/`, not the site; copy its `site-files/music.*` and `music.json` over `public/audio/` and `src/audio/` to use it. (The v1 drum-kit lo-fi was folded into this script: same chords, a different beat.)
+
+**Its own switch (`src/audio/music.ts`).** Music and sound effects are separate settings: people often want clicks without music, or the reverse. Header: a spinning record (filled disc, centre label; one turn per 4 s while on, still when off or when motion is off), next to the sound-effects level meter and the Motion orbit. The sound toggle is now labelled "Sound effects". Each is saved on its own (`dean-music`, `dean-sound`).
+- **Default:** on, like the effects, but only after the first click, tap or key press (browsers block audio before that); off on a Save-Data connection unless the visitor turns it on.
+- **Loading:** it starts 1.2 s after the first gesture, behind the click sounds, so the click sounds are never held up by the 450 KB file. With music off the file is never requested.
+- **Behaviour:** every change of state fades, never cuts. In over 3 s when it starts or is switched on; out over 1.4 s when switched off, then paused; out over 0.6 s when the tab is left (then paused) and back in over 1.5 s on return. Measured: 0.34 down to silence in 1.4 s on a real click, and 0 up to 0.34 in 3 s. The level is 0.34 of the file (`VOLUME` in `music.ts`), a bed under the clicks. The old drone from §15 is gone: under a real track it would muddy the mix.
+
+**Phones:** four controls plus the action no longer fit at 375 px, so below 441 px the header action reads "Hire Dean" (above that, "Work with Dean"); below 360 px the capsule and button tighten. Measured: 375 px, 20 px clear; 360 px, 5 px; 320 px, 10 px; 430 px, 75 px.
+
+**Audition:** `lab/sound.html` has a music switch beside the sound-effects one.
+
+## 19. Page tab bar without numbers (2026-10-01)
+
+The Console's tab bar reads "Works Events About Contact": the 01–04 numbers are gone from it (and from the List view's section links before). The wallet's own top keys keep their engraved 01–04, and so do the screen's softkey labels under them (they label those keys), and keys 1–4 still work. Phone tab labels went from 12 to 13 px with the room freed.
+
+## 20. "Chronicle" is now "Events" (2026-10-01, Dean's choice)
+
+The section of speaking, hosting and community work is called Events: tab bar, panel title, List view heading and link, the screen's label ("EVENTS") and the page description. Internal keys (`chronicle` in the code, `#/stage/…` links, `lv-chronicle` anchors) are unchanged, so existing links keep working.
+
+## 21. Motion icon: a bouncing ball (2026-10-01, Dean's request)
+
+The Motion icon was a dot orbiting a ring, too close to the new spinning record (both rotate). It is now a ball bouncing off a floor line: it falls with an ease-in, squashes as it lands (wider and shorter), and rebounds with an ease-out (1.5 s a cycle). The shadow widens and darkens as the ball comes down. With motion off the ball rests on the floor and the line is dashed. Transform and opacity only.

@@ -2,13 +2,12 @@
 
 Set 2 (docs/device-design.md §15), after studying how Contra uses sound: few sounds, one family.
 Interaction sounds are 10-60 ms and not pitched (a hover tick, a press, a detent, a thock), pitch is
-kept for one reward (a D6 + D7 bell), and a quiet low drone in D sits under everything so the short
-clicks feel like one place. Measured targets, not copies: none of Contra's audio is used.
+kept for one reward (a D6 + D7 bell). The background is the lo-fi track (build_music.py), not a drone.
+Measured targets, not copies: none of Contra's audio is used.
 
 Outputs
   public/audio/sfx.webm|mp3   the interaction sprite (Opus, mp3 fallback)
-  public/audio/bed.webm|mp3   the ambient bed: a seamless 24 s loop between LOOP_IN and LOOP_IN + 24 s
-  src/audio/sprite.json       {name: [offsetMs, durationMs]} for Howler, plus "bed": [in, 24000, true]
+  src/audio/sprite.json       {name: [offsetMs, durationMs]} for Howler
   .cache/sfx/                 one WAV per sound + sheet.png (waveform and spectrogram) with --sheet
 
 Run: python scripts/audio/build_sfx.py [--sheet]
@@ -33,7 +32,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / ".cache" / "sfx"
 rng = np.random.default_rng(20260928)  # fixed seed: rebuilds are byte-identical before encoding
 
-# The site's key is D: the bell and the bed use it.
+# The site's key is D: the bell uses it (the music is in D too).
 D6, D7 = 1174.66, 2349.32
 # Free circular plate mode ratios (approx.): what makes a coin ring, not beep.
 PLATE = [1.0, 1.594, 2.136, 2.296, 2.653, 2.918, 3.156, 3.501]
@@ -242,37 +241,6 @@ GAP = 0.12  # silence between sounds: no bleed at any playback rate the site use
 TAIL = 0.04  # extra ms in each sprite entry past the sound's end
 
 
-# ---------------------------------------------------------------- the bed
-BED_T = 24.0  # loop length (s): every frequency and every slow movement repeats exactly in it
-LOOP_IN = 0.1  # the loop starts this far into the file (a lead-in absorbs codec priming)
-
-
-def periodic(f):
-    """Nearest frequency that repeats a whole number of times in BED_T, so the loop has no seam."""
-    return round(f * BED_T) / BED_T
-
-
-def s_bed():
-    """A quiet, warm drone in D: a sub root and fifth, a soft D3, and faint F#4 A4 E5 colour that
-    swell in and out on their own slow cycles. Two detuned copies of each partial give it air."""
-    t = tt(BED_T)
-    x = zeros(BED_T)
-    lfo = lambda cycles, ph=0.0: 0.5 + 0.5 * np.sin(2 * np.pi * cycles * t / BED_T + ph)
-    parts = [(73.42, 1.0, 1, 0.15), (110.0, 0.45, 2, 0.25), (146.83, 0.3, 3, 0.5),
-             (369.99, 0.05, 1, 1.0), (440.0, 0.045, 2, 1.0), (659.26, 0.035, 3, 1.0)]
-    for f, a, cyc, depth in parts:
-        ph = rng.uniform(0, 2 * np.pi)
-        swell = 1 - depth + depth * lfo(cyc, ph)
-        for df in (0.0, 2 / BED_T):  # a slow 12 s beat between the pair
-            x += a * swell * np.sin(2 * np.pi * periodic(f + df) * t + rng.uniform(0, 2 * np.pi))
-    # A breath of band-limited air, made periodic by shaping white noise in the frequency domain.
-    spec = np.fft.rfft(rng.standard_normal(len(t)))
-    fr = np.fft.rfftfreq(len(t), 1 / SR)
-    spec *= np.exp(-0.5 * (np.log(np.maximum(fr, 1) / 500) / 0.6) ** 2)
-    x += norm(np.fft.irfft(spec, len(t))) * 0.04 * lfo(2, 1.0)
-    return x
-
-
 # ---------------------------------------------------------------- output
 def write_wav(path: Path, x: np.ndarray):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -356,16 +324,6 @@ def main():
     enc = lambda src, *a: subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-i", str(src), *a], check=True)
     enc(master, "-ac", "1", "-c:a", "libopus", "-b:a", "48k", "-application", "audio", str(out / "sfx.webm"))
     enc(master, "-ac", "1", "-ar", "44100", "-c:a", "libmp3lame", "-b:a", "64k", str(out / "sfx.mp3"))
-
-    # Bed: one loop with LOOP_IN s of its own end before it and 0.5 s of its start after it, so the
-    # loop window [LOOP_IN, LOOP_IN + BED_T] is seamless whatever the codec does at the file's edges.
-    loop = norm(s_bed(), 10 ** (-9 / 20))
-    bed = np.concatenate([loop[-n_(LOOP_IN):], loop, loop[: n_(0.5)]])
-    bed_wav = CACHE / "bed.wav"
-    write_wav(bed_wav, bed)
-    enc(bed_wav, "-ac", "1", "-c:a", "libopus", "-b:a", "40k", "-application", "audio", str(out / "bed.webm"))
-    enc(bed_wav, "-ac", "1", "-ar", "44100", "-c:a", "libmp3lame", "-b:a", "64k", str(out / "bed.mp3"))
-    sprite["bed"] = [round(LOOP_IN * 1000, 1), round(BED_T * 1000, 1), True]
     (ROOT / "src" / "audio").mkdir(parents=True, exist_ok=True)
     (ROOT / "src" / "audio" / "sprite.json").write_text(json.dumps(sprite, indent=2) + "\n", encoding="utf-8")
 
@@ -376,9 +334,7 @@ def main():
 
     kb = lambda p: (out / p).stat().st_size / 1024
     print(f"{len(clips)} sounds, {total:.2f} s  ->  sfx.webm {kb('sfx.webm'):.1f} KB, sfx.mp3 {kb('sfx.mp3'):.1f} KB")
-    print(f"bed {BED_T:.0f} s loop  ->  bed.webm {kb('bed.webm'):.1f} KB, bed.mp3 {kb('bed.mp3'):.1f} KB, "
-          f"rms {20 * np.log10(np.sqrt(np.mean(loop**2))):.1f} dBFS")
-    for name, (o, d) in ((k, v[:2]) for k, v in sprite.items() if k != "bed"):
+    for name, (o, d) in sprite.items():
         print(f"  {name:9s} {o:8.1f} ms  {d:6.1f} ms  peak {20 * np.log10(np.max(np.abs(clips[name]))):6.1f} dBFS")
 
 

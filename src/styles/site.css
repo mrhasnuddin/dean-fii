@@ -49,6 +49,7 @@ html.lenis, html.lenis body { height: auto; }
 .share svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .cta { font: 600 15px/1 var(--font-ui); color: #111; background: var(--champagne); border: 0; border-radius: 999px; padding: 15px 22px; cursor: pointer; text-decoration: none; display: inline-block; transition: background-color 160ms ease, transform 160ms var(--ease-out), opacity 160ms ease; }
 .cta-head { padding: 14px 22px; }
+.cta-short { display: none; }
 .cta:active { transform: scale(0.97); }
 .cta:disabled { opacity: 0.5; cursor: default; }
 @media (hover: hover) and (pointer: fine) {
@@ -79,15 +80,35 @@ html.lenis, html.lenis body { height: auto; }
 .icon-btn.is-playing[aria-pressed='true'] .eq i:nth-child(3) { animation-duration: 0.38s; }
 @keyframes eq { from { transform: scaleY(0.5); } to { transform: scaleY(0.9); } }
 @keyframes eq-live { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
-/* Motion: a dot orbiting its ring while motion is on; parked at the top, ring dashed, when off. */
-.orbit { position: relative; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid currentColor; }
-.orbit i { position: absolute; inset: -1.5px; border-radius: 50%; }
-.orbit i::after { content: ''; position: absolute; left: 50%; top: -3px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: currentColor; }
-.icon-btn[aria-pressed='true'] .orbit i { animation: orbit 6s linear infinite; }
-.icon-btn[aria-pressed='false'] .orbit { border-style: dashed; }
-@keyframes orbit { to { transform: rotate(1turn); } }
+/* Motion: a ball that bounces off a floor line and squashes as it lands (straight up and down, so it
+   can't be mistaken for the spinning record). It drops and rests on the floor when motion is off.
+   Transforms only; the shadow widens and darkens as the ball comes down. */
+.bounce { width: 22px; height: 22px; overflow: visible; }
+.bounce .b-ball { fill: currentColor; transform-box: fill-box; transform-origin: 50% 100%; }
+.bounce .b-floor { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; opacity: 0.55; }
+.bounce .b-shadow { fill: currentColor; opacity: 0.3; transform-box: fill-box; transform-origin: 50% 50%; }
+.icon-btn[aria-pressed='true'] .b-ball { animation: bounce 1.5s infinite; }
+.icon-btn[aria-pressed='true'] .b-shadow { animation: bounce-shadow 1.5s infinite; }
+.icon-btn[aria-pressed='false'] .b-floor { stroke-dasharray: 2 3; }
+@keyframes bounce {
+  0%, 100% { transform: translateY(-9px); animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.4); }
+  45% { transform: translateY(0) scale(1, 1); }
+  50% { transform: translateY(0) scale(1.22, 0.74); animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1); }
+  57% { transform: translateY(-1.2px) scale(0.94, 1.06); animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1); }
+}
+@keyframes bounce-shadow {
+  0%, 100% { transform: scale(0.5); opacity: 0.12; animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.4); }
+  45%, 50% { transform: scale(1.15); opacity: 0.4; animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1); }
+}
+/* Music: a record. It spins while music is on (slowly: 4 s a turn), and rests when off. The arc on
+   the label is what makes the turn visible. */
+.vinyl { position: relative; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; background: color-mix(in srgb, currentColor 22%, transparent); }
+.vinyl::before { content: ''; position: absolute; inset: 1.5px; border-radius: 50%; border: 1.5px solid currentColor; border-right-color: transparent; border-bottom-color: transparent; border-left-color: transparent; opacity: 0.8; }
+.vinyl i { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: currentColor; }
+.icon-btn[aria-pressed='true'] .vinyl { animation: spin 4s linear infinite; }
+@keyframes spin { to { transform: rotate(1turn); } }
 /* Still icons when motion is off or reduced: the state reads from colour, fill and bar height. */
-html.motion-off .icon-btn .eq i, html.motion-off .icon-btn .orbit i { animation: none; }
+html.motion-off .icon-btn .eq i, html.motion-off .icon-btn .b-ball, html.motion-off .icon-btn .b-shadow, html.motion-off .icon-btn .vinyl { animation: none; }
 html.motion-off .icon-btn[aria-pressed='true'] .eq i:nth-child(odd) { transform: scaleY(0.6); }
 html.motion-off .icon-btn[aria-pressed='true'] .eq i:nth-child(even) { transform: scaleY(1); }
 @media (hover: hover) and (pointer: fine) {
@@ -123,9 +144,7 @@ main { position: relative; z-index: 2; pointer-events: none; }
    cell and cross-fade: the outgoing one leaves fast, the incoming one arrives just after. */
 .tabbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 20px; }
 .tabbar [role='tab'] { display: inline-flex; align-items: center; gap: 7px; font: 500 13px/1 var(--font-ui); color: var(--ink-light); background: rgb(236 232 223 / 0.05); border: 1px solid var(--line); border-radius: 999px; padding: 9px 13px; cursor: pointer; backdrop-filter: blur(10px); transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease; }
-.tabbar [role='tab'] b { font: 500 11px/1 var(--font-mono); color: var(--champagne); }
 .tabbar [aria-selected='true'] { background: var(--champagne); border-color: var(--champagne); color: #111; }
-.tabbar [aria-selected='true'] b { color: #111; }
 @media (hover: hover) and (pointer: fine) { .tabbar [aria-selected='false']:hover { border-color: var(--champagne); } }
 .titles, .panels { display: grid; align-items: end; }
 .panel-title, .panel { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 140ms var(--ease-out), transform 140ms var(--ease-out), visibility 0s linear 140ms; }
@@ -193,6 +212,8 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   /* Header, all 40 px tall: the brand, then Device/List + Sound + Motion as one capsule beside it, and
      the primary action on the right. Share moves beside the Contact button here. */
   .cta-head { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; font-size: 14px; }
+  /* Four preference icons need the room: below 440 px the action reads "Hire Dean". */
+  @media (max-width: 440px) { .cta-long { display: none; } .cta-short { display: inline; } }
   .share { display: none; }
   .prefs { top: 14px; bottom: auto; right: auto; left: calc(var(--gutter) + 52px); height: 40px; gap: 0; padding: 0 3px; border: 1px solid var(--line); border-radius: 999px; background: rgb(22 23 28 / 0.6); backdrop-filter: blur(10px); }
   .prefs .icon-btn { width: 38px; height: 38px; border: 0; background: none; backdrop-filter: none; }
@@ -203,7 +224,7 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   .view-switch[aria-checked='true'] .vs-track i { transform: translateX(14px); }
   #console .section-copy { justify-items: stretch; } /* the tab bar spans the width */
   .tabbar { flex-wrap: nowrap; gap: 6px; }
-  .tabbar [role='tab'] { flex: 1; justify-content: center; padding: 0 6px; font-size: 12px; min-height: 44px; }
+  .tabbar [role='tab'] { flex: 1; justify-content: center; padding: 0 6px; font-size: 13px; min-height: 44px; }
   /* About: the bio's second line with the link to the rest running on after it (inline padding makes
      the link 44 px tall to a thumb without adding height). Contact: the first sentence only. */
   #panel-about .bio-lead { display: none; }
@@ -224,6 +245,16 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   /* The key card comes forward over the copy: keep only the button readable. */
   #console .section-copy :is(.titles, .panel .lede) { transition: opacity 200ms ease; }
   #console:is([data-card='running'], [data-card='ready']) .section-copy :is(.titles, .panel .lede) { opacity: 0.08; }
+  /* Under 360 px (rare): a tighter capsule and button keep the four icons clear of the action. */
+  @media (max-width: 359px) {
+    .prefs { left: calc(var(--gutter) + 48px); padding: 0 2px; }
+    .prefs .icon-btn { width: 32px; height: 32px; }
+    .view-switch { height: 32px; padding: 0 6px; }
+    .vs-track { width: 30px; height: 18px; }
+    .vs-track i { width: 10px; height: 10px; top: 3px; left: 3px; }
+    .view-switch[aria-checked='true'] .vs-track i { transform: translateX(12px); }
+    .cta-head { padding: 0 12px; font-size: 13px; }
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .icon-btn, .cta { transition: background-color 160ms ease, opacity 160ms ease; }

@@ -20,7 +20,7 @@ export type Place = 'hero' | 'console';
 type Pose = { x: number; y: number; z: number; rx: number; ry: number; rz: number };
 const TAB_MESH: Record<TabId, string> = { works: 'tab-01', chronicle: 'tab-02', about: 'tab-03', contact: 'tab-04' };
 // Tab click pitch rises 01 → 04 (D, E, F♯, A), so the sound tells you where you are.
-// Section moves (yaw, on top of the Console pose). Works faces you; Chronicle turns a little;
+// Section moves (yaw, on top of the Console pose). Works faces you; Events turns a little;
 // About spins once to show the D-star on the back; Contact turns its right side (the card reader) in.
 const TAB_YAW: Record<TabId, number> = { works: 0.08, chronicle: -0.14, about: 0.16, contact: -0.36 };
 const TAB_PRESS = 0.02; // the active tab sits sunk into the rail (W)

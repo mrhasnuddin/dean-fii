@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Dean Studio · UI/UX, frontend and creative design</title>
-  <meta name="description" content="Dean: UI/UX designer, frontend developer and creative designer working on Web3 products. Selected works, speaking chronicle and contact." />
+  <meta name="description" content="Dean: UI/UX designer, frontend developer and creative designer working on Web3 products. Selected works, events and contact." />
   <meta name="theme-color" content="#0f1014" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <!-- Loader: inline so it paints before the 3D bundle arrives (a JS/GSAP loader would sit frozen
@@ -87,23 +87,26 @@
         <span class="share-label">Share</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="17.5" cy="5.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/><path d="m8.7 10.8 6.6-4M8.7 13.2l6.6 4"/></svg>
       </button>
-      <a class="cta cta-head" id="hire" href="#/contact">Work with Dean</a>
+      <a class="cta cta-head" id="hire" href="#/contact"><span class="cta-long">Work with Dean</span><span class="cta-short">Hire Dean</span></a>
     </div>
   </header>
 
   <!-- Bottom-right: the Device / List view switch (mirrored by the wallet's side switch), then Sound
-       and Motion as animated icons: the icon moves while the setting is on. -->
+       effects, Music and Motion as animated icons: the icon moves while the setting is on. -->
   <div class="prefs" role="group" aria-label="View and preferences">
     <button class="view-switch" id="view-toggle" type="button" role="switch" aria-checked="false" aria-label="List view">
       <span class="vs-opt vs-device" aria-hidden="true">Device</span>
       <span class="vs-track" aria-hidden="true"><i></i></span>
       <span class="vs-opt vs-list" aria-hidden="true">List</span>
     </button>
-    <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true" aria-label="Sound" title="Sound">
+    <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true" aria-label="Sound effects" title="Sound effects">
       <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </button>
+    <button class="icon-btn" id="music-toggle" type="button" aria-pressed="true" aria-label="Music" title="Music">
+      <span class="vinyl" aria-hidden="true"><i></i></span>
+    </button>
     <button class="icon-btn" id="motion-toggle" type="button" aria-pressed="true" aria-label="Motion" title="Motion">
-      <span class="orbit" aria-hidden="true"><i></i></span>
+      <svg class="bounce" viewBox="0 0 24 24" aria-hidden="true"><ellipse class="b-shadow" cx="12" cy="20.5" rx="4.6" ry="1.1"/><circle class="b-ball" cx="12" cy="16.2" r="3.8"/><path class="b-floor" d="M3.5 20.5h17"/></svg>
     </button>
   </div>
 
@@ -127,14 +130,14 @@
       <div class="section-copy">
         <div class="copy-main">
           <div class="tabbar" role="tablist" aria-label="Sections">
-          <button role="tab" id="tab-works" data-tab="works" aria-controls="panel-works" aria-selected="true"><b>01</b> Works</button>
-          <button role="tab" id="tab-chronicle" data-tab="chronicle" aria-controls="panel-chronicle" aria-selected="false" tabindex="-1"><b>02</b> Chronicle</button>
-          <button role="tab" id="tab-about" data-tab="about" aria-controls="panel-about" aria-selected="false" tabindex="-1"><b>03</b> About</button>
-          <button role="tab" id="tab-contact" data-tab="contact" aria-controls="panel-contact" aria-selected="false" tabindex="-1"><b>04</b> Contact</button>
+          <button role="tab" id="tab-works" data-tab="works" aria-controls="panel-works" aria-selected="true">Works</button>
+          <button role="tab" id="tab-chronicle" data-tab="chronicle" aria-controls="panel-chronicle" aria-selected="false" tabindex="-1">Events</button>
+          <button role="tab" id="tab-about" data-tab="about" aria-controls="panel-about" aria-selected="false" tabindex="-1">About</button>
+          <button role="tab" id="tab-contact" data-tab="contact" aria-controls="panel-contact" aria-selected="false" tabindex="-1">Contact</button>
           </div>
           <div class="titles" aria-hidden="true">
           <p class="panel-title" data-panel="works" data-active>Selected works</p>
-          <p class="panel-title" data-panel="chronicle">The chronicle</p>
+          <p class="panel-title" data-panel="chronicle">Events</p>
           <p class="panel-title" data-panel="about">About Dean</p>
           <p class="panel-title" data-panel="contact">Get in touch</p>
           </div>
@@ -147,7 +150,7 @@
             <ul class="focus-list" data-list="works"></ul>
           </div>
           <div class="panel" role="tabpanel" id="panel-chronicle" aria-labelledby="tab-chronicle" data-panel="chronicle">
-            <h3 class="sr">The chronicle</h3>
+            <h3 class="sr">Events</h3>
             <p class="lede">8 events, 3 countries: speaking, hosting and community work.</p>
             <p class="hint">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open</p>
             <ul class="focus-list" data-list="chronicle"></ul>

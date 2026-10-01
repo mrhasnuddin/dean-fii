@@ -41,7 +41,7 @@ export interface Screen {
 }
 
 const LABEL: Record<ScreenMode, string> = {
-  boot: 'DEAN STUDIO', hello: 'HELLO', works: 'WORKS', chronicle: 'CHRONICLE', about: 'ABOUT', contact: 'CONTACT',
+  boot: 'DEAN STUDIO', hello: 'HELLO', works: 'WORKS', chronicle: 'EVENTS', about: 'ABOUT', contact: 'CONTACT',
 };
 const CHANNELS = [
   { id: 'email', name: 'Email', detail: emailDisplay() },
@@ -150,11 +150,15 @@ export function createScreen(): Screen {
     return items.slice(start, start + rows).map((item, k) => ({ item, i: start + k }));
   }
 
+  // The top of every screen: the four softkeys right under the wallet's tab keys (01–04; the active one is
+  // inverted, with a caret up to its key), then a status strip: the page name on the left, the local
+  // clock and the battery on the right (Hello shows them too).
   function softkeys() {
-    return `<header class="ek-sb ek-soft">${SOFTKEYS.map(({ tab, x }, i) => {
+    const keys = SOFTKEYS.map(({ tab, x }, i) => {
       const on = tab === current;
-      return `<span data-softkey="${tab}" class="${on ? 'on' : ''}" style="left:${(180 + x * PX_PER_W).toFixed(1)}px">0${i + 1}${on ? ` ${LABEL[tab]}` : ''}</span>`;
-    }).join('')}</header>`;
+      return `<span data-softkey="${tab}" class="${on ? 'on' : ''}" style="left:${(180 + x * PX_PER_W).toFixed(1)}px">0${i + 1}</span>`;
+    }).join('');
+    return `<header class="ek-sb ek-soft">${keys}</header><header class="ek-sb ek-status"><span>${LABEL[current]}</span>${statusRight()}</header>`;
   }
 
   // Bottom edge: labels for the two face keys under it (‹ Back, ✓). They are tappable too: on a phone the
@@ -165,7 +169,6 @@ export function createScreen(): Screen {
   }
 
   function render() {
-    const sb = (right = statusRight()) => `<header class="ek-sb"><span>${LABEL[current]}</span>${right}</header>`;
     let html = '';
     switch (current) {
       case 'boot': // under the page loader: a still mark until the wallet arrives
@@ -174,7 +177,7 @@ export function createScreen(): Screen {
           <p class="sc-kicker">DEAN STUDIO</p></section>`;
         break;
       case 'hello': // home screen: the pixel D-star idles here (status bar only: no section yet)
-        html = `${sb()}<section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>
+        html = `${softkeys()}<section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>
           <footer class="ek-ab"><span data-softkey="works">01 Works</span><span>Scroll ↓</span><span class="ek-hold" data-softkey="contact">04 Contact</span></footer>`;
         break;
       case 'works': {

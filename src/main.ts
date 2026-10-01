@@ -24,6 +24,7 @@ import { contact, mailtoHref, whatsappHref } from './content/contact';
 import { copyText } from './ui/clipboard';
 import { motion } from './motion';
 import { sfx } from './audio/sfx';
+import { music } from './audio/music';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -245,6 +246,16 @@ sfx.onPlay(() => {
 soundBtn.addEventListener('click', () => sfx.set(!sfx.enabled()));
 sfx.subscribe(updateSoundUi);
 updateSoundUi();
+// Music: its own switch (the record spins while it is on). The click sound is the toggle's own, so
+// switching music off is still heard (if effects are on).
+const musicBtn = document.getElementById('music-toggle') as HTMLButtonElement;
+const updateMusicUi = () => musicBtn.setAttribute('aria-pressed', String(music.enabled()));
+musicBtn.addEventListener('click', () => {
+  sfx.play('toggle');
+  music.set(!music.enabled());
+});
+music.subscribe(updateMusicUi);
+updateMusicUi();
 motion.subscribe((reduced) => {
   if (reduced) {
     lenis?.destroy();

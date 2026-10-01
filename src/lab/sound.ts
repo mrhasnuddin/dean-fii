@@ -1,6 +1,7 @@
-// Sound audition: every sound with where the site plays it, the bed, and the contact sequence's timing.
-// Set 2 (docs/device-design.md §15). The bed starts with the first click here, as on the site.
+// Sound audition: every sound effect with where the site plays it, the music switch, and the contact sequence's timing.
+// Set 2 (docs/device-design.md §15). The music (§18) has its own switch below; both are the site's settings.
 import { sfx, type SfxName, type PlayOptions } from '../audio/sfx';
+import { music } from '../audio/music';
 
 type Row = { label: string; where: string; play: () => void };
 const p = (name: SfxName, o?: PlayOptions) => () => sfx.play(name, o);
@@ -16,7 +17,7 @@ const rows: Row[] = [
   { label: 'coin tap · swing', where: 'The keychain coin clicked; the coin swinging into the wallet (quieter, follows the hit).', play: () => run([[0, p('coin')], [450, p('coin', { volume: 0.35 })]]) },
   { label: 'air', where: 'The key card flying in or out; the wallet settling after a hand turn.', play: p('air') },
   { label: 'peel', where: 'Peeling a sticker on the back (easter egg), while it lifts.', play: () => run([0, 1, 2].map((i) => [i * 130, p('peel', { volume: 0.5 + i * 0.2 })])) },
-  { label: 'power', where: 'Sound switched on in the header (the bed comes up with it).', play: p('power') },
+  { label: 'power', where: 'Sound effects switched on in the header.', play: p('power') },
   { label: 'success', where: 'The key comes back written: the one pitched sound (D6 + D7).', play: p('success') },
   {
     label: 'Contact sequence',
@@ -32,20 +33,26 @@ const rows: Row[] = [
 ];
 
 const root = document.getElementById('root')!;
+const musicToggle = document.createElement('button');
+musicToggle.type = 'button';
+const syncMusic = () => (musicToggle.textContent = music.enabled() ? 'Turn music off' : 'Turn music on');
+musicToggle.addEventListener('click', () => music.set(!music.enabled()));
+music.subscribe(syncMusic);
+syncMusic();
 const status = document.createElement('p');
 status.className = 'status';
 const toggle = document.createElement('button');
 toggle.type = 'button';
 const sync = () => {
   status.textContent = sfx.enabled()
-    ? 'Sound is on (the same setting as the site). The bed plays underneath once you click anything.'
-    : 'Sound is off for this site.';
+    ? 'Sound effects are on (the same setting as the site). The music is separate: its button is next to this one.'
+    : 'Sound effects are off for this site.';
   toggle.textContent = sfx.enabled() ? 'Turn sound off' : 'Turn sound on';
 };
 toggle.addEventListener('click', () => sfx.set(!sfx.enabled()));
 sfx.subscribe(sync);
 sync();
-root.append(status, toggle);
+root.append(status, toggle, ' ', musicToggle);
 
 const list = document.createElement('ol');
 for (const r of rows) {

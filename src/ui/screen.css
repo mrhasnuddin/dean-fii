@@ -1,12 +1,15 @@
 /* Site screen modes, layered on the e-ink base (einkScreen.css). 360 × 480 CSS px. */
 .screen { position: relative; font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; user-select: none; }
 
-/* Softkey labels under the four top tabs (positions from the spec). The active one is inverted and
-   names its section; the others show their number. Tappable: they select the section too. */
-.ek-soft { position: relative; height: 38px; padding: 0; }
-.ek-soft span { position: absolute; top: 9px; transform: translateX(-50%); padding: 3px 6px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer; white-space: nowrap; }
+/* Softkey labels under the four top tabs (positions from the spec). They are the wallet's tab numbers,
+   the active one inverted with a caret up to its key. Tappable: they select the section too. */
+.ek-soft { position: relative; height: 32px; padding: 0; border-bottom: 0; }
+.ek-soft span { position: absolute; top: 7px; transform: translateX(-50%); padding: 3px 9px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer; white-space: nowrap; }
 .ek-soft span.on { background: var(--ink); color: var(--paper); }
-.ek-soft span.on::before { content: ''; position: absolute; left: 50%; top: -9px; margin-left: -5px; border: 5px solid transparent; border-bottom-color: var(--ink); }
+.ek-soft span.on::before { content: ''; position: absolute; left: 50%; top: -7px; margin-left: -5px; border: 5px solid transparent; border-bottom-color: var(--ink); }
+/* Status strip on every screen: page name, then the local time (24 h, GMT+8) and the battery. */
+.ek-status { padding: 4px 14px; font-size: 12px; border-top: 1px dashed var(--rule); }
+.ek-status .ek-bat { width: 20px; height: 10px; }
 
 /* Idle mark (Hello, and the overlay after IDLE_MS): pixel D-star over a dashed rule and the name. */
 .px-logo { display: block; image-rendering: pixelated; }
@@ -28,7 +31,7 @@
 .sc-kicker { font-weight: 700; letter-spacing: 0.16em; margin-top: 10px; }
 
 .sc-list { padding-top: 12px; gap: 8px; }
-.sc-well { margin: 0; border: 1.5px solid var(--ink); position: relative; height: 150px; overflow: hidden; flex: none; }
+.sc-well { margin: 0; border: 1.5px solid var(--ink); position: relative; height: 138px; overflow: hidden; flex: none; }
 .sc-well img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; mix-blend-mode: multiply; }
 .sc-well figcaption { position: absolute; left: 0; bottom: 0; background: var(--ink); color: var(--paper); font-size: 11px; letter-spacing: 0.08em; padding: 3px 8px; text-transform: uppercase; }
 .sc-rows li { padding: 5px 8px; }
@@ -43,7 +46,7 @@
    and the softkeys grow to ~30 px tall there. The image well gives up 26 px and one row goes. The
    softkeys keep their look; an invisible margin takes the taps. */
 @media (pointer: coarse) {
-  .sc-well { height: 124px; }
+  .sc-well { height: 100px; }
   .sc-rows li { padding-block: 12px; }
   .ek-ab span { padding-block: 15px; }
   .ek-soft span::after { content: ''; position: absolute; inset: -9px -10px; }
