@@ -80,10 +80,11 @@ export function createDetail(): Detail {
     const list = kind === 'project' ? projects : events;
     const prev = list[(i - 1 + n) % n];
     const next = list[(i + 1) % n];
+    // A short direction label, the title as a one-line sub-label (hidden on phones; the label keeps the full title).
     return `<nav class="dt-pager" aria-label="More">
-      <button type="button" data-go="${prev.id}" data-kind="${kind}"><span aria-hidden="true">‹</span> ${esc(prev.title)}</button>
+      <button type="button" data-go="${prev.id}" data-kind="${kind}" aria-label="Previous: ${esc(prev.title)}"><span class="dt-dir"><span aria-hidden="true">‹</span> Previous</span><span class="dt-name">${esc(prev.title)}</span></button>
       <span>${String(i + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span>
-      <button type="button" data-go="${next.id}" data-kind="${kind}">${esc(next.title)} <span aria-hidden="true">›</span></button></nav>`;
+      <button type="button" data-go="${next.id}" data-kind="${kind}" aria-label="Next: ${esc(next.title)}"><span class="dt-dir">Next <span aria-hidden="true">›</span></span><span class="dt-name">${esc(next.title)}</span></button></nav>`;
   }
 
   dlg.addEventListener('click', (e) => {

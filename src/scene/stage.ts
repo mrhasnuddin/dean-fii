@@ -59,7 +59,8 @@ function gpuTier(renderer: THREE.WebGLRenderer): GpuTier {
   return /swiftshader|llvmpipe|software|basic render/i.test(name) ? 'low' : 'high';
 }
 
-export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): Stage {
+/** `studioEnv`: the baked environment (loadBakedEnvironment); null generates it here, which is slow. */
+export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement, studioEnv: THREE.Texture | null): Stage {
   // alpha: the page's radial glow (site.css .stage) shows through behind the wallet.
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   const coarse = matchMedia('(pointer: coarse)').matches;
@@ -70,7 +71,7 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
   cssHost.append(css.domElement);
 
   const scene = new THREE.Scene(); // no background: transparent over the page's glow
-  const env = createStudioEnvironment(renderer);
+  const env = studioEnv ?? createStudioEnvironment(renderer);
   scene.environment = env;
   const key = new THREE.DirectionalLight('#ffffff', 1.1);
   key.position.set(-3, 4, 5);
@@ -252,6 +253,13 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
   // Compile every shader before the first frame (in parallel where the driver allows), so the loader
   // covers the compile instead of the first visible frames stalling. D3D11 (ANGLE) takes 0.3–1 s per
   // physical program, so the key card, first seen in Contact, compiles afterwards in the background.
+  //
+  // That background work (the card's shaders, the stickers) is 0.4–1 s of blocked main thread per piece.
+  // It waits for the entrance to settle (the loader lifts right after the first frame and the wallet rises
+  // over ~1.4 s) and then for an idle moment, so it never lands on the arrival animation.
+  const idle = () =>
+    new Promise<void>((r) => ('requestIdleCallback' in window ? requestIdleCallback(() => r(), { timeout: 2000 }) : setTimeout(r, 100)));
+  const settled = ready.then(() => new Promise<void>((r) => setTimeout(r, 2500))).then(idle);
   queueMicrotask(() => {
     resize();
     performance.mark('stage:compile-start');
@@ -265,7 +273,7 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
         clock.getDelta();
         compiled = true;
         loop();
-        return ready.then(() => renderer.compileAsync(scene, camera)).catch(() => {});
+        return settled.then(() => renderer.compileAsync(scene, camera)).catch(() => {});
       });
   });
   // Pause rendering while the tab is hidden; resume without a time jump (keychain re-hangs on big dt).
@@ -274,10 +282,10 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
     clock.getDelta();
   });
 
-  // Stickers (easter egg): built from the SVGs after the first frame and compiled in the background,
+  // Stickers (easter egg): built from the SVGs once the entrance has settled and compiled in the background,
   // so the loader never waits for them; then stuck to the back plate's outer face.
   const stickers: Sticker[] = [];
-  ready
+  settled
     .then(async () => {
       const plate = wallet.runtime.meshes['back-plate'];
       if (!plate) return;
@@ -285,7 +293,7 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement): St
       plate.geometry.computeBoundingBox();
       const toRoot = new THREE.Matrix4().copy(wallet.root.matrixWorld).invert().multiply(plate.matrixWorld);
       const backZ = plate.geometry.boundingBox!.clone().applyMatrix4(toRoot).min.z;
-      const made = await createStickers(backZ, env);
+      const made = await createStickers(backZ, env, idle);
       await renderer.compileAsync(made.group, camera, scene).catch(() => {});
       wallet.root.add(made.group);
       stickers.push(...made.stickers);

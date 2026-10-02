@@ -509,9 +509,18 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
  * Builds the three stickers (async: the SVGs load first) and places them at random on the back plate
  * of `root`, at `backZ` (the plate's outer face, root space). Resolves with a group to add to `root`.
  */
-export async function createStickers(backZ: number, envMap: THREE.Texture | null): Promise<{ group: THREE.Group; stickers: Sticker[] }> {
+export async function createStickers(
+  backZ: number,
+  envMap: THREE.Texture | null,
+  /** Awaited between stickers: each one's textures are ~0.5 s of pixel work, so frames get a turn in between. */
+  pause: () => Promise<void> = () => Promise.resolve(),
+): Promise<{ group: THREE.Group; stickers: Sticker[] }> {
   const rand = Math.random;
-  const built = await Promise.all(STICKERS.map((s) => buildTextures(s, rand)));
+  const built: Built[] = [];
+  for (const s of STICKERS) {
+    built.push(await buildTextures(s, rand));
+    await pause();
+  }
   const boxes = place(built.map((b, i) => ({ hw: b.width / 2, hh: b.height / 2, tilt: STICKERS[i].tilt })), rand);
   const hintIndex = Math.floor(rand() * built.length);
   const group = new THREE.Group();

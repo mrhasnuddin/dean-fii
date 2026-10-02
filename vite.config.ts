@@ -3,13 +3,28 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 // Dev-only: lets lab/wallet.html save review renders (PNG) into .img2threejs/renders for the
-// img2threejs review gates. Names are sanitised; nothing else on disk is writable.
+// img2threejs review gates. Names are sanitised; nothing else on disk is writable (bar the baked
+// environment file, lab/bake-env.html).
 function reviewCapture(): Plugin {
   const outDir = resolve(import.meta.dirname, '.img2threejs/renders');
   return {
     name: 'review-capture',
     apply: 'serve',
     configureServer(server) {
+      // lab/bake-env.html posts the pre-filtered studio environment here; one fixed file name.
+      server.middlewares.use('/__bake-env', (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.end();
+          return;
+        }
+        const chunks: Buffer[] = [];
+        req.on('data', (c: Buffer) => chunks.push(c));
+        req.on('end', () => {
+          writeFileSync(resolve(import.meta.dirname, 'src/device/generated/studio-env.bin'), Buffer.concat(chunks));
+          res.end('ok');
+        });
+      });
       server.middlewares.use('/__capture', (req, res) => {
         if (req.method !== 'POST') {
           res.statusCode = 405;

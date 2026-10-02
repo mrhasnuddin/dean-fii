@@ -73,8 +73,11 @@
 .dt-tool img { object-fit: contain; }
 
 .dt-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1 var(--font-mono); }
-.dt-pager button { background: none; border: 0; color: var(--ink-light); padding: 8px 4px; max-width: 40%; text-align: left; }
+.dt-pager button { display: grid; gap: 6px; min-width: 0; flex: 1 1 0; background: none; border: 0; color: var(--ink-light); padding: 8px 4px; text-align: left; }
 .dt-pager button:last-child { text-align: right; }
+.dt-dir { white-space: nowrap; }
+.dt-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 11px; }
+.dt-pager > span { flex: none; }
 .dt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 760px) {
@@ -84,6 +87,8 @@
   /* The sheet leaves the header showing above it: dim it further so it doesn't read as live. */
   .detail[open]::backdrop { background: rgb(8 8 10 / 0.62); }
   .dt-head, .dt-scroll { padding-left: 18px; padding-right: 18px; }
+  .dt-name { display: none; } /* "Previous" / "Next" only: the titles were too long for the width */
+  .dt-pager button { padding: 12px 4px; font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .detail, .detail[open], .detail::backdrop { transition: opacity 150ms ease, overlay 150ms allow-discrete, display 150ms allow-discrete; transform: none; }

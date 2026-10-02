@@ -25,7 +25,9 @@ import { copyText } from './ui/clipboard';
 import { motion } from './motion';
 import { sfx } from './audio/sfx';
 import { music } from './audio/music';
+import { loadBakedEnvironment } from './device/studioEnvironment';
 
+const studioEnv = loadBakedEnvironment(); // fetched and decoded while the rest of the page sets up
 gsap.registerPlugin(ScrollTrigger);
 
 const hero = document.getElementById('hello')!;
@@ -97,9 +99,13 @@ startLenis();
 // Lifts once the page is usable and the mark has drawn. Never traps the page: 8 s cap.
 const loader = document.getElementById('loader')!;
 const LOADER_MIN_MS = 1350; // the mark has faded in (450 ms) and the sparkle has twinkled once (900 ms)
+// Every face the page draws, requested now. A face is otherwise fetched only when text first uses it, and
+// the screen's mono 500/700 were first used after the reveal, so its text swapped fonts in front of the visitor.
+const FACES = ['400 1em "IBM Plex Mono"', '500 1em "IBM Plex Mono"', '700 1em "IBM Plex Mono"', '400 1em "Instrument Serif"', '400 1em "Inter Variable"'];
+const fontsLoaded = Promise.all(FACES.map((f) => document.fonts.load(f))).then(() => document.fonts.ready);
 function liftLoader(ready: Promise<unknown>, then: () => void) {
   const min = motion.reduced() ? 0 : Math.max(0, LOADER_MIN_MS - performance.now());
-  const settled = Promise.race([Promise.all([ready, document.fonts.ready]), new Promise((r) => setTimeout(r, 8000))]);
+  const settled = Promise.race([Promise.all([ready, fontsLoaded]), new Promise((r) => setTimeout(r, 8000))]);
   Promise.all([settled, new Promise((r) => setTimeout(r, min))]).then(() => {
     loader.classList.add('done');
     setTimeout(() => loader.remove(), 500);
@@ -306,7 +312,7 @@ if (!webglAvailable()) {
   hire.addEventListener('click', (e) => (e.preventDefault(), selectTab('contact')));
   liftLoader(Promise.resolve(), () => {});
 } else {
-  const stage = createStage(document.getElementById('webgl') as HTMLCanvasElement, document.getElementById('css3d')!);
+  const stage = createStage(document.getElementById('webgl') as HTMLCanvasElement, document.getElementById('css3d')!, await studioEnv);
   const chor = createChoreography(stage, hero, consoleEl);
   const contactSeq: ContactSequence = createContactSequence(stage, chor, announce);
   const { screen } = stage;
