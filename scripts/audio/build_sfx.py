@@ -228,11 +228,42 @@ def s_peel():  # sticker adhesive letting go: a short soft crackle
     return edges(hiss + norm(hp(crack, 3500)) * 0.7, fin=0.002, fout=0.015)
 
 
+def rip(d: float) -> np.ndarray:
+    """Adhesive letting go along a line: a fibrous tearing hiss whose pitch climbs as the flap comes away,
+    broken up by uneven pulls and with sparse crackle that gets denser as it goes. Forward in time."""
+    t = tt(d)
+    u = t / d
+    env = np.minimum(t / 0.02, 1) * (0.55 + 0.45 * u) * np.cos(np.pi / 2 * np.clip((u - 0.85) / 0.15, 0, 1)) ** 2
+    pull = lp(noise(d), 35)  # uneven tearing: the hiss swells and drops with the fibres
+    pull = 0.45 + 0.55 * np.clip(pull / (3 * np.std(pull)) + 0.5, 0, 1)
+    hiss = norm(svf_bp(noise(d), 1900 + 3400 * u, 1.1)) * pull * env
+    crack = np.zeros(n_(d))
+    hits = rng.random(n_(d)) < ((350 + 1700 * u) / SR) * env
+    crack[hits] = rng.uniform(-1, 1, hits.sum())
+    return hiss * 0.55 + norm(hp(crack, 3000)) * 0.5 * env
+
+
+def s_rip():  # pulling a sticker's corner up: the long version of the adhesive letting go
+    return edges(norm(rip(0.55)), fin=0.003, fout=0.03)
+
+
+def s_unpeel():  # the sticker laid back down: that rip played backwards, ending in a soft press
+    d = 0.85
+    back = np.flip(norm(rip(0.78)))  # swells in, as if gathering, and stops at the contact
+    x = zeros(d)
+    place(x, edges(back, fin=0.12, fout=0.004), 0, 0.8)
+    t = tt(0.16)
+    pat = mode(118, 0.05, 0.16, 1.0, phase=0) + 0.9 * transient(0.16, 900, 3200) * np.exp(-t / 0.02)
+    place(x, edges(norm(pat), fin=0.0, fout=0.03), d - 0.16, 0.85)
+    return x
+
+
 # name -> (builder, peak dBFS). Levels are the mix: the frequent ones quietest.
 SOUNDS = {
     "hover": (s_hover, -21), "press": (s_press, -11), "detent": (s_detent, -15), "toggle": (s_toggle, -16),
     "process": (s_process, -27), "success": (s_success, -14), "power": (s_power, -19), "air": (s_air, -24),
     "coin": (s_coin, -17), "peel": (s_peel, -23),
+    "rip": (s_rip, -20), "unpeel": (s_unpeel, -17),
 }
 
 

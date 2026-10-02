@@ -7,6 +7,8 @@
 // easter egg). Pull a sticker all the way (past COMMIT of its travel) and let go: the flap stays rolled
 // back and the QR is revealed. Tap the QR to visit the site, or tap the flap to put the sticker back.
 // The QR is the largest square that fits inside the sticker's die-cut shape, so it is never seen early.
+// Putting it back plays the peel in reverse: the fold travels back to the corner while the flap's angle
+// follows the same curve it took on the way up (`angleFor`), then a tiny press as it lands.
 //
 // Construction (all procedural, from the SVGs in public/):
 // - Die-cut shape = the logo dilated (stamped around a circle) with enclosed counters filled, so the
@@ -56,6 +58,8 @@ const LATCH_ANGLE = 2.85; // a latched flap hangs folded almost flat back over i
 const REST_ANGLE = 0.75;
 const PULL_ANGLE = [1.85, 2.8] as const; // just grabbed → at the limit
 const ANGLE_TAU = 0.07; // s: the flap swings to its new angle instead of snapping
+const HEAL_FULL = 0.85; // s: a latched flap laying back down (shorter from a partial peel); sfx 'unpeel' is cut to this
+const SETTLE = 0.4; // s: a flap let go before it latches, springing back
 
 export interface Sticker {
   mesh: THREE.Mesh; // front (print) side; raycast target (userData.sticker = this)
@@ -591,21 +595,54 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
   a = rest;
   deform();
 
-  /** The flap lays back down. Vinyl springs back fast: most of the travel lands in the first ~100 ms. */
-  function lay(onSettled: (() => void) | undefined, instant: boolean, seconds: number) {
+  /** The flap angle that goes with a fold distance, on the way up (pull) or down (heal): the same curve, so a
+   *  heal is the peel run backwards. The last stretch eases down to the resting lift angle. */
+  function angleFor(fold: number) {
+    const x = maxA ? Math.min(1, fold / maxA) : 0;
+    const w = Math.min(1, x / 0.12);
+    const pulled = PULL_ANGLE[0] + (LATCH_ANGLE - PULL_ANGLE[0]) * x;
+    return REST_ANGLE + (pulled - REST_ANGLE) * w * w * (3 - 2 * w);
+  }
+
+  /**
+   * The flap lays back down by reversing the peel: the fold line travels back to the corner while the angle
+   * follows `angleFor` (driven by the same number, so the two can't drift apart). `ease` and `seconds` set
+   * the character: a deliberate heal eases in and out; a flap let go springs back, fast at first.
+   */
+  let healing = false;
+  const baseScale = (box.hw * 2) / b.width;
+  function lay(onSettled: (() => void) | undefined, instant: boolean, seconds: number, ease: string) {
     settle?.kill();
-    angleTo = REST_ANGLE;
-    if (instant) angle = REST_ANGLE;
+    if (instant) {
+      a = rest;
+      angle = angleTo = REST_ANGLE;
+      dirty = true;
+      healing = false;
+      onSettled?.();
+      return;
+    }
+    healing = true;
     const p = { a };
     settle = gsap.to(p, {
       a: rest,
-      duration: instant ? 0 : seconds,
-      ease: 'power3.out',
+      duration: seconds,
+      ease,
       onUpdate: () => {
         a = p.a;
+        angle = angleTo = angleFor(a);
         dirty = true;
       },
-      onComplete: onSettled,
+      onComplete: () => {
+        healing = false;
+        a = rest;
+        angle = angleTo = REST_ANGLE;
+        dirty = true;
+        // It touches down: a barely-there press into the plate.
+        gsap.timeline()
+          .to(group.scale, { x: baseScale * 0.992, y: baseScale * 0.992, duration: 0.07, ease: 'power2.out' })
+          .to(group.scale, { x: baseScale, y: baseScale, duration: 0.18, ease: 'power3.out' });
+        onSettled?.();
+      },
     });
   }
 
@@ -618,6 +655,7 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
     qr: qrMesh,
     beginPeel(worldPoint) {
       settle?.kill();
+      healing = false;
       mesh.worldToLocal(tmp.copy(worldPoint));
       grab.set(tmp.x, tmp.y);
       // Lift the corner nearest to where it was grabbed.
@@ -664,15 +702,16 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
         });
         return true;
       }
-      lay(onSettled, instant, 0.28);
+      lay(onSettled, instant, SETTLE, 'power3.out');
       return false;
     },
     heal(onSettled, instant = false) {
       open = false;
-      lay(onSettled, instant, 0.45); // a latched flap has further to fall
+      const x = maxA ? Math.min(1, a / maxA) : 0;
+      lay(onSettled, instant, 0.35 + (HEAL_FULL - 0.35) * x, 'power2.inOut'); // the further it has to go, the longer
     },
     update(dt) {
-      if (Math.abs(angleTo - angle) > 1e-3) {
+      if (!healing && Math.abs(angleTo - angle) > 1e-3) {
         angle += (angleTo - angle) * (1 - Math.exp(-dt / ANGLE_TAU));
         dirty = true;
       }

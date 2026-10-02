@@ -61,8 +61,8 @@
 .dt-media { display: grid; gap: 10px; margin-bottom: 26px; }
 .dt-main { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; }
 .dt-portrait { aspect-ratio: 4 / 5; max-width: 320px; }
-.dt-thumbs { display: flex; gap: 10px; }
-.dt-thumb { padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; width: 96px; aspect-ratio: 16 / 10; background: none; cursor: pointer; opacity: 0.6; transition: opacity 160ms ease, border-color 160ms ease; }
+.dt-thumbs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 96px); gap: 8px; } /* up to 96 px each, shrinking together so four fit a phone */
+.dt-thumb { padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; width: 100%; aspect-ratio: 16 / 10; background: none; cursor: pointer; opacity: 0.6; transition: opacity 160ms ease, border-color 160ms ease; }
 .dt-thumb[aria-pressed='true'] { opacity: 1; border-color: var(--champagne); }
 .dt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 

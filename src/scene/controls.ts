@@ -173,7 +173,9 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     if (!s) return;
     openSticker = null;
     h.sticker(null);
-    s.heal(quiet ? undefined : () => sfx.play('toggle', { volume: 0.5 }), motion.reduced());
+    s.heal(undefined, motion.reduced());
+    // 'unpeel' is the rip played backwards, cut to the length of the heal, ending in the press as it lands.
+    if (!quiet) sfx.play(motion.reduced() ? 'toggle' : 'unpeel', { volume: motion.reduced() ? 0.5 : 0.85 });
   }
   function visit(s: Sticker) {
     window.open(s.url, '_blank', 'noopener,noreferrer');
@@ -250,8 +252,12 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
       }
     } else if (drag.kind === 'peel') {
       const s = drag.sticker;
-      // Pulled to the end: it stays rolled back, the QR showing. Otherwise it lays down with a soft pat.
-      if (s.release(() => sfx.play('toggle', { volume: 0.5 }), motion.reduced())) {
+      // Pulled to the end: it stays rolled back, the QR showing. Otherwise it springs back down: the same
+      // sound as a heal, sped up to fit the shorter spring.
+      const latched = s.release(undefined, motion.reduced());
+      // (a nudge too small to have torn anything stays silent)
+      if (!latched && drag.lastF > 0) sfx.play(motion.reduced() ? 'toggle' : 'unpeel', { volume: motion.reduced() ? 0.5 : 0.7, rate: 2 });
+      if (latched) {
         if (openSticker && openSticker !== s) healSticker(true);
         openSticker = s;
         sfx.play('success', { volume: 0.45 });
@@ -284,10 +290,11 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
           sfx.play('detent', { volume: 0.7 });
           buzz(8);
         } else if (f < COMMIT - 0.04) drag.past = false;
-        // Adhesive crackle while it lifts, louder for a faster pull; silent once it stops giving.
+        // The adhesive tearing as it comes away: one 'rip' per pull (it lasts ~0.55 s), louder for a faster
+        // pull, and not again until the flap has travelled on; silent once it stops giving.
         const now = performance.now();
-        if (f - drag.lastF > 0.07 && now - drag.lastSound > 120 && f < 0.97) {
-          sfx.play('peel', { volume: Math.min(1, 0.35 + (f - drag.lastF) * 3) });
+        if (f - drag.lastF > 0.08 && now - drag.lastSound > 520 && f < 0.97) {
+          sfx.play('rip', { volume: Math.min(1, 0.45 + (f - drag.lastF) * 2.5) });
           drag.lastSound = now;
           drag.lastF = f;
         } else if (f < drag.lastF) drag.lastF = f;

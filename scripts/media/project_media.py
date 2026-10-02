@@ -6,6 +6,8 @@ Outputs (public/media/):
   eink/<id>.png                                324x150, 1-bit, dithered from the screenshot given as EINK_FROM (1 or 2)
 
 Run: python scripts/media/project_media.py <id> <shot1.png> <shot2.png> [eink_from=1]
+More thumbnails for a project that already has two (numbered on from -3; the dithered image is left alone):
+     python scripts/media/project_media.py <id> --more <shot3.png> [<shot4.png> ...]
 """
 import sys
 from pathlib import Path
@@ -16,7 +18,17 @@ PUB = ROOT / "public" / "media"
 EINK_SIZE = (162, 75)  # 1 dot = 2 CSS px on the 324 x 150 preview well of the 360 x 480 screen (saved at 2x)
 
 
+def more(pid: str, shots: list[str]) -> None:
+    (PUB / "projects").mkdir(parents=True, exist_ok=True)
+    first = len(list((PUB / "projects").glob(f"{pid}-*.webp"))) + 1
+    for i, p in enumerate(shots, first):
+        im = ImageOps.fit(Image.open(p).convert("RGB"), (1280, 800), Image.LANCZOS)
+        im.save(PUB / "projects" / f"{pid}-{i}.webp", quality=82, method=6)
+
+
 def main() -> None:
+    if len(sys.argv) > 3 and sys.argv[2] == "--more":
+        return more(sys.argv[1], sys.argv[3:])
     pid, a, b = sys.argv[1], Path(sys.argv[2]), Path(sys.argv[3])
     src = int(sys.argv[4]) if len(sys.argv) > 4 else 1
     (PUB / "projects").mkdir(parents=True, exist_ok=True)

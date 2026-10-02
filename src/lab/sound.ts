@@ -16,7 +16,9 @@ const rows: Row[] = [
   { label: 'toggle (end stop)', where: 'The roller at a list end; a failed copy. Pitched down.', play: p('toggle', { rate: 0.8 }) },
   { label: 'coin tap · swing', where: 'The keychain coin clicked; the coin swinging into the wallet (quieter, follows the hit).', play: () => run([[0, p('coin')], [450, p('coin', { volume: 0.35 })]]) },
   { label: 'air', where: 'The key card flying in or out; the wallet settling after a hand turn.', play: p('air') },
-  { label: 'peel', where: 'Peeling a sticker on the back (easter egg), while it lifts.', play: () => run([0, 1, 2].map((i) => [i * 130, p('peel', { volume: 0.5 + i * 0.2 })])) },
+  { label: 'peel', where: 'A sticker corner coming unstuck, the moment it is grabbed (easter egg).', play: p('peel', { volume: 0.5 }) },
+  { label: 'rip', where: 'Pulling a sticker up: the adhesive tearing, once per pull, louder for a faster pull.', play: p('rip') },
+  { label: 'unpeel', where: 'Putting a sticker back (tap on the flap, Esc, ✕, turning the wallet): the rip played backwards, ending in a soft press. Sped up (rate 2) when a half-pulled sticker springs back.', play: p('unpeel', { volume: 0.85 }) },
   { label: 'power', where: 'Sound effects switched on in the header.', play: p('power') },
   { label: 'success', where: 'The key comes back written: the one pitched sound (D6 + D7).', play: p('success') },
   {
