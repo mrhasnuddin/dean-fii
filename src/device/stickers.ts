@@ -3,6 +3,11 @@
 // with a real curl (showing the adhesive side), harder the further it goes, and never past ~70 %;
 // let go and it lays back down.
 //
+// Underneath each one is a second sticker: a QR code to the partner's site (the hidden part of the
+// easter egg). Pull a sticker all the way (past COMMIT of its travel) and let go: the flap stays rolled
+// back and the QR is revealed. Tap the QR to visit the site, or tap the flap to put the sticker back.
+// The QR is the largest square that fits inside the sticker's die-cut shape, so it is never seen early.
+//
 // Construction (all procedural, from the SVGs in public/):
 // - Die-cut shape = the logo dilated (stamped around a circle) with enclosed counters filled, so the
 //   sticker follows the artwork like a real die-cut, with a thick border. The border is holographic
@@ -19,6 +24,10 @@ import gsap from 'gsap';
 
 export interface StickerSpec {
   src: string;
+  /** Partner name (announced when its QR is revealed). */
+  name: string;
+  /** Where the QR under the sticker leads. */
+  url: string;
   /** Printed logo width, W (the border adds to it). */
   width: number;
   /** Max random rotation, radians. */
@@ -26,9 +35,9 @@ export interface StickerSpec {
 }
 
 export const STICKERS: StickerSpec[] = [
-  { src: '/OC.svg', width: 0.36, tilt: 0.3 },
-  { src: '/aseanlabs.svg', width: 0.25, tilt: 0.45 },
-  { src: '/mydac.svg', width: 0.19, tilt: 0.5 },
+  { src: '/OC.svg', name: 'Open Crew', url: 'https://open-crew.vercel.app/', width: 0.36, tilt: 0.3 },
+  { src: '/aseanlabs.svg', name: 'ASEAN Labs', url: 'https://aseanlabs.io/', width: 0.25, tilt: 0.45 },
+  { src: '/mydac.svg', name: 'MyDAC', url: 'https://www.mydac.org.my/', width: 0.19, tilt: 0.5 },
 ];
 
 const BODY_PAD = 0.012; // vinyl around the print (W)
@@ -36,7 +45,11 @@ const BORDER = 0.016; // holographic foil border (W)
 const PX_PER_W = 1600; // texture resolution
 const SEG = 48; // plane subdivisions per side (peel smoothness)
 const CURL_R = 0.014; // curl radius (W): how stiff the vinyl is
-const MAX_FRACTION = 0.7; // how far along the peel direction it can go
+const MAX_FRACTION = 0.9; // how far along the peel direction it can go (nearly off: the QR beneath is revealed)
+const RESIST = 0.7; // rubber band: smaller = the pull reaches the limit sooner
+/** Released past this share of the travel, the flap stays rolled back (QR revealed) instead of laying down. */
+export const COMMIT = 0.8;
+const LATCH_ANGLE = 2.85; // a latched flap hangs folded almost flat back over itself
 // Peel angle (0 = flat, π = folded flat back over itself). A corner that has come unstuck stands up
 // at a shallow angle; one being pulled rolls back past vertical, so the viewer sees its adhesive
 // side (at ~90° the flap is edge-on to a camera looking at the back, and simply vanishes).
@@ -47,11 +60,24 @@ const ANGLE_TAU = 0.07; // s: the flap swings to its new angle instead of snappi
 export interface Sticker {
   mesh: THREE.Mesh; // front (print) side; raycast target (userData.sticker = this)
   group: THREE.Group;
+  name: string;
+  url: string;
+  /** "mydac.org.my": what the link pill shows. */
+  host: string;
+  /** The QR sticker beneath (raycastable only while the flap is latched open); null if no square fits. */
+  qr: THREE.Mesh | null;
+  /** The flap is latched open and the QR is showing. */
+  isOpen(): boolean;
   beginPeel(worldPoint: THREE.Vector3): void;
   /** Pointer ray while dragging. Returns the peel fraction 0..1 (of the allowed maximum). */
   drag(ray: THREE.Ray): number;
-  /** Let go: it lays back down (`instant` under reduced motion). */
-  release(onSettled?: () => void, instant?: boolean): void;
+  /**
+   * Let go. Past COMMIT it latches open and returns true; otherwise it lays back down (`instant` under
+   * reduced motion), calls `onSettled` when flat, and returns false.
+   */
+  release(onSettled?: () => void, instant?: boolean): boolean;
+  /** Put a latched sticker back: the flap lays down over the QR. */
+  heal(onSettled?: () => void, instant?: boolean): void;
   update(dt: number): void;
 }
 
@@ -116,6 +142,79 @@ function dieCut(src: HTMLCanvasElement, r: number): Uint8ClampedArray {
   return inside;
 }
 
+// ---------------------------------------------------------------- the QR sticker beneath
+const QR_MARGIN = 2; // quiet zone, modules: the sticker's own white (the dark plate lies beyond it)
+const QR_RIM = 0.9; // holographic border, modules
+
+/** The QR as a die-cut rounded-square sticker: foil rim, white vinyl, black modules. */
+function qrTexture(modules: boolean[][]): THREE.CanvasTexture {
+  const PX = 20; // pixels per module: edges stay crisp up close
+  const n = modules.length;
+  const S = Math.round((n + 2 * QR_MARGIN + 2 * QR_RIM) * PX);
+  const c = canvas(S, S);
+  const ctx = c.getContext('2d')!;
+  const rim = QR_RIM * PX;
+  const foil = ctx.createLinearGradient(0, 0, S, S * 0.6);
+  ['#9fd0ff', '#e6b8ff', '#ffd6a8', '#b6ffd9', '#9fd0ff'].forEach((col, i, all) => foil.addColorStop(i / (all.length - 1), col));
+  ctx.fillStyle = foil;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, S, S, S * 0.1);
+  ctx.fill();
+  ctx.fillStyle = '#f6f3ec';
+  ctx.beginPath();
+  ctx.roundRect(rim, rim, S - 2 * rim, S - 2 * rim, S * 0.075);
+  ctx.fill();
+  ctx.fillStyle = '#0f0f12';
+  const o = rim + QR_MARGIN * PX;
+  modules.forEach((row, y) => row.forEach((on, x) => on && ctx.fillRect(o + x * PX, o + y * PX, PX, PX)));
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}
+
+/**
+ * The largest square (centre and side, W, sticker space: origin at its centre, y up) that lies inside the
+ * die-cut `mask` and stays clear of the curl however the sticker is peeled: whichever corner is lifted, the
+ * fold stops at MAX_FRACTION of the diagonal, and the square must end before it.
+ */
+function fitSquare(mask: Uint8ClampedArray, wPx: number, hPx: number, w: number, h: number): { cx: number; cy: number; side: number } | null {
+  const iw = wPx + 1;
+  const sum = new Int32Array(iw * (hPx + 1)); // integral image of the mask: any box's coverage in O(1)
+  for (let y = 0; y < hPx; y++) {
+    let row = 0;
+    for (let x = 0; x < wPx; x++) {
+      row += mask[y * wPx + x] > 0 ? 1 : 0;
+      sum[(y + 1) * iw + x + 1] = sum[y * iw + x + 1] + row;
+    }
+  }
+  const full = (x0: number, y0: number, x1: number, y1: number) =>
+    sum[y1 * iw + x1] - sum[y0 * iw + x1] - sum[y1 * iw + x0] + sum[y0 * iw + x0] === (x1 - x0) * (y1 - y0);
+  const E = Math.hypot(w, h);
+  const free = (MAX_FRACTION - 0.5) * E - CURL_R - 0.012; // the fold's reach past the centre, less the curl and a margin
+  const dirs = [[1, 1], [1, -1], [-1, 1], [-1, -1]].map(([sx, sy]) => [(-sx * w) / E, (-sy * h) / E]); // peel directions
+  const STEP = 6; // px between candidate centres
+  for (let side = Math.min(w, h) * 0.92; side >= 0.07; side -= 0.004) {
+    const half = Math.round((side * PX_PER_W) / 2) + 4; // 4 px of vinyl to spare all round
+    let best: { cx: number; cy: number; side: number } | null = null;
+    let bestD = Infinity;
+    for (let py = half; py <= hPx - half; py += STEP) {
+      for (let px = half; px <= wPx - half; px += STEP) {
+        const cx = (px - wPx / 2) / PX_PER_W;
+        const cy = (hPx / 2 - py) / PX_PER_W;
+        const d = Math.hypot(cx, cy);
+        if (d >= bestD) continue;
+        if (dirs.some(([ux, uy]) => cx * ux + cy * uy + (side / 2) * (Math.abs(ux) + Math.abs(uy)) > free)) continue;
+        if (!full(px - half, py - half, px + half, py + half)) continue;
+        best = { cx, cy, side };
+        bestD = d;
+      }
+    }
+    if (best) return best;
+  }
+  return null;
+}
+
 interface Built {
   art: THREE.CanvasTexture; // RGBA: foil base / vinyl / print; alpha = die-cut
   surface: THREE.CanvasTexture; // R iridescence, G roughness, B metalness
@@ -123,6 +222,8 @@ interface Built {
   alpha: THREE.CanvasTexture; // die-cut for the adhesive side
   width: number; // W incl. border
   height: number;
+  /** The QR sticker beneath: its texture, side and centre (W, sticker space); null if none fits. */
+  qr: { tex: THREE.CanvasTexture; side: number; cx: number; cy: number } | null;
 }
 
 async function buildTextures(spec: StickerSpec, rand: () => number): Promise<Built> {
@@ -235,7 +336,14 @@ async function buildTextures(spec: StickerSpec, rand: () => number): Promise<Bui
     t.anisotropy = 8;
     return t;
   };
-  return { art: tex(art, true), surface: tex(surf), bump: tex(bump), alpha: tex(al), width, height };
+  // The QR beneath: the biggest square that hides entirely under this sticker's die-cut.
+  let qr: Built['qr'] = null;
+  const fit = fitSquare(outer, W, H, width, height);
+  if (fit) {
+    const { encode } = await import('uqr'); // its own small chunk, fetched with the stickers
+    qr = { tex: qrTexture(encode(spec.url, { ecc: 'L', border: 0 }).data), side: fit.side, cx: fit.cx, cy: fit.cy };
+  }
+  return { art: tex(art, true), surface: tex(surf), bump: tex(bump), alpha: tex(al), width, height, qr };
 }
 
 // ---------------------------------------------------------------- placement (back view, W)
@@ -292,7 +400,7 @@ function place(sizes: { hw: number; hh: number; tilt: number }[], rand: () => nu
 }
 
 // ---------------------------------------------------------------- one sticker
-function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null, hint: number, rand: () => number): Sticker {
+function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: THREE.Texture | null, hint: number, rand: () => number): Sticker {
   const geo = new THREE.PlaneGeometry(b.width, b.height, SEG, SEG);
   const base = Float32Array.from(geo.attributes.position.array as Float32Array);
   const front = new THREE.MeshPhysicalMaterial({
@@ -338,7 +446,8 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
   mesh.name = 'sticker';
   const underside = new THREE.Mesh(geo, back);
   underside.name = 'sticker-adhesive';
-  underside.raycast = () => {}; // the front mesh is the one hit target
+  // A flap rolled back past vertical shows its adhesive side to the camera, which is then what a tap
+  // lands on (the front mesh's back faces are culled); a sticker lying flat is only ever hit on the front.
   // Flap shadow: the curl's footprint flattened onto the surface, darker where the flap is higher,
   // nudged away from the key light. Depth-tested, so the flap itself always covers its own shadow.
   const shadowGeo = new THREE.BufferGeometry();
@@ -354,8 +463,44 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
   shadow.raycast = () => {};
   const shadowOff = new THREE.Vector2(0.22, -0.3).rotateAround(new THREE.Vector2(), -box.rot);
 
+  // The QR sticker beneath: matte white vinyl with black modules, just under the sticker (it is hidden
+  // by it until the flap comes away). Only raycastable once the flap is latched open.
+  let open = false;
+  let qrMesh: THREE.Mesh | null = null;
+  let qrHit: THREE.Mesh | null = null;
+  if (b.qr) {
+    qrMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(b.qr.side, b.qr.side),
+      new THREE.MeshStandardMaterial({
+        name: 'sticker-qr',
+        map: b.qr.tex,
+        alphaTest: 0.5,
+        roughness: 0.6,
+        metalness: 0,
+        envMap,
+        envMapIntensity: 0.6, // even light: the code has to stay readable
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+      }),
+    );
+    qrMesh.name = 'sticker-qr';
+    qrMesh.position.set(b.qr.cx, b.qr.cy, -0.0006);
+    qrMesh.visible = false; // until something is peeled
+    qrMesh.raycast = () => {};
+    // The tap target is a plane 1.8× the code (it is ~30 px on a phone), unseen and live only while latched open.
+    qrHit = new THREE.Mesh(new THREE.PlaneGeometry(b.qr.side * 1.8, b.qr.side * 1.8), new THREE.MeshBasicMaterial());
+    qrHit.name = 'sticker-qr-hit';
+    qrHit.visible = false; // the raycaster ignores `visible`, the renderer doesn't draw it
+    qrHit.position.copy(qrMesh.position);
+    const hit = THREE.Mesh.prototype.raycast;
+    qrHit.raycast = function (rc, hits) {
+      if (open) hit.call(this, rc, hits);
+    };
+  }
+
   const group = new THREE.Group();
   group.add(mesh, underside, shadow);
+  if (qrMesh && qrHit) group.add(qrMesh, qrHit);
   group.scale.setScalar((box.hw * 2) / b.width); // the placer may have shrunk it to fit
   // Back plate faces −Z: turn the sticker around (π about Y), mirror x so the layout reads from behind.
   group.position.set(-box.x, box.y, z);
@@ -435,6 +580,7 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
     shadowGeo.attributes.color.needsUpdate = true;
     shadowGeo.computeBoundingSphere();
     shadow.visible = a > 0;
+    if (qrMesh) qrMesh.visible = a > 0;
     dirty = false;
   }
 
@@ -445,9 +591,31 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
   a = rest;
   deform();
 
+  /** The flap lays back down. Vinyl springs back fast: most of the travel lands in the first ~100 ms. */
+  function lay(onSettled: (() => void) | undefined, instant: boolean, seconds: number) {
+    settle?.kill();
+    angleTo = REST_ANGLE;
+    if (instant) angle = REST_ANGLE;
+    const p = { a };
+    settle = gsap.to(p, {
+      a: rest,
+      duration: instant ? 0 : seconds,
+      ease: 'power3.out',
+      onUpdate: () => {
+        a = p.a;
+        dirty = true;
+      },
+      onComplete: onSettled,
+    });
+  }
+
   const self: Sticker = {
     mesh,
     group,
+    name: spec.name,
+    url: spec.url,
+    host: new URL(spec.url).host.replace(/^www\./, ''),
+    qr: qrMesh,
     beginPeel(worldPoint) {
       settle?.kill();
       mesh.worldToLocal(tmp.copy(worldPoint));
@@ -471,27 +639,37 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
       // over half the pull, which keeps the rolled-back tip near the pointer. Resistance grows toward
       // the limit (rubber band), so the last stretch takes more and more effort and then stops.
       const raw = Math.max(0, dx * u.x + dy * u.y) * 0.55 + Math.hypot(dx, dy) * 0.2;
-      a = Math.max(0.004, maxA * (1 - Math.exp(-raw / maxA)));
+      a = Math.max(0.004, maxA * (1 - Math.exp(-raw / (maxA * RESIST))));
       angleTo = PULL_ANGLE[0] + (PULL_ANGLE[1] - PULL_ANGLE[0]) * (a / maxA);
       dirty = true;
       return a / maxA;
     },
+    isOpen: () => open,
     release(onSettled, instant = false) {
       settle?.kill();
-      angleTo = REST_ANGLE;
-      if (instant) angle = REST_ANGLE;
-      const p = { a };
-      // Vinyl springs back fast: most of the travel lands in the first ~100 ms.
-      settle = gsap.to(p, {
-        a: rest,
-        duration: instant ? 0 : 0.28,
-        ease: 'power3.out',
-        onUpdate: () => {
-          a = p.a;
-          dirty = true;
-        },
-        onComplete: onSettled,
-      });
+      if (maxA > 0 && a / maxA >= COMMIT) {
+        // Pulled to the end: the flap stays rolled back and the QR beneath is showing.
+        open = true;
+        angleTo = LATCH_ANGLE;
+        if (instant) angle = LATCH_ANGLE;
+        const p = { a };
+        settle = gsap.to(p, {
+          a: maxA,
+          duration: instant ? 0 : 0.35,
+          ease: 'power3.out',
+          onUpdate: () => {
+            a = p.a;
+            dirty = true;
+          },
+        });
+        return true;
+      }
+      lay(onSettled, instant, 0.28);
+      return false;
+    },
+    heal(onSettled, instant = false) {
+      open = false;
+      lay(onSettled, instant, 0.45); // a latched flap has further to fall
     },
     update(dt) {
       if (Math.abs(angleTo - angle) > 1e-3) {
@@ -502,6 +680,8 @@ function makeSticker(b: Built, box: Box, z: number, envMap: THREE.Texture | null
     },
   };
   mesh.userData.sticker = self;
+  underside.userData.sticker = self;
+  if (qrHit) qrHit.userData.qrOf = self;
   return self;
 }
 
@@ -529,7 +709,7 @@ export async function createStickers(
   built.forEach((b, i) => {
     const box = boxes[i];
     if (!box) return;
-    const s = makeSticker(b, box, backZ - 0.0012 - i * 0.0003, envMap, i === hintIndex ? 0.022 : 0, rand);
+    const s = makeSticker(b, STICKERS[i], box, backZ - 0.0012 - i * 0.0003, envMap, i === hintIndex ? 0.022 : 0, rand);
     group.add(s.group);
     stickers.push(s);
   });

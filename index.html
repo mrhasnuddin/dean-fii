@@ -212,6 +212,12 @@
 
 
   <p id="live" class="sr" role="status" aria-live="polite"></p>
+  <!-- Easter egg (docs/device-design.md §24): shown while a back sticker is peeled to its QR. A real link, so it
+       works by keyboard and where a tap on the 3D code can't open a window. -->
+  <div class="qr-pill" id="qr-pill" hidden>
+    <a class="qr-link" target="_blank" rel="noopener noreferrer"><span class="qr-kicker">Scan the code or tap here</span><span class="qr-host"></span></a>
+    <button type="button" class="qr-close" aria-label="Put the sticker back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 3.5l9 9m0-9l-9 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

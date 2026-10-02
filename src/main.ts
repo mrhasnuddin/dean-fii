@@ -26,6 +26,7 @@ import { motion } from './motion';
 import { sfx } from './audio/sfx';
 import { music } from './audio/music';
 import { loadBakedEnvironment } from './device/studioEnvironment';
+import type { Sticker } from './device/stickers';
 
 const studioEnv = loadBakedEnvironment(); // fetched and decoded while the rest of the page sets up
 gsap.registerPlugin(ScrollTrigger);
@@ -53,6 +54,7 @@ document.querySelector('[data-list="chronicle"]')!.innerHTML = events.map((e) =>
 
 // ---------------------------------------------------------------- smooth scroll + Hero ↔ Console snap
 let controls: Controls | null = null;
+let qrOpen: Sticker | null = null; // the back sticker whose QR is showing (see showQr)
 let lenis: Lenis | null = null;
 let view: ViewMode = 'device';
 function startLenis() {
@@ -376,7 +378,34 @@ if (!webglAvailable()) {
     if (v > CLINK_MIN) sfx.play('coin', { volume: Math.min(0.7, 0.2 + (v - CLINK_MIN) / 3) });
   });
 
+  // Easter egg (§24): a back sticker latched open shows its site as a link pill; it heals when the wallet
+  // is turned back to the front by any route (tab, Back key, scroll).
+  const qrPill = document.getElementById('qr-pill')!;
+  const qrLink = qrPill.querySelector<HTMLAnchorElement>('.qr-link')!;
+  let qrHide = 0;
+  function showQr(s: Sticker | null) {
+    qrOpen = s;
+    clearTimeout(qrHide);
+    if (s) {
+      qrLink.href = s.url;
+      qrLink.querySelector('.qr-host')!.textContent = s.host;
+      qrPill.hidden = false;
+      void qrPill.offsetWidth; // so the first state is painted and the entrance can transition
+      qrPill.classList.add('in');
+      announce(`${s.name} sticker peeled back. Its QR code leads to ${s.host}; the link is at the bottom of the page.`);
+    } else {
+      qrPill.classList.remove('in');
+      qrHide = window.setTimeout(() => (qrPill.hidden = true), 220);
+    }
+  }
+  qrLink.addEventListener('click', () => controls?.healSticker());
+  qrPill.querySelector('.qr-close')!.addEventListener('click', () => controls?.healSticker());
+  stage.onFrame(() => {
+    if (qrOpen && !chor.flip.isBack()) controls?.healSticker();
+  });
+
   controls = createControls(stage, document.getElementById('webgl') as HTMLCanvasElement, {
+    sticker: showQr,
     selectTab: (n) => selectTab(TABS[n - 1]),
     roll: (d) => screen.move(d),
     canRoll: (d) => {
@@ -386,7 +415,8 @@ if (!webglAvailable()) {
     },
     confirm: () => handleIntent(screen.confirm()),
     back: () => {
-      if (detail.isOpen()) detail.close();
+      if (qrOpen) controls?.healSticker();
+      else if (detail.isOpen()) detail.close();
       else if (chor.flip.isBack()) chor.flip.reset();
       else if (contactSeq.state() === 'ready') contactSeq.putAway();
     },

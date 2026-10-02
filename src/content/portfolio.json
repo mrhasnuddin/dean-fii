@@ -151,6 +151,36 @@
       "eink": "/media/eink/eniaclabs.png"
     },
     {
+      "id": "opencrew",
+      "title": "OpenCrew",
+      "category": "Global Web3 & AI Team",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "claude"
+      ],
+      "stack": [
+        "Next.js",
+        "React",
+        "Turbopack"
+      ],
+      "tags": [
+        "Growth Partner",
+        "Corporate Site"
+      ],
+      "status": "Shipped",
+      "link": "https://open-crew.vercel.app/",
+      "description": "OpenCrew is a global team and growth partner for Web3, AI and new finance projects, covering talent, institutional access and overseas markets. I designed and built its website: six expandable capability cards, a partner network and client stories, laid out so a service with many parts reads as one offer.",
+      "images": [
+        "/media/projects/opencrew-1.webp",
+        "/media/projects/opencrew-2.webp"
+      ],
+      "eink": "/media/eink/opencrew.png"
+    },
+    {
       "id": "fortuna",
       "title": "Fortuna HK",
       "category": "Professional Services",
@@ -271,35 +301,6 @@
         "/media/projects/pusc-2.webp"
       ],
       "eink": "/media/eink/pusc.png"
-    },
-    {
-      "id": "ait",
-      "title": "AIT NET",
-      "category": "AI Task Economy",
-      "roles": [
-        "UI/UX Designer",
-        "Frontend Developer",
-        "Creative Designer"
-      ],
-      "tools": [
-        "gemini"
-      ],
-      "stack": [
-        "React",
-        "Vite"
-      ],
-      "tags": [
-        "AI Economy",
-        "Protocol Site"
-      ],
-      "status": "Shipped",
-      "link": "https://ait-topaz.vercel.app/",
-      "description": "AIT NET connects AI task registries, proof of execution and stablecoin settlement. The website explains that three-layer architecture through interactive tokenomics and use cases, showing how tasks become tradable digital commodities.",
-      "images": [
-        "/media/projects/ait-1.webp",
-        "/media/projects/ait-2.webp"
-      ],
-      "eink": "/media/eink/ait.png"
     }
   ],
   "events": [

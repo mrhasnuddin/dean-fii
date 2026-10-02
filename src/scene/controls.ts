@@ -1,13 +1,15 @@
 // Physical controls on the wallet + keyboard. Every control maps to one job (docs/device-design.md §2, §10):
 // tabs 01–04 → sections · roller → browse · ✓ → open · Back → close · side switch → Device / List view ·
 // coin → top. Two hand gestures: drag the wallet's body sideways to turn it over, and on the back,
-// drag a sticker to peel it (an easter egg, §11).
+// drag a sticker to peel it (an easter egg, §11). Pull one all the way and let go: it stays rolled back
+// and the QR under it shows (§24); tap the QR to visit the site, tap the flap (or ✕, Esc, or turn the
+// wallet) to put it back.
 // The wheel turns the roller only while the pointer is over the wallet and the list can still move;
 // at a list end the wheel scrolls the page (no scroll trap).
 import * as THREE from 'three';
 import gsap from 'gsap';
 import type { Stage } from './stage';
-import type { Sticker } from '../device/stickers';
+import { COMMIT, type Sticker } from '../device/stickers';
 import { motion } from '../motion';
 import { sfx } from '../audio/sfx';
 
@@ -21,6 +23,8 @@ export interface ControlHandlers {
   toTop(): void;
   /** Hand turn (choreography.flip). */
   flip: { begin(): void; to(delta: number): void; release(): void };
+  /** A sticker's flap was latched open (its QR is showing), or null once it is back down. */
+  sticker(s: Sticker | null): void;
 }
 
 export interface Controls {
@@ -30,6 +34,8 @@ export interface Controls {
   setViewSwitch(list: boolean): void;
   /** Press a face key as if tapped (its label on the screen was tapped). */
   pressKey(id: 'key-confirm' | 'key-back'): void;
+  /** Put the open sticker back (the link pill's ✕). */
+  healSticker(): void;
 }
 
 export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: ControlHandlers): Controls {
@@ -83,12 +89,18 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
   // Raycast the whole wallet + keychain and take the NEAREST hit, then walk up to a part: the roller
   // disc sits mostly inside the body, so testing parts alone would let clicks on the screen hit it.
   // What was hit: a control, a sticker (only reachable when the back faces you), or the body itself.
-  type Target = { kind: 'part'; id: string; point: THREE.Vector3 } | { kind: 'sticker'; sticker: Sticker; point: THREE.Vector3 } | { kind: 'body' };
+  type Target =
+    | { kind: 'part'; id: string; point: THREE.Vector3 }
+    | { kind: 'sticker'; sticker: Sticker; point: THREE.Vector3 }
+    | { kind: 'qr'; sticker: Sticker }
+    | { kind: 'body' };
   function target(e: PointerEvent | WheelEvent): Target | null {
     ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
     ray.setFromCamera(ndc, camera);
     const hits = ray.intersectObjects([wallet.root, keychain.group], true);
     if (!hits.length) return null;
+    const qrOf = hits[0].object.userData.qrOf as Sticker | undefined; // only hit while its flap is latched open
+    if (qrOf) return { kind: 'qr', sticker: qrOf };
     const sticker = hits[0].object.userData.sticker as Sticker | undefined;
     if (sticker) return { kind: 'sticker', sticker, point: hits[0].point };
     let o: THREE.Object3D | null = hits[0].object;
@@ -131,7 +143,9 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
   // Hand gestures. A drag starts on press; a turn only once the pointer has clearly moved sideways
   // (so a tap on the body does nothing and vertical touch drags still scroll the page).
   type Drag =
-    | { kind: 'peel'; id: number; sticker: Sticker; lastF: number; lastSound: number }
+    | { kind: 'peel'; id: number; sticker: Sticker; lastF: number; lastSound: number; past: boolean }
+    // A press on an open sticker: a tap on the QR visits its site, a tap on the flap puts it back.
+    | { kind: 'tap'; id: number; sticker: Sticker; qr: boolean; x0: number; y0: number }
     | { kind: 'turn'; id: number; x0: number; y0: number; turning: boolean };
   let drag: Drag | null = null;
   const TURN_PER_PX = Math.PI / 260; // ~260 px of drag turns it over
@@ -145,11 +159,37 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     }
   };
 
+  // The sticker whose flap is latched open (one at a time) and what happens around it.
+  let openSticker: Sticker | null = null;
+  const buzz = (ms: number) => {
+    try {
+      navigator.vibrate?.(ms); // phones that allow it; a no-op elsewhere
+    } catch {
+      /* blocked */
+    }
+  };
+  function healSticker(quiet = false) {
+    const s = openSticker;
+    if (!s) return;
+    openSticker = null;
+    h.sticker(null);
+    s.heal(quiet ? undefined : () => sfx.play('toggle', { volume: 0.5 }), motion.reduced());
+  }
+  function visit(s: Sticker) {
+    window.open(s.url, '_blank', 'noopener,noreferrer');
+    healSticker();
+  }
+
   canvas.addEventListener('pointerdown', (e) => {
     const hit = target(e);
     if (!hit) return;
+    if (hit.kind === 'qr' || (hit.kind === 'sticker' && hit.sticker.isOpen())) {
+      drag = { kind: 'tap', id: e.pointerId, sticker: hit.sticker, qr: hit.kind === 'qr', x0: e.clientX, y0: e.clientY };
+      capture(e.pointerId);
+      return;
+    }
     if (hit.kind === 'sticker') {
-      drag = { kind: 'peel', id: e.pointerId, sticker: hit.sticker, lastF: 0, lastSound: 0 };
+      drag = { kind: 'peel', id: e.pointerId, sticker: hit.sticker, lastF: 0, lastSound: 0, past: false };
       hit.sticker.beginPeel(hit.point);
       capture(e.pointerId);
       canvas.style.cursor = 'grabbing';
@@ -202,10 +242,22 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
 
   function endDrag(e: PointerEvent) {
     if (!drag || drag.id !== e.pointerId) return;
-    if (drag.kind === 'peel') {
+    if (drag.kind === 'tap') {
+      // A tap, not a drag that happened to end on it.
+      if (e.type === 'pointerup' && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 12) {
+        if (drag.qr) visit(drag.sticker);
+        else healSticker();
+      }
+    } else if (drag.kind === 'peel') {
       const s = drag.sticker;
-      // It lays back down: a soft pat when it lands.
-      s.release(() => sfx.play('toggle', { volume: 0.5 }), motion.reduced());
+      // Pulled to the end: it stays rolled back, the QR showing. Otherwise it lays down with a soft pat.
+      if (s.release(() => sfx.play('toggle', { volume: 0.5 }), motion.reduced())) {
+        if (openSticker && openSticker !== s) healSticker(true);
+        openSticker = s;
+        sfx.play('success', { volume: 0.45 });
+        buzz(18);
+        h.sticker(s);
+      }
     } else if (drag.turning) {
       h.flip.release();
       sfx.play('air', { volume: 0.5 });
@@ -221,10 +273,17 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
   // drifts from under the pointer while the tilt settles; it resumes in the open space around it.
   canvas.addEventListener('pointermove', (e) => {
     if (drag?.id === e.pointerId) {
+      if (drag.kind === 'tap') return;
       if (drag.kind === 'peel') {
         ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
         ray.setFromCamera(ndc, camera);
         const f = drag.sticker.drag(ray.ray);
+        // Crossing the line where letting go keeps it open: a click under the finger (a tick on phones).
+        if (f >= COMMIT && !drag.past) {
+          drag.past = true;
+          sfx.play('detent', { volume: 0.7 });
+          buzz(8);
+        } else if (f < COMMIT - 0.04) drag.past = false;
         // Adhesive crackle while it lifts, louder for a faster pull; silent once it stops giving.
         const now = performance.now();
         if (f - drag.lastF > 0.07 && now - drag.lastSound > 120 && f < 0.97) {
@@ -238,6 +297,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
       const dy = e.clientY - drag.y0;
       if (!drag.turning && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
         drag.turning = true;
+        healSticker(); // turning the wallet away puts an open sticker back
         h.flip.begin();
         canvas.style.cursor = 'grabbing';
       }
@@ -246,7 +306,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     }
     const t = target(e);
     // Controls say "press"; the body and stickers say "grab" (turn it over, peel).
-    canvas.style.cursor = !t ? '' : t.kind === 'part' ? 'pointer' : 'grab';
+    canvas.style.cursor = !t ? '' : t.kind === 'part' || t.kind === 'qr' || (t.kind === 'sticker' && t.sticker.isOpen()) ? 'pointer' : 'grab';
     stage.hold(!!t);
     // A tiny tick as the mouse arrives on a control (Contra's device buttons do this; never on touch).
     const part = t?.kind === 'part' ? t.id : null;
@@ -291,7 +351,10 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
     if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
     const t = e.target as HTMLElement;
     if (t.closest('input, textarea, select, dialog, [contenteditable]')) return;
-    if (/^[1-4]$/.test(e.key)) {
+    if (e.key === 'Escape' && openSticker) {
+      healSticker();
+      e.preventDefault();
+    } else if (/^[1-4]$/.test(e.key)) {
       h.selectTab(Number(e.key));
       e.preventDefault();
     } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !t.closest('a, button')) {
@@ -312,5 +375,6 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
       gsap.to(knob.position, { y: knobUp - (list ? 0.09 : 0), duration: motion.reduced() ? 0 : 0.18, ease: 'power2.out' });
     },
     pressKey,
+    healSticker: () => healSticker(),
   };
 }
