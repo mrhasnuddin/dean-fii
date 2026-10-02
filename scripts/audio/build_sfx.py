@@ -217,44 +217,79 @@ def s_coin():  # the D-star coin: a short metal tick with a little ring
     return coin_hit(2600, ring=0.35, dur=0.14)
 
 
-def s_peel():  # sticker adhesive letting go: a short soft crackle
-    d = 0.18
-    t = tt(d)
-    env = np.minimum(t / 0.015, 1) * np.exp(-t / 0.06)
-    hiss = norm(bp(noise(d), 2500, 8000)) * env * 0.25
-    crack = np.zeros(n_(d))
-    hits = rng.random(n_(d)) < (700 / SR) * env
-    crack[hits] = rng.uniform(-1, 1, hits.sum())
-    return edges(hiss + norm(hp(crack, 3500)) * 0.7, fin=0.002, fout=0.015)
+def crackle(d: float, rate, bright, amp, snap: float = 0.03, film: float = 0.22) -> np.ndarray:
+    """Stick-slip adhesive: thousands of fibres letting go, heard as a stream of tiny dry snaps.
 
-
-def rip(d: float) -> np.ndarray:
-    """Adhesive letting go along a line: a fibrous tearing hiss whose pitch climbs as the flap comes away,
-    broken up by uneven pulls and with sparse crackle that gets denser as it goes. Forward in time."""
-    t = tt(d)
+    `rate(u)` (events/s), `bright(u)` (0.6-1.4, scales each snap's pitch) and `amp(u)` are functions of u = t/d
+    in [0, 1]. Snaps arrive in irregular bursts (a slow random modulation of the rate), each is a pair of fast-
+    decaying resonances at a random frequency in the 1.8-9 kHz band plus a hint of noise, with a random
+    log-normal level; some carry the low thump of the film flexing; a few are big. Under it a faint broadband
+    bed. No pitch sweep: a pitched hiss is what makes an adhesive sound like a whoosh.
+    """
+    n = n_(d)
+    t = np.arange(n) / SR
     u = t / d
-    env = np.minimum(t / 0.02, 1) * (0.55 + 0.45 * u) * np.cos(np.pi / 2 * np.clip((u - 0.85) / 0.15, 0, 1)) ** 2
-    pull = lp(noise(d), 35)  # uneven tearing: the hiss swells and drops with the fibres
-    pull = 0.45 + 0.55 * np.clip(pull / (3 * np.std(pull)) + 0.5, 0, 1)
-    hiss = norm(svf_bp(noise(d), 1900 + 3400 * u, 1.1)) * pull * env
-    crack = np.zeros(n_(d))
-    hits = rng.random(n_(d)) < ((350 + 1700 * u) / SR) * env
-    crack[hits] = rng.uniform(-1, 1, hits.sum())
-    return hiss * 0.55 + norm(hp(crack, 3000)) * 0.5 * env
+    z = lp(rng.standard_normal(n), 14)
+    z = z / (np.std(z) + 1e-9)
+    lam = rate(u) * np.exp(0.75 * z - 0.28)  # bursty (clusters and gaps) but never silent: it is one continuous tear
+    hits = np.flatnonzero(rng.random(n) < lam / SR)
+    out = np.zeros(n)
+    for i in hits:
+        uu = u[i]
+        a = amp(uu) * rng.lognormal(0, 0.7) * (2.4 if rng.random() < snap else 1.0)
+        fc = np.exp(rng.uniform(np.log(1800), np.log(9000))) * bright(uu)
+        tau = rng.uniform(0.00014, 0.00045) * (4000 / max(fc, 1500)) ** 0.5
+        m = int(min(n - i, SR * tau * 7))
+        if m < 8:
+            continue
+        g = np.arange(m) / SR
+        w = np.sin(2 * np.pi * fc * g + rng.uniform(0, 6.28)) * np.exp(-g / tau)
+        w += 0.6 * np.sin(2 * np.pi * fc * 1.47 * g + rng.uniform(0, 6.28)) * np.exp(-g / (0.7 * tau))
+        w += 0.5 * rng.standard_normal(m) * np.exp(-g / (0.5 * tau))
+        if rng.random() < film * bright(uu):  # the film flexing under it
+            f = rng.uniform(500, 1500)
+            tf = rng.uniform(0.004, 0.009)
+            mf = int(min(n - i, SR * tf * 5))
+            gf = np.arange(mf) / SR
+            out[i : i + mf] += 0.3 * a * np.sin(2 * np.pi * f * gf) * np.exp(-gf / tf)
+        out[i : i + m] += a * w[:m]
+    bed = bp(rng.standard_normal(n), 2800, 9500) * np.clip(lam / 900, 0, 1) * 0.12 * amp(u)
+    x = hp(out + bed, 700)
+    return np.tanh(x / (np.percentile(np.abs(x), 99.7) + 1e-9))  # soft-limit the big snaps so the body of the tear is heard
 
 
-def s_rip():  # pulling a sticker's corner up: the long version of the adhesive letting go
-    return edges(norm(rip(0.55)), fin=0.003, fout=0.03)
+def s_peel():  # a sticker corner coming unstuck at the grab: a small, tight burst of snaps
+    d = 0.17
+    x = crackle(d, lambda u: 700 * (1 - 0.7 * u), lambda u: 1.1 - 0.3 * u, lambda u: np.exp(-3.0 * u), snap=0.06)
+    return edges(norm(x), fin=0.001, fout=0.03)
 
 
-def s_unpeel():  # the sticker laid back down: that rip played backwards, ending in a soft press
+def _rip_profile(d: float, backwards: bool):
+    """Rate, brightness and level over a pull. Forward: it starts slow and sticky, quickens as the flap comes
+    away and ends abruptly when it lets go. Backwards: the same shape with time reversed (dense at the start,
+    thinning and softening as it settles), but every snap inside stays forward."""
+    f = (lambda u: 1 - u) if backwards else (lambda u: u)
+    rate = lambda u: 150 + 1100 * f(u) ** 1.5 * (1 - f(u) ** 8)
+    bright = lambda u: 0.75 + 0.5 * f(u)
+    amp = lambda u: np.minimum(f(u) / 0.04, 1) * (0.35 + 0.65 * f(u) ** 0.8) * np.where(f(u) > 0.93, np.clip((1 - f(u)) / 0.07, 0, 1), 1)
+    return rate, bright, amp
+
+
+def s_rip():  # pulling a sticker up: the adhesive letting go along the peel line
+    d = 0.6
+    r, b, a = _rip_profile(d, False)
+    x = crackle(d, r, b, a, snap=0.025)
+    return edges(norm(x), fin=0.002, fout=0.025)
+
+
+def s_unpeel():  # the sticker laid back down: that rip with time reversed, then a soft press as it lands
     d = 0.85
-    back = np.flip(norm(rip(0.78)))  # swells in, as if gathering, and stops at the contact
+    r, b, a = _rip_profile(0.72, True)
     x = zeros(d)
-    place(x, edges(back, fin=0.12, fout=0.004), 0, 0.8)
+    place(x, edges(norm(crackle(0.72, r, b, a, snap=0.02, film=0.3)), fin=0.01, fout=0.02), 0.04, 0.8)
     t = tt(0.16)
-    pat = mode(118, 0.05, 0.16, 1.0, phase=0) + 0.9 * transient(0.16, 900, 3200) * np.exp(-t / 0.02)
-    place(x, edges(norm(pat), fin=0.0, fout=0.03), d - 0.16, 0.85)
+    pat = mode(112, 0.045, 0.16, 1.0, phase=0) + 0.8 * transient(0.16, 700, 2800) * np.exp(-t / 0.02)
+    place(x, edges(norm(pat), fin=0.0, fout=0.03), d - 0.16, 0.55)
     return x
 
 

@@ -60,6 +60,7 @@ const PULL_ANGLE = [1.85, 2.8] as const; // just grabbed → at the limit
 const ANGLE_TAU = 0.07; // s: the flap swings to its new angle instead of snapping
 const HEAL_FULL = 0.85; // s: a latched flap laying back down (shorter from a partial peel); sfx 'unpeel' is cut to this
 const SETTLE = 0.4; // s: a flap let go before it latches, springing back
+const GENTLE = 0.3; // s: the longest any of it takes under reduced motion (quick, but still a movement, not a jump)
 
 export interface Sticker {
   mesh: THREE.Mesh; // front (print) side; raycast target (userData.sticker = this)
@@ -76,12 +77,13 @@ export interface Sticker {
   /** Pointer ray while dragging. Returns the peel fraction 0..1 (of the allowed maximum). */
   drag(ray: THREE.Ray): number;
   /**
-   * Let go. Past COMMIT it latches open and returns true; otherwise it lays back down (`instant` under
-   * reduced motion), calls `onSettled` when flat, and returns false.
+   * Let go. Past COMMIT it latches open and returns true; otherwise it lays back down, calls `onSettled`
+   * when flat, and returns false. `gentle` (reduced motion): the same movement, quicker and without the
+   * press as it lands; it is never skipped, because it answers the visitor's own gesture.
    */
-  release(onSettled?: () => void, instant?: boolean): boolean;
-  /** Put a latched sticker back: the flap lays down over the QR. */
-  heal(onSettled?: () => void, instant?: boolean): void;
+  release(onSettled?: () => void, gentle?: boolean): boolean;
+  /** Put a latched sticker back: the flap lays down over the QR (the peel in reverse). */
+  heal(onSettled?: () => void, gentle?: boolean): void;
   update(dt: number): void;
 }
 
@@ -611,22 +613,14 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
    */
   let healing = false;
   const baseScale = (box.hw * 2) / b.width;
-  function lay(onSettled: (() => void) | undefined, instant: boolean, seconds: number, ease: string) {
+  function lay(onSettled: (() => void) | undefined, gentle: boolean, seconds: number, ease: string) {
     settle?.kill();
-    if (instant) {
-      a = rest;
-      angle = angleTo = REST_ANGLE;
-      dirty = true;
-      healing = false;
-      onSettled?.();
-      return;
-    }
     healing = true;
     const p = { a };
     settle = gsap.to(p, {
       a: rest,
-      duration: seconds,
-      ease,
+      duration: gentle ? Math.min(seconds, GENTLE) : seconds,
+      ease: gentle ? 'power2.out' : ease,
       onUpdate: () => {
         a = p.a;
         angle = angleTo = angleFor(a);
@@ -637,10 +631,12 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
         a = rest;
         angle = angleTo = REST_ANGLE;
         dirty = true;
-        // It touches down: a barely-there press into the plate.
-        gsap.timeline()
-          .to(group.scale, { x: baseScale * 0.992, y: baseScale * 0.992, duration: 0.07, ease: 'power2.out' })
-          .to(group.scale, { x: baseScale, y: baseScale, duration: 0.18, ease: 'power3.out' });
+        if (!gentle) {
+          // It touches down: a barely-there press into the plate.
+          gsap.timeline()
+            .to(group.scale, { x: baseScale * 0.992, y: baseScale * 0.992, duration: 0.07, ease: 'power2.out' })
+            .to(group.scale, { x: baseScale, y: baseScale, duration: 0.18, ease: 'power3.out' });
+        }
         onSettled?.();
       },
     });
@@ -683,17 +679,16 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
       return a / maxA;
     },
     isOpen: () => open,
-    release(onSettled, instant = false) {
+    release(onSettled, gentle = false) {
       settle?.kill();
       if (maxA > 0 && a / maxA >= COMMIT) {
         // Pulled to the end: the flap stays rolled back and the QR beneath is showing.
         open = true;
         angleTo = LATCH_ANGLE;
-        if (instant) angle = LATCH_ANGLE;
         const p = { a };
         settle = gsap.to(p, {
           a: maxA,
-          duration: instant ? 0 : 0.35,
+          duration: gentle ? 0.2 : 0.35,
           ease: 'power3.out',
           onUpdate: () => {
             a = p.a;
@@ -702,13 +697,13 @@ function makeSticker(b: Built, spec: StickerSpec, box: Box, z: number, envMap: T
         });
         return true;
       }
-      lay(onSettled, instant, SETTLE, 'power3.out');
+      lay(onSettled, gentle, SETTLE, 'power3.out');
       return false;
     },
-    heal(onSettled, instant = false) {
+    heal(onSettled, gentle = false) {
       open = false;
       const x = maxA ? Math.min(1, a / maxA) : 0;
-      lay(onSettled, instant, 0.35 + (HEAL_FULL - 0.35) * x, 'power2.inOut'); // the further it has to go, the longer
+      lay(onSettled, gentle, 0.35 + (HEAL_FULL - 0.35) * x, 'power2.inOut'); // the further it has to go, the longer
     },
     update(dt) {
       if (!healing && Math.abs(angleTo - angle) > 1e-3) {
