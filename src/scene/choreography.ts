@@ -100,7 +100,9 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
     trigger = ScrollTrigger.create({
       trigger: consoleEl,
       start: 'top bottom',
-      end: 'top top',
+      // clamp(): on a phone the page can end before the Console's top (see queueSnap in main.ts); the
+      // move still has to finish there.
+      end: 'clamp(top top)',
       scrub: motion.reduced() ? true : 0.35,
       onUpdate: (self) => {
         progress = self.progress;

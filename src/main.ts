@@ -78,21 +78,31 @@ function scrollToEl(el: HTMLElement | number, done?: () => void, immediate = fal
 }
 // Between the Hero and the Console there is no resting place: when the scroll settles in between,
 // finish the move in the direction it was going. The Console is the end of the page.
+// "At the Console" is the Console's top OR the end of the page, whichever comes first: on a phone the
+// places are 100svh tall, and once the address bar hides the viewport is taller than that, so the page
+// ends 50–100 px before the Console's top. A small drift (a finger settling on the wallet, the address
+// bar coming back) goes back to where the page rested; only a real scroll (over SNAP_DEADZONE) changes
+// place. Before both, any scroll event at all, such as a tap on the wallet, sent a phone back to the Hero.
+const SNAP_DEADZONE = 48; // px
 let snapTimer = 0;
-let lastRest = 0;
+let restAt: 'hero' | 'console' = 'hero';
+let restY = 0;
 function queueSnap() {
   clearTimeout(snapTimer);
   snapTimer = window.setTimeout(() => {
     if (!lenis || view === 'list' || detail.isOpen() || lenis.isScrolling) return;
     const y = scrollY;
-    const top = consoleEl.offsetTop;
-    if (y <= 2 || Math.abs(y - top) <= 2 || y > top) {
-      lastRest = y;
+    const top = Math.min(consoleEl.offsetTop, lenis.limit);
+    if (y <= 2 || y >= top - 2) {
+      restAt = y <= 2 ? 'hero' : 'console';
+      restY = y;
       return;
     }
-    const target = y > lastRest ? top : 0;
-    lastRest = target;
-    lenis.scrollTo(target, { duration: 0.9 });
+    const drift = y - restY;
+    const toConsole = Math.abs(drift) < SNAP_DEADZONE ? restAt === 'console' : drift > 0;
+    restAt = toConsole ? 'console' : 'hero';
+    restY = toConsole ? top : 0;
+    lenis.scrollTo(restY, { duration: 0.9 });
   }, 150);
 }
 startLenis();
