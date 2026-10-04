@@ -12,10 +12,8 @@ import { CARD, createKeyCard, type KeyCard } from '../device/keyCard';
 import type { GpuTier } from '../device/walletRefine';
 import { createStickers, type Sticker } from '../device/stickers';
 import { createScreen, type Screen } from '../ui/screen';
-import { createContactCard, setContactCardWritten } from '../ui/contactCard';
 import { motion } from '../motion';
 
-const OVERLAY_PX = 240;
 
 export interface Stage {
   renderer: THREE.WebGLRenderer;
@@ -39,7 +37,6 @@ export interface Stage {
   keychain: Keychain;
   card: KeyCard;
   screen: Screen;
-  label: HTMLElement;
   /** Back-plate stickers (easter egg); filled once built, after the first frame. */
   stickers: Sticker[];
   /** Viewport half-width at depth z (world units), for layout. */
@@ -113,15 +110,9 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement, stu
   cssScreen.scale.setScalar(0.795 / 360);
   wallet.screenSocket.add(cssScreen);
 
-  const label = createContactCard('overlay');
-  setContactCardWritten(label, false);
-  const cssLabel = new CSS3DObject(label);
-  cssLabel.scale.setScalar(CARD.label.w / OVERLAY_PX);
-  card.labelAnchor.add(cssLabel);
-
   // CSS3D always draws above WebGL and backface-visibility is unreliable under its matrix3d:
   // hide a surface when it faces away from the camera or its 3D parent is hidden.
-  const surfaces = [cssScreen, cssLabel];
+  const surfaces = [cssScreen];
   const n = new THREE.Vector3();
   const p = new THREE.Vector3();
   const q = new THREE.Quaternion();
@@ -135,7 +126,7 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement, stu
     }
     // WebGL can't occlude CSS3D: when the key card is in front of the screen and overlaps it on
     // screen (phones bring the card forward over the wallet), hide the screen's HTML.
-    if (card.group.visible && cssScreen.element.style.visibility === '') {
+    if (card.group.visible && card.group.parent !== wallet.root && cssScreen.element.style.visibility === '') {
       const a = projectedRect(wallet.screenSocket, 0.4, 0.53);
       const b = projectedRect(card.group, CARD.w / 2, CARD.h / 2);
       const overlap = a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
@@ -302,7 +293,7 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement, stu
   frameCbs.push((dt) => stickers.forEach((s) => s.update(dt)));
 
   const stage: Stage = {
-    renderer, scene, camera, rig, pose, tilt, actor, wallet, keychain, card, screen, label, intro, ready, stickers,
+    renderer, scene, camera, rig, pose, tilt, actor, wallet, keychain, card, screen, intro, ready, stickers,
     follow: (on) => (followOn = on),
     hold: (on) => (held = on),
     setActive(on) {

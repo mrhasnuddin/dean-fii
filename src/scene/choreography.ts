@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Stage } from './stage';
-import { CARD } from '../device/keyCard';
 import { motion } from '../motion';
 import { sfx } from '../audio/sfx';
 
@@ -45,15 +44,13 @@ export interface Choreography {
     /** True while the back faces the visitor. */
     isBack(): boolean;
   };
-  /** Contact layout (world space): where the card flies in from and where the written card settles. */
+  /** Contact layout (world space): where the key card flies in from and leaves to. */
   cardEntry: THREE.Vector3;
-  cardFinal: THREE.Vector3;
 }
 
 export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: HTMLElement): Choreography {
   const { rig, pose, wallet, screen } = stage;
   const cardEntry = new THREE.Vector3();
-  const cardFinal = new THREE.Vector3();
   // Hero: three-quarter from above, showing the top tabs and the roller edge (the controls).
   // Console: facing you, tipped back a little so the numbered tabs read from the front.
   const HERO: Pose = { x: 0, y: -0.04, z: 0, rx: 0.3, ry: 0.52, rz: -0.12 };
@@ -62,26 +59,9 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
   // (its keychain clears the title) and comes up to full size on the way into the Console.
   const HERO_SCALE_PORTRAIT = 0.9;
 
+  // Where the key card flies in from (and leaves to): just past the right edge of the frame.
   function computeCard() {
-    const portrait = stage.portrait();
-    const cam = stage.camera;
-    const t = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2));
-    // Phones: in front of the wallet, ~86 % of the width (details near their design size).
-    // Landscape: right of the wallet, ~32 % of the width, smaller if it would cross the gutter.
-    let d: number;
-    let ndc: { x: number; y: number };
-    if (portrait) {
-      d = CARD.w / (2 * 0.86 * t * cam.aspect);
-      ndc = { x: 0, y: 0.08 };
-    } else {
-      const walletEdge = 0.56 / (t * cam.aspect * cam.position.z); // half-width incl. a turn, NDC
-      const room = 0.93 - walletEdge - 0.05;
-      d = Math.max(CARD.w / (0.64 * t * cam.aspect), CARD.w / (room * t * cam.aspect));
-      const half = CARD.w / (2 * t * cam.aspect * d);
-      ndc = { x: walletEdge + 0.05 + half, y: 0.1 };
-    }
-    cardFinal.set(ndc.x * t * cam.aspect * d, cam.position.y + ndc.y * t * d, cam.position.z - d);
-    cardEntry.set(stage.halfWidthAt(0.4) + 0.9, cam.position.y + 0.1, 0.4);
+    cardEntry.set(stage.halfWidthAt(0.4) + 0.9, stage.camera.position.y + 0.1, 0.4);
   }
 
   // ---------------------------------------------------------------- scroll: Hero ↔ Console
@@ -249,6 +229,5 @@ export function createChoreography(stage: Stage, hero: HTMLElement, consoleEl: H
     onPlace: (cb) => placeCbs.push(cb),
     flip,
     cardEntry,
-    cardFinal,
   };
 }

@@ -20,8 +20,8 @@ export type ScreenIntent =
   | { type: 'contact' }
   | { type: 'channel'; channel: 'email' | 'whatsapp' | 'linkedin' }
   | { type: 'tab'; tab: 'works' | 'chronicle' | 'about' | 'contact' }
-  /** A face-key label on the bottom edge was tapped: press that key. */
-  | { type: 'key'; key: 'back' | 'confirm' }
+  /** A label on the bottom edge was tapped: press that face key, or (Contact, Email selected) copy the address. */
+  | { type: 'key'; key: 'back' | 'confirm' | 'copy' }
   | { type: 'none' };
 
 export interface Screen {
@@ -34,6 +34,8 @@ export interface Screen {
   select(index: number): void;
   confirm(): ScreenIntent;
   setContactState(state: ContactState): void;
+  /** Feedback for a copy of the email address: the footer's middle says so for a moment. */
+  copied(ok: boolean): void;
   /** Row click/tap on the screen: select, or confirm if already selected. */
   onIntent(cb: (intent: ScreenIntent) => void): void;
   onSelect(cb: (index: number) => void): void;
@@ -163,10 +165,14 @@ export function createScreen(): Screen {
 
   // Bottom edge: labels for the two face keys under it (‹ Back, ✓). They are tappable too: on a phone the
   // label is the bigger target, and it is what people try first.
-  function footer(left: string, mid: string, right: string) {
+  function footer(left: string, mid: string, right: string, midKey?: 'copy') {
     const ok = right === '…' ? '' : ' data-key="confirm"';
-    return `<footer class="ek-ab"><span data-key="back">${left}</span><span>${mid}</span><span class="ek-hold"${ok}>${right}</span></footer>`;
+    const m = midKey ? ` data-key="${midKey}" class="ek-act"` : '';
+    return `<footer class="ek-ab"><span data-key="back">${left}</span><span${m}>${mid}</span><span class="ek-hold"${ok}>${right}</span></footer>`;
   }
+  // Contact, Email selected: the middle of the footer is a Copy key; after a copy it says how it went.
+  let copyNote: string | null = null;
+  let copyTimer = 0;
 
   function render() {
     let html = '';
@@ -216,13 +222,13 @@ export function createScreen(): Screen {
           html = `${softkeys()}<section class="ek-view sc-center">${readerGlyph}<p class="ek-title">Contact Dean</p><p class="ek-sub">Press ✓ and Dean’s key goes into the reader.</p></section>
             ${footer('‹ Back', '—', 'Insert ✓')}`;
         } else if (contactState === 'reading') {
-          html = `${softkeys()}<section class="ek-view sc-center sc-reading"><p class="ek-title">Writing details…</p><div class="ek-bar"><i></i></div><p class="ek-sub">Keep the key in.</p></section>
+          html = `${softkeys()}<section class="ek-view sc-center sc-reading"><p class="ek-title">Reading key…</p><div class="ek-bar"><i></i></div><p class="ek-sub">Keep the key in.</p></section>
             ${footer('‹ Back', '—', '…')}`;
         } else {
           const sel = index.contact;
-          html = `${softkeys()}<section class="ek-view sc-list"><p class="ek-title">Key written <span aria-hidden="true">✓</span></p><p class="ek-grp">SEND VIA</p>
+          html = `${softkeys()}<section class="ek-view sc-list"><p class="ek-title">Key read <span aria-hidden="true">✓</span></p><p class="ek-grp">SEND VIA</p>
             <ul class="ek-list">${CHANNELS.map((c, i) => `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${c.name}</span><small>${esc(c.detail)}</small></li>`).join('')}</ul></section>
-            ${footer('‹ Back', `${sel + 1} of 3`, 'Open ✓')}`;
+            ${CHANNELS[sel].id === 'email' ? footer('‹ Back', copyNote ?? 'Copy ⧉', 'Open ✓', copyNote ? undefined : 'copy') : footer('‹ Back', `${sel + 1} of 3`, 'Open ✓')}`;
         }
         break;
     }
@@ -249,7 +255,7 @@ export function createScreen(): Screen {
 
   el.addEventListener('click', (e) => {
     const faceKey = (e.target as HTMLElement).closest<HTMLElement>('[data-key]');
-    if (faceKey) return intentCb({ type: 'key', key: faceKey.dataset.key as 'back' | 'confirm' });
+    if (faceKey) return intentCb({ type: 'key', key: faceKey.dataset.key as 'back' | 'confirm' | 'copy' });
     const soft = (e.target as HTMLElement).closest<HTMLElement>('[data-softkey]');
     if (soft) return intentCb({ type: 'tab', tab: soft.dataset.softkey as (typeof SOFTKEYS)[number]['tab'] });
     const row = (e.target as HTMLElement).closest<HTMLElement>('[data-index]');
@@ -314,6 +320,15 @@ export function createScreen(): Screen {
         refresh();
         render();
       }
+    },
+    copied(ok) {
+      copyNote = ok ? 'Copied ✓' : 'Copy failed';
+      if (current === 'contact') render();
+      clearTimeout(copyTimer);
+      copyTimer = window.setTimeout(() => {
+        copyNote = null;
+        if (current === 'contact') render();
+      }, 1600);
     },
     onIntent: (cb) => (intentCb = cb),
     onSelect: (cb) => (selectCb = cb),

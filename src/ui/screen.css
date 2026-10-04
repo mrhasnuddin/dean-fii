@@ -25,6 +25,8 @@
 .sc-saver[hidden] { display: none; }
 .screen .ek-view { display: flex; min-height: 0; }
 .screen :is(.ek-list li, .ek-ab [data-key], .ek-ab [data-softkey]) { cursor: pointer; }
+/* A footer action that isn't a face key (Copy, under Email): underlined, so it reads as tappable. */
+.screen .ek-ab .ek-act { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
 .sc-center { align-items: center; justify-content: center; text-align: center; }
 .sc-logo { width: 150px; height: 150px; fill: var(--ink); }

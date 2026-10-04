@@ -242,9 +242,6 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   .section :is(h1, h2) { text-shadow: 0 2px 22px rgb(15 16 20 / 0.85); }
   .lede { font-size: 15px; }
   .scroll-cue { display: none; } /* the wallet's screen says "Scroll ↓" right above it */
-  /* The key card comes forward over the copy: keep only the button readable. */
-  #console .section-copy :is(.titles, .panel .lede) { transition: opacity 200ms ease; }
-  #console:is([data-card='running'], [data-card='ready']) .section-copy :is(.titles, .panel .lede) { opacity: 0.08; }
   /* Under 360 px (rare): a tighter capsule and button keep the four icons clear of the action. */
   @media (max-width: 359px) {
     .prefs { left: calc(var(--gutter) + 48px); padding: 0 2px; }

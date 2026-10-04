@@ -20,7 +20,7 @@ import { createDetail, type DetailTarget } from './ui/detail';
 import type { ScreenIntent } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
 import { events, profile, projects } from './content/portfolio';
-import { contact, mailtoHref, whatsappHref } from './content/contact';
+import { contact, emailAddress, mailtoHref, whatsappHref } from './content/contact';
 import { copyText } from './ui/clipboard';
 import { motion } from './motion';
 import { sfx } from './audio/sfx';
@@ -360,6 +360,23 @@ if (!webglAvailable()) {
     const m = screen.mode();
     return m === 'works' ? projects.length : m === 'chronicle' ? events.length : 0;
   };
+  // Copy Dean's email (the screen's Copy key, or C on the keyboard while Email is selected): the address
+  // is only joined here, on request, like the mailto link.
+  async function copyEmail() {
+    const ok = await copyText(emailAddress());
+    sfx.play(ok ? 'detent' : 'toggle', ok ? {} : { rate: 0.8 });
+    screen.copied(ok);
+    announce(ok ? 'Email address copied' : 'Couldn’t copy the email address. Use Open instead.');
+  }
+  addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() !== 'c' || e.metaKey || e.ctrlKey || e.altKey || view !== 'device') return;
+    if ((e.target as HTMLElement).closest?.('input, textarea, select, dialog, [contenteditable]')) return;
+    const sel = screen.confirm();
+    if (screen.mode() === 'contact' && sel.type === 'channel' && sel.channel === 'email') {
+      e.preventDefault();
+      void copyEmail();
+    }
+  });
   function handleIntent(i: ScreenIntent) {
     switch (i.type) {
       case 'project': return openDetail({ kind: 'project', id: i.id });
@@ -369,7 +386,9 @@ if (!webglAvailable()) {
         chor.flip.reset(true);
         return contactSeq.run();
       case 'tab': return selectTab(i.tab);
-      case 'key': return controls?.pressKey(i.key === 'back' ? 'key-back' : 'key-confirm');
+      case 'key':
+        if (i.key === 'copy') return void copyEmail();
+        return controls?.pressKey(i.key === 'back' ? 'key-back' : 'key-confirm');
       case 'channel':
         sfx.play('press');
         if (i.channel === 'email') location.href = mailtoHref();
@@ -462,7 +481,6 @@ if (!webglAvailable()) {
   };
   hire.addEventListener('click', goContact);
   contactSeq.onState((s) => {
-    consoleEl.dataset.card = s; // phones fade the title while the card is out (site.css)
     cta.disabled = s === 'running';
     cta.textContent = s === 'ready' ? 'Put the key away' : 'Contact me';
   });
