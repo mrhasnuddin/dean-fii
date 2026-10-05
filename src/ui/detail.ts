@@ -2,6 +2,7 @@
 // free). Slides in over the text column so the wallet stays visible; bottom sheet on phones.
 import './detail.css';
 import { countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
+import { mountFlow, type Flow } from './flowFigure';
 
 export type DetailTarget = { kind: 'project'; id: string } | { kind: 'event'; id: string } | { kind: 'about' };
 
@@ -17,6 +18,20 @@ export interface Detail {
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const tool = (t: string) =>
   `<li class="dt-tool"><img src="${toolLogo(t)}" alt="" width="20" height="20"><span>${toolNames[t as ToolId] ?? t}</span></li>`;
+
+/** Design flow: the chain figure (blocks = stages, drawn by flowFigure.ts), the stages in order, and how it went. */
+function flowSection(flow: Flow) {
+  const steps = flow.steps.map((s, i) => `<li><span class="dt-step-n">${String(i + 1).padStart(2, '0')}</span>${esc(s)}</li>`).join('');
+  return `<section class="dt-flow" aria-labelledby="dt-flow-title">
+    <h3 class="dt-h3" id="dt-flow-title">Design flow</h3>
+    <figure class="dt-fig">
+      <div class="dt-fig-stage" role="img" aria-label="The design flow as a chain of blocks, one block per stage: ${esc(flow.steps.join(', '))}."></div>
+      <figcaption class="dt-fig-read" aria-hidden="true"></figcaption>
+    </figure>
+    <ol class="dt-steps">${steps}</ol>
+    <p class="dt-desc">${esc(flow.text)}</p>
+  </section>`;
+}
 
 function gallery(images: string[], alt: string) {
   return `<div class="dt-media">
@@ -37,6 +52,26 @@ export function createDetail(): Detail {
   let closeCb = () => {};
   let navCb: (t: DetailTarget) => void = () => {};
   let inviteCb = () => {};
+  // The live figure of the panel showing, if any: torn down when the panel changes or closes.
+  let unmountFlow: (() => void) | null = null;
+  let flowToken = 0;
+  function stopFlow() {
+    flowToken++;
+    unmountFlow?.();
+    unmountFlow = null;
+  }
+  function startFlow(t: DetailTarget) {
+    stopFlow();
+    if (t.kind !== 'project') return;
+    const stage = dlg.querySelector<HTMLElement>('.dt-fig-stage');
+    const readEl = dlg.querySelector<HTMLElement>('.dt-fig-read');
+    const p = projects.find((x) => x.id === t.id);
+    if (!stage || !readEl || !p) return;
+    const token = flowToken;
+    mountFlow(stage, readEl, p.flow)
+      .then((un) => (token === flowToken ? (unmountFlow = un) : un()))
+      .catch(() => stage.closest('.dt-fig')?.remove()); // no figure: the stages and the text still say it
+  }
 
   function render(t: DetailTarget) {
     let head = '';
@@ -50,6 +85,7 @@ export function createDetail(): Detail {
         <h2 id="detail-title">${esc(p.title)}</h2><p class="dt-roles">${p.roles.map(esc).join(' · ')}</p>`;
       body = `${gallery(p.images, p.title)}
         <p class="dt-desc">${esc(p.description)}</p>
+        ${flowSection(p.flow)}
         <h3 class="dt-h3">Tools used</h3><ul class="dt-tools">${p.tools.map(tool).join('')}</ul>`;
       actions = `<a class="dt-cta" href="${p.link}" target="_blank" rel="noopener noreferrer">Visit site <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`;
       pager = pagerHtml(i, projects.length, 'project');
@@ -107,6 +143,7 @@ export function createDetail(): Detail {
     if (go) navCb({ kind: go.dataset.kind as 'project' | 'event', id: go.dataset.go! });
   });
   dlg.addEventListener('close', () => {
+    stopFlow();
     current = null;
     closeCb();
   });
@@ -114,7 +151,9 @@ export function createDetail(): Detail {
   return {
     open(t) {
       current = t;
+      stopFlow();
       render(t);
+      startFlow(t);
       if (!dlg.open) dlg.showModal();
       dlg.querySelector<HTMLElement>('.dt-scroll')?.scrollTo(0, 0);
       dlg.querySelector<HTMLElement>('.dt-close')?.focus();

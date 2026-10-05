@@ -6,7 +6,7 @@
   border: 0;
   max-width: none;
   max-height: none;
-  width: min(620px, 56vw);
+  width: min(720px, 60vw); /* room for the gallery and the design-flow figure; the wallet stays in view */
   height: 100dvh;
   background: transparent;
   color: var(--ink-light);
@@ -78,6 +78,19 @@
 .dt-dir { white-space: nowrap; }
 .dt-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 11px; }
 .dt-pager > span { flex: none; }
+/* Design flow (docs/device-design.md §29): the chain figure, the stages in order, the text. The figure's
+   strokes take the site's palette; its plates are filled with the panel's colour, as Hairline asks. */
+.dt-flow { margin: 30px 0 6px; }
+.dt-fig { position: relative; margin: 6px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #141519; }
+.dt-fig-stage {
+  width: min(100%, 460px); margin-inline: auto;
+  --hairline-plate: #141519; --hairline-hi: var(--champagne); --hairline-edge: #9c9aa3; --hairline-mid: #5b5c64; --hairline-lo: #303138; --hairline-stroke: 1;
+}
+.dt-fig-read { position: absolute; top: 12px; right: 14px; font: 500 11px/1 var(--font-mono); letter-spacing: 0.04em; color: var(--muted); pointer-events: none; }
+.dt-steps { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.dt-steps li { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px 6px 8px; border: 1px solid var(--line); border-radius: 999px; font: 500 13px/1 var(--font-ui); color: #d7d3ca; }
+.dt-step-n { font: 500 10px/1 var(--font-mono); color: var(--muted); }
+.dt-steps li:last-child { border-color: color-mix(in srgb, var(--champagne) 45%, var(--line)); }
 .dt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 760px) {

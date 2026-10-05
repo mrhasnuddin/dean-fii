@@ -6,7 +6,7 @@
       "category": "Modular L1 Blockchain",
       "roles": [
         "UI/UX Designer",
-        "Creative Designer"
+        "Frontend Developer"
       ],
       "tools": [
         "figma",
@@ -22,7 +22,19 @@
       ],
       "status": "Shipped + Live",
       "link": "https://eni.top/",
-      "description": "ENI is a modular Layer 1 blockchain built for commercial adoption. I led the visual design, bringing its Mainnet, Hub and AppChains into a clear network dashboard and Matrix architecture diagram. The site also explains how institutions participate in the ecosystem.",
+      "description": "ENI is a modular Layer 1 blockchain built for commercial adoption. I joined a team of designers, a PM and developers as a UI/UX designer and frontend developer, and designed and built part of the site's pages, including the mobile versions of several of them.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Wireframes",
+          "MVPs",
+          "Iteration",
+          "Builds v1 to v3",
+          "Iteration",
+          "Handover"
+        ],
+        "text": "I was in the early team, from the first ideas to the third version of the build, before the project passed to another team. Designers, a PM and developers worked it out together through wireframes and MVPs, and every design decision answered to two things: the client's requirements and the conventions of Web3."
+      },
       "images": [
         "/media/projects/eni-1.webp",
         "/media/projects/eni-2.webp",
@@ -55,7 +67,17 @@
       ],
       "status": "Shipped + Live",
       "link": "https://aseanlabs.io/",
-      "description": "ASEAN Labs helps Web3 projects build on ENI across Southeast Asia. I developed a narrative-led website with animated metrics and distinct paths for builders, ecosystems and enterprise clients, making the incubator’s role easier to understand.",
+      "description": "ASEAN Labs helps Web3 projects build on ENI across Southeast Asia. I made the site on my own from start to finish: custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and the motion and micro-interactions throughout.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "MVPs",
+          "Build",
+          "Iteration"
+        ],
+        "text": "I gathered ideas and references from the Web3 incubator space, then set the direction: a site that stands apart through quiet micro-interactions and motion. MVPs settled the look before the build, and iteration tuned it after."
+      },
       "images": [
         "/media/projects/aseanlabs-1.webp",
         "/media/projects/aseanlabs-2.webp",
@@ -88,7 +110,18 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.kairma.ai/",
-      "description": "Kairma deploys AI employees on an on-premise appliance, keeping brand data local. I designed and built an interface inspired by an operating-system boot sequence, with a command deck, live model pricing and localisation for six regions.",
+      "description": "Kairma deploys AI employees on an on-premise appliance, keeping brand data local. I designed and built the site on my own. It pulls live AI model rankings from the OpenRouter API, the quote page unfolds as you scroll, and the icons and components are animated. I used AI-assisted tools for the imagery.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "MVPs",
+          "Iteration",
+          "Build",
+          "Iteration"
+        ],
+        "text": "The client came with the idea and the direction. I ran the consultations, then refined the UI/UX and technical decisions through MVPs and two rounds of iteration, one before the build and one after it."
+      },
       "images": [
         "/media/projects/kairma-1.webp",
         "/media/projects/kairma-2.webp",
@@ -119,7 +152,17 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.paygo.ac/",
-      "description": "PayGo lets APIs and AI agents pay per request through x402 on ENI Mainnet. I designed a developer-focused website with an interactive protocol walkthrough and accurate terminal examples, explaining the payment flow without relying on API keys or subscriptions.",
+      "description": "PayGo lets APIs and AI agents pay per request through x402 on ENI Mainnet. I designed and built the developer site on my own, put together from components of a UI library, with an interactive protocol walkthrough that explains the payment flow.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "Build",
+          "Iteration",
+          "Handover"
+        ],
+        "text": "The client came with the idea and the direction, and I consulted on and refined the UI/UX and technical decisions. Once we agreed on the result, I handed the site over to the client's in-house team to run."
+      },
       "images": [
         "/media/projects/paygo-1.webp",
         "/media/projects/paygo-2.webp",
@@ -151,7 +194,15 @@
       ],
       "status": "Shipped",
       "link": "https://eniaclabs.vercel.app/",
-      "description": "Eniac Labs helps enterprises and governments move on-chain. The website presents its strategy, compliance, tokenisation and capital services through layered reveals and an interactive view of the ENI Matrix architecture.",
+      "description": "Eniac Labs helps enterprises and governments move on-chain. I designed and built the site around an institutional structure, with custom SVG shapes drawn in Figma, custom icons, and AI-generated images for the thumbnails and media. It shipped, but the client didn't take it further.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "Build"
+        ],
+        "text": "I proposed the design direction and the ideas for an institutional business, and built it once the client agreed."
+      },
       "images": [
         "/media/projects/eniaclabs-1.webp",
         "/media/projects/eniaclabs-2.webp",
@@ -184,7 +235,18 @@
       ],
       "status": "Shipped",
       "link": "https://open-crew.vercel.app/",
-      "description": "OpenCrew is a global team and growth partner for Web3, AI and new finance projects, covering talent, institutional access and overseas markets. I designed and built its website: six expandable capability cards, a partner network and client stories, laid out so a service with many parts reads as one offer.",
+      "description": "OpenCrew is a global team and growth partner for Web3, AI and new finance projects. I designed and built the site on my own. Its client stories come from projects we incubated, and its photos are real, taken at my own offline events; they carry much of the pitch. The illustrations are custom SVGs drawn in Figma.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "MVPs",
+          "Build",
+          "Iteration",
+          "Maintenance"
+        ],
+        "text": "I set the design direction from the business OpenCrew is in and from the client's own requests, combining and refining the two. After launch I keep maintaining it."
+      },
       "images": [
         "/media/projects/opencrew-1.webp",
         "/media/projects/opencrew-2.webp",
@@ -218,7 +280,17 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.fortunahkholding.com/",
-      "description": "Fortuna HK provides cross-border education, wealth management and corporate services. I designed a multilingual editorial website, pairing a calligraphic opening with expandable service sections and a world-clock footer for its international audience.",
+      "description": "Fortuna HK provides cross-border education, wealth management and corporate services. I designed and built the multilingual site on my own, starting by helping the client choose a theme and mood that suit the business. The world clock in the footer was made at the client's request, and the imagery is AI-assisted.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "MVPs",
+          "Build",
+          "Iteration"
+        ],
+        "text": "The client set the design direction. I suggested and refined what it needed, based on their requirements and the nature of the business."
+      },
       "images": [
         "/media/projects/fortuna-1.webp",
         "/media/projects/fortuna-2.webp",
@@ -249,7 +321,15 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.nikola.network/",
-      "description": "Nikola coordinates AI governance, protocol structure and capital for projects on ENI. I designed a focused, single-viewport website with atmospheric visuals and precise typography, giving the platform a clear introduction at first glance.",
+      "description": "Nikola coordinates AI governance, protocol structure and capital for projects on ENI. I designed and built the site on my own, after helping the client choose a theme and mood that fit the business. Its effects and shaders come from a UI component library.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "Build"
+        ],
+        "text": "I set the design direction and the client agreed to it. Their guidelines and documentation made the build straightforward."
+      },
       "images": [
         "/media/projects/nikola-1.webp",
         "/media/projects/nikola-2.webp",
@@ -281,7 +361,16 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.flowfidao.com/",
-      "description": "FlowFi is a community-governed treasury protocol on ENI. I designed an interface that presents capital as digital architecture, using vault diagrams, tokenomics grids and a phased roadmap to explain how the protocol works.",
+      "description": "FlowFi is a community-governed treasury protocol on ENI. I designed and built the site on my own: I proposed a theme and mood that suit the business, then made the custom SVGs, the design system, and the animation and motion.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "Build",
+          "Iteration"
+        ],
+        "text": "I proposed the design direction, then polished and adjusted it to the client's requests."
+      },
       "images": [
         "/media/projects/flowfi-1.webp",
         "/media/projects/flowfi-2.webp",
@@ -314,7 +403,15 @@
       ],
       "status": "Shipped",
       "link": "https://pusc-liard.vercel.app/",
-      "description": "PUSC is a DAO-governed stablecoin protocol. I designed a terminal-inspired interface with live protocol readouts, mechanism modules and a focused minting narrative to make a technical product easier to understand.",
+      "description": "PUSC is a DAO-governed stablecoin protocol. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets. It is a microsite for PayGo.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Build",
+          "Handover"
+        ],
+        "text": "A microsite for PayGo with the same mood and its own variation, so there was little to settle before I built it and handed it over."
+      },
       "images": [
         "/media/projects/pusc-1.webp",
         "/media/projects/pusc-2.webp",

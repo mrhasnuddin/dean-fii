@@ -26,7 +26,7 @@ export const profile = {
   roles: ['UI/UX Designer', 'Frontend Developer', 'Creative Designer'],
   // Dean's own bio (2026-09-28, lightly edited for flow; no claims added). Design/build, then speaking.
   bio: [
-    'UI/UX designer, frontend developer (vibe coding) and creative designer, focused on user interfaces, landing pages and frontend builds that are easy to understand.',
+    'UI/UX designer, frontend developer using AI-assisted workflows, and creative designer, focused on user interfaces, landing pages and frontend builds that are easy to understand.',
     'An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics.',
   ],
   toolGroups: [
