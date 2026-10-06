@@ -151,6 +151,15 @@ main { position: relative; z-index: 2; pointer-events: none; }
 .panel-title[data-active], .panel[data-active] { opacity: 1; visibility: visible; transform: none; transition: opacity 240ms var(--ease-out) 60ms, transform 240ms var(--ease-out) 60ms, visibility 0s; }
 .panel-title { margin: 0; font: 400 clamp(48px, 6.2vw, 112px)/0.92 var(--font-display); letter-spacing: -0.02em; text-wrap: balance; }
 
+/* Works: Web / Mobile apps, a small switch above the text (main.ts keeps it in step with the screen's
+   WEB / APPS pages). The page showing is lit. */
+.work-kind { display: inline-flex; gap: 2px; margin: 0 0 12px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: rgb(236 232 223 / 0.04); backdrop-filter: blur(10px); }
+.work-kind button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--font-ui); color: var(--ink-light); cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
+.work-kind [aria-pressed='true'] { background: rgb(228 207 159 / 0.14); color: var(--champagne); }
+@media (hover: hover) and (pointer: fine) { .work-kind [aria-pressed='false']:hover { color: var(--champagne); } }
+.work-kind button:focus-visible { outline: 1.5px solid var(--champagne); outline-offset: 2px; }
+@media (pointer: coarse) { .work-kind button { padding-block: 11px; } } /* a thumb-sized target (~43 px with the ring) */
+
 /* Contact actions: the CTA, plus Share on phones (the header has no room for it there). */
 .panel-actions { display: flex; align-items: center; gap: 18px; margin-top: 20px; }
 .panel-actions .cta { margin-top: 0; }

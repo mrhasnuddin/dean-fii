@@ -2,7 +2,7 @@
 // free). Slides in over the text column so the wallet stays visible; bottom sheet on phones.
 import './detail.css';
 import { countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
-import { mountFlow, type Flow } from './flowFigure';
+import { mountFlow, type Flow, type FlowHandle } from './flowFigure';
 
 export type DetailTarget = { kind: 'project'; id: string } | { kind: 'event'; id: string } | { kind: 'about' };
 
@@ -19,16 +19,24 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const tool = (t: string) =>
   `<li class="dt-tool"><img src="${toolLogo(t)}" alt="" width="20" height="20"><span>${toolNames[t as ToolId] ?? t}</span></li>`;
 
+// The arrow into a stage: straight on along a row; at the start of a wrapped row, down from the row above
+// and on (markWraps picks which). Both are the same size, so swapping them never moves the layout.
+const ARROW = `<svg class="dt-arrow" viewBox="0 0 14 14" aria-hidden="true"><path class="dt-a-on" d="M2 7h9M8 4l3 3-3 3"/><path class="dt-a-turn" d="M3 1.5v3.5a2.5 2.5 0 0 0 2.5 2.5H11M8 4.5l3 3-3 3"/></svg>`;
+
 /** Design flow: the chain figure (blocks = stages, drawn by flowFigure.ts), the stages in order, and how it went. */
 function flowSection(flow: Flow) {
-  const steps = flow.steps.map((s, i) => `<li><span class="dt-step-n">${String(i + 1).padStart(2, '0')}</span>${esc(s)}</li>`).join('');
+  const n = flow.steps.length;
+  // Each stage after the first carries the arrow into it, so a wrapped row starts with its own arrow.
+  const steps = flow.steps
+    .map((s, i) => `<li class="dt-step${i === n - 1 ? ' is-on' : ''}" data-i="${i}">${i ? ARROW : ''}<button type="button" class="dt-chip">${esc(s)}</button></li>`)
+    .join('');
   return `<section class="dt-flow" aria-labelledby="dt-flow-title">
     <h3 class="dt-h3" id="dt-flow-title">Design flow</h3>
     <figure class="dt-fig">
       <div class="dt-fig-stage" role="img" aria-label="The design flow as a chain of blocks, one block per stage: ${esc(flow.steps.join(', '))}."></div>
       <figcaption class="dt-fig-read" aria-hidden="true"></figcaption>
     </figure>
-    <ol class="dt-steps">${steps}</ol>
+    <ol class="dt-steps" aria-label="Stages, in order">${steps}</ol>
     <p class="dt-desc">${esc(flow.text)}</p>
   </section>`;
 }
@@ -53,12 +61,42 @@ export function createDetail(): Detail {
   let navCb: (t: DetailTarget) => void = () => {};
   let inviteCb = () => {};
   // The live figure of the panel showing, if any: torn down when the panel changes or closes.
-  let unmountFlow: (() => void) | null = null;
+  let flowHandle: FlowHandle | null = null;
   let flowToken = 0;
+  let wrapWatch: ResizeObserver | null = null;
+  let letGo = 0; // a tap on a stage holds it a while, then lets the chain play again
   function stopFlow() {
     flowToken++;
-    unmountFlow?.();
-    unmountFlow = null;
+    flowHandle?.destroy();
+    flowHandle = null;
+    wrapWatch?.disconnect();
+    wrapWatch = null;
+    clearTimeout(letGo);
+  }
+  /** Marks each stage that starts a new row, so its arrow turns down from the row above. */
+  function markWraps(list: HTMLElement) {
+    const items = [...list.children] as HTMLElement[];
+    items.forEach((li, i) => li.classList.toggle('is-wrap', i > 0 && li.offsetTop > items[i - 1].offsetTop + 4));
+  }
+  /** The stages list follows the figure (its pointer, its play) and drives it: hover, focus or tap a stage to show it. */
+  function bindSteps(list: HTMLElement, handle: FlowHandle) {
+    const items = [...list.querySelectorAll<HTMLElement>('.dt-step')];
+    const at = (e: Event) => Number((e.target as Element).closest<HTMLElement>('.dt-step')?.dataset.i ?? -1);
+    list.addEventListener('pointerover', (e) => {
+      const i = at(e);
+      if (e.pointerType === 'mouse' && i >= 0 && (e.target as Element).closest('.dt-chip')) handle.hold(i);
+    });
+    list.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && handle.hold(-1));
+    list.addEventListener('focusin', (e) => handle.hold(at(e)));
+    list.addEventListener('focusout', (e) => !list.contains(e.relatedTarget as Node) && handle.hold(-1));
+    list.addEventListener('click', (e) => {
+      const i = at(e);
+      if (i < 0 || (e as PointerEvent).pointerType === 'mouse') return;
+      handle.hold(i);
+      clearTimeout(letGo);
+      if ((e as PointerEvent).pointerType) letGo = window.setTimeout(() => handle.hold(-1), 3200); // a tap, not a key
+    });
+    return (a: number) => items.forEach((li, i) => li.classList.toggle('is-on', i === (a < 0 ? items.length - 1 : a)));
   }
   function startFlow(t: DetailTarget) {
     stopFlow();
@@ -67,9 +105,19 @@ export function createDetail(): Detail {
     const readEl = dlg.querySelector<HTMLElement>('.dt-fig-read');
     const p = projects.find((x) => x.id === t.id);
     if (!stage || !readEl || !p) return;
+    const list = dlg.querySelector<HTMLElement>('.dt-steps');
+    if (list) {
+      wrapWatch = new ResizeObserver(() => markWraps(list));
+      wrapWatch.observe(list);
+    }
     const token = flowToken;
-    mountFlow(stage, readEl, p.flow)
-      .then((un) => (token === flowToken ? (unmountFlow = un) : un()))
+    let mark = (_a: number) => {};
+    mountFlow(stage, readEl, p.flow, 'chain', { auto: true, onPick: (a) => mark(a) })
+      .then((h) => {
+        if (token !== flowToken) return h.destroy();
+        flowHandle = h;
+        if (list) mark = bindSteps(list, h);
+      })
       .catch(() => stage.closest('.dt-fig')?.remove()); // no figure: the stages and the text still say it
   }
 

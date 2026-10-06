@@ -17,7 +17,7 @@ import { createChoreography, TABS, type TabId } from './scene/choreography';
 import { createControls, type Controls } from './scene/controls';
 import { createContactSequence, type ContactSequence } from './scene/contactSequence';
 import { createDetail, type DetailTarget } from './ui/detail';
-import type { ScreenIntent } from './ui/screen';
+import type { ScreenIntent, WorksPage } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
 import { events, profile, projects } from './content/portfolio';
 import { contact, emailAddress, mailtoHref, whatsappHref } from './content/contact';
@@ -344,9 +344,39 @@ if (!webglAvailable()) {
   chor.onPlace((place) => {
     if (place === 'hero' && contactSeq.state() !== 'idle') contactSeq.putAway(true);
   });
+  // Works' two pages (§31): WEB, the projects, and APPS, mobile apps (coming soon). Flipped by pressing
+  // 01 again (the wallet key, the softkey or key 1), ← →, WEB/APPS on the screen or the switch beside the
+  // wallet; the Back key on APPS goes back to WEB. The switch and its text follow the screen.
+  const kindBtns = [...document.querySelectorAll<HTMLButtonElement>('.work-kind [data-kind]')];
+  function flipWorks(page?: WorksPage) {
+    const to = page ?? (screen.worksPage() === 'web' ? 'apps' : 'web');
+    if (to === screen.worksPage()) return;
+    sfx.play('press');
+    screen.setWorksPage(to);
+  }
+  screen.onPage((page) => {
+    kindBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === page)));
+    document.querySelectorAll<HTMLElement>('[data-kind-text]').forEach((el) => (el.hidden = el.dataset.kindText !== page));
+    if (chor.tab() === 'works') announce(page === 'apps' ? 'Mobile apps: coming soon' : 'Web projects');
+  });
+  kindBtns.forEach((b) => b.addEventListener('click', () => flipWorks(b.dataset.kind as WorksPage)));
+  /** A tab key or softkey: pressed again on Works, it flips Works' page; otherwise it chooses the section. */
+  function pressTab(tab: TabId) {
+    if (tab === 'works' && chor.tab() === 'works' && chor.place() === 'console' && view === 'device') return flipWorks();
+    selectTab(tab);
+  }
+  addEventListener('keydown', (e) => {
+    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+    if (view !== 'device' || detail.isOpen() || screen.mode() !== 'works' || chor.place() !== 'console') return;
+    if ((e.target as HTMLElement).closest?.('input, textarea, select, dialog, [contenteditable], [role="tab"], a, button')) return;
+    e.preventDefault();
+    flipWorks(e.key === 'ArrowRight' ? 'apps' : 'web');
+  });
+
   // A deep link or ✓ opens a detail: the Console behind it shows the same section and item.
   onDetailOpen = (t) => {
     const tab = TAB_FOR[t.kind];
+    if (t.kind === 'project') flipWorks('web');
     if (chor.tab() !== tab) selectTab(tab);
     if (chor.place() !== 'console' && view === 'device') scrollToEl(consoleEl, undefined, true);
     const list = t.kind === 'project' ? projects : t.kind === 'event' ? events : null;
@@ -358,7 +388,7 @@ if (!webglAvailable()) {
 
   const listLength = () => {
     const m = screen.mode();
-    return m === 'works' ? projects.length : m === 'chronicle' ? events.length : 0;
+    return m === 'works' ? (screen.worksPage() === 'web' ? projects.length : 0) : m === 'chronicle' ? events.length : 0;
   };
   // Copy Dean's email (the screen's Copy key, or C on the keyboard while Email is selected): the address
   // is only joined here, on request, like the mailto link.
@@ -385,7 +415,8 @@ if (!webglAvailable()) {
       case 'contact':
         chor.flip.reset(true);
         return contactSeq.run();
-      case 'tab': return selectTab(i.tab);
+      case 'tab': return pressTab(i.tab);
+      case 'page': return flipWorks(i.page);
       case 'key':
         if (i.key === 'copy') return void copyEmail();
         return controls?.pressKey(i.key === 'back' ? 'key-back' : 'key-confirm');
@@ -435,7 +466,7 @@ if (!webglAvailable()) {
 
   controls = createControls(stage, document.getElementById('webgl') as HTMLCanvasElement, {
     sticker: showQr,
-    selectTab: (n) => selectTab(TABS[n - 1]),
+    selectTab: (n) => pressTab(TABS[n - 1]),
     roll: (d) => screen.move(d),
     canRoll: (d) => {
       const n = listLength();
@@ -448,6 +479,7 @@ if (!webglAvailable()) {
       else if (detail.isOpen()) detail.close();
       else if (chor.flip.isBack()) chor.flip.reset();
       else if (contactSeq.state() === 'ready') contactSeq.putAway();
+      else if (screen.mode() === 'works' && screen.worksPage() === 'apps') flipWorks('web');
     },
     // The side switch: the knob visibly slides first, then the page changes view.
     toggleView: () => {

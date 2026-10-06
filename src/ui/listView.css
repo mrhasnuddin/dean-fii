@@ -17,6 +17,10 @@
 .lv-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px 24px; }
 .lv-grid a { display: grid; gap: 8px; color: var(--ink-light); text-decoration: none; }
 .lv-grid img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; margin-bottom: 6px; }
+/* Mobile apps: a line under the web projects until the first app ships. */
+.lv-soon { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 32px 0 0; padding: 16px 18px; border: 1px dashed var(--line); border-radius: 12px; color: #b9b5ad; font-size: 15px; }
+.lv-soon strong { color: var(--ink-light); font-weight: 500; }
+.lv-soon span { font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--champagne); background: rgb(228 207 159 / 0.1); border-radius: 999px; padding: 5px 9px; }
 .lv-grid strong { font: 500 19px/1.25 var(--font-ui); }
 
 .lv-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }

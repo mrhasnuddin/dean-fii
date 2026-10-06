@@ -47,6 +47,7 @@ export function buildListView(root: HTMLElement): void {
           <strong>${esc(p.title)}</strong>
           <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`)
         .join('')}</ul>
+      <p class="lv-soon"><strong>Mobile apps</strong> <span>Coming soon</span> Mobile app design and development.</p>
     </section>
 
     <section class="lv-sec" id="lv-chronicle" aria-labelledby="lv-chronicle-h">

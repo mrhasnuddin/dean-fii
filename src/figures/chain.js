@@ -11,8 +11,14 @@
  * place the next block will take.
  * The flow comes in with mount (the site passes each project's); without one
  * it draws ENI's. The slider is the stagger, in ms.
+ * With auto (the site's panels), the chain plays itself while nobody touches it, so the gesture is seen
+ * before it is found: after a beat at rest each stage in turn is picked, as the pointer would, held a
+ * moment, then the chain rests and goes round again. The pointer, or hold() from the page's list of
+ * stages, takes over at once; a while after it lets go, the play starts again from the first stage.
+ * onPick hears every pick, the pointer's, the play's and hold()'s, so the page can mark the same stage.
+ * Under reduced motion the chain does not play itself.
  */
-const { Cam, clamp, facing, fit, poly, prism, proj, ringAt, rings, solid, put, tdone, tset, tval, tween, disposer, mk, pointer, register } = HL;
+const { Cam, clamp, facing, fit, poly, prism, proj, ringAt, rings, solid, put, tdone, tset, tval, tween, reducedMotion, disposer, mk, pointer, register } = HL;
 
 const ENI = {
   steps: [["Ideation", 1], ["Wireframes", 1], ["MVPs", 2], ["Iteration", 2], ["Builds v1 to v3", 3], ["Iteration", 2], ["Handover", 1]],
@@ -21,6 +27,7 @@ const ENI = {
 const B = 32, H = 22, PITCH = 64, ARC = 52, R = 4, CR = 1.4; // block side, height, centre to centre, bow of the arc, corner, crease
 const PG = 1.6, FAN = 5, LIFT = 14, TIP = 4; // plate gap at rest, extra gap when picked, lift when picked, the tip's rest lift
 const FALL = [1, 0.34, 0.1]; // how much the picked block's neighbours follow, by distance; beyond, nothing
+const LEAD = 900, BREATH = 2200, RESUME = 2600; // the play: ms at rest before it starts, at rest between rounds, and after a touch
 
 /** An oval link: centre c, long axis u (unit, ground), half lengths a and b, upright (in the u–z plane) or flat. */
 function oval(P, c, u, a, b, upright) {
@@ -32,7 +39,7 @@ function oval(P, c, u, a, b, upright) {
   return poly(pts);
 }
 
-function mount({ stage, svg, read, flow }, value) {
+function mount({ stage, svg, read, flow, auto, onPick }, value) {
   const bag = disposer();
   const F = flow && flow.steps && flow.steps.length ? flow : ENI;
   const n = F.steps.length, ghost = F.end === "handover", wait = F.end === "maintenance";
@@ -108,7 +115,22 @@ function mount({ stage, svg, read, flow }, value) {
     return moving;
   }
 
-  const L = register(stage, (_dt, now) => draw(now));
+  // The play: one clock in ms, run only while the chain is on screen and nobody holds it. Each stage is
+  // held long enough to settle and be read; a long chain holds each a little less, so a round stays short.
+  const hold = clamp(8400 / n, 1100, 1500), round = n * hold + BREATH;
+  let clock = 0, due = LEAD, held = false, act = -1;
+  const playing = () => auto && !held && !reducedMotion();
+  function play(dt) {
+    clock += dt * 1000;
+    if (clock < due) return;
+    const k = Math.floor(((clock - due) % round) / hold);
+    setActive(k < n ? k : -1);
+  }
+  const L = register(stage, (dt, now) => {
+    if (playing()) { play(dt); draw(now); return true; }
+    if (auto && !held && act >= 0) setActive(-1); // the play stopped (reduced motion came on): back to rest
+    return draw(now);
+  });
   bag.add(L.unregister);
   draw(performance.now());
 
@@ -121,7 +143,6 @@ function mount({ stage, svg, read, flow }, value) {
     return bd <= reach ? best : -1;
   }
 
-  let act = -1;
   const mark = (a) => blocks.forEach((bk, i) => i < n && bk.ps.forEach((s) => s.sil.classList.toggle("hi", a < 0 ? i === n - 1 : i === a)));
   /** Picks block a (-1 lets go): it lifts and fans, its neighbours follow less, staggered out from it. */
   function setActive(a) {
@@ -135,15 +156,22 @@ function mount({ stage, svg, read, flow }, value) {
     });
     mark(a);
     read.textContent = a < 0 ? "rest" : String(a + 1).padStart(2, "0") + " " + F.steps[a][0];
+    if (onPick) onPick(a);
     L.wake();
+  }
+  /** Someone holds stage a (-1 lets go): the play stops; after a while let go, it starts again from the first stage. */
+  function take(a) {
+    held = a >= 0;
+    if (!held) { clock = 0; due = RESUME; }
+    setActive(a);
   }
   mark(-1);
   read.textContent = "rest";
 
-  bag.add(pointer(stage, { move: (p) => setActive(hit(p)), leave: () => setActive(-1) }));
+  bag.add(pointer(stage, { move: (p) => { held = true; setActive(hit(p)); }, leave: () => take(-1) }));
   bag.add(() => svg.replaceChildren());
 
-  return { set: (v) => { stag = v; }, destroy: bag.dispose };
+  return { set: (v) => { stag = v; }, hold: take, destroy: bag.dispose };
 }
 
 hairline({

@@ -87,10 +87,21 @@
   --hairline-plate: #141519; --hairline-hi: var(--champagne); --hairline-edge: #9c9aa3; --hairline-mid: #5b5c64; --hairline-lo: #303138; --hairline-stroke: 1;
 }
 .dt-fig-read { position: absolute; top: 12px; right: 14px; font: 500 11px/1 var(--font-mono); letter-spacing: 0.04em; color: var(--muted); pointer-events: none; }
-.dt-steps { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.dt-steps li { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px 6px 8px; border: 1px solid var(--line); border-radius: 999px; font: 500 13px/1 var(--font-ui); color: #d7d3ca; }
-.dt-step-n { font: 500 10px/1 var(--font-mono); color: var(--muted); }
-.dt-steps li:last-child { border-color: color-mix(in srgb, var(--champagne) 45%, var(--line)); }
+/* The stages, in order, joined by arrows; the one the figure shows is lit (detail.ts keeps them in step). */
+.dt-steps { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 5px; }
+.dt-step { display: inline-flex; align-items: center; gap: 5px; }
+.dt-arrow { flex: none; width: 14px; height: 14px; color: #5b5c64; transition: color 220ms ease-out; }
+.dt-arrow path { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.dt-a-turn, .dt-step.is-wrap .dt-a-on { display: none; }
+.dt-step.is-wrap .dt-a-turn { display: inline; }
+.dt-chip {
+  appearance: none; margin: 0; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: transparent;
+  font: 500 13px/1 var(--font-ui); color: #d7d3ca; cursor: pointer;
+  transition: border-color 220ms ease-out, color 220ms ease-out, background-color 220ms ease-out;
+}
+.dt-chip:focus-visible { outline: 1.5px solid var(--champagne); outline-offset: 2px; }
+.dt-step.is-on .dt-chip { border-color: color-mix(in srgb, var(--champagne) 60%, var(--line)); color: var(--champagne); background: color-mix(in srgb, var(--champagne) 7%, transparent); }
+.dt-step.is-on .dt-arrow { color: var(--champagne); }
 .dt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 760px) {

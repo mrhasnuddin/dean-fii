@@ -3,6 +3,8 @@
 // change does a full refresh flash, like a real e-ink panel. `confirm()` returns what ✓ should do.
 // Idle: the Hello screen is the pixel D-star; any other screen falls back to it after IDLE_MS with
 // no input anywhere, and wakes on the next pointer move, key, wheel, scroll or touch.
+// Works has two pages, WEB (the projects) and APPS (mobile apps: coming soon, shown as a firmware
+// update that never quite finishes). The status strip names both; main.ts flips them (§31).
 import './einkScreen.css';
 import './screen.css';
 import { LOGO_PATHS } from '../brand/logo';
@@ -13,6 +15,7 @@ import { motion } from '../motion';
 
 export type ScreenMode = 'boot' | 'hello' | 'works' | 'chronicle' | 'about' | 'contact';
 export type ContactState = 'prompt' | 'reading' | 'verified';
+export type WorksPage = 'web' | 'apps';
 export type ScreenIntent =
   | { type: 'project'; id: string }
   | { type: 'event'; id: string }
@@ -20,6 +23,8 @@ export type ScreenIntent =
   | { type: 'contact' }
   | { type: 'channel'; channel: 'email' | 'whatsapp' | 'linkedin' }
   | { type: 'tab'; tab: 'works' | 'chronicle' | 'about' | 'contact' }
+  /** WEB or APPS was tapped in Works' status strip. */
+  | { type: 'page'; page: WorksPage }
   /** A label on the bottom edge was tapped: press that face key, or (Contact, Email selected) copy the address. */
   | { type: 'key'; key: 'back' | 'confirm' | 'copy' }
   | { type: 'none' };
@@ -36,6 +41,10 @@ export interface Screen {
   setContactState(state: ContactState): void;
   /** Feedback for a copy of the email address: the footer's middle says so for a moment. */
   copied(ok: boolean): void;
+  /** Works' page: the web projects, or mobile apps (coming soon). Leaving Works goes back to WEB. */
+  worksPage(): WorksPage;
+  setWorksPage(page: WorksPage): void;
+  onPage(cb: (page: WorksPage) => void): void;
   /** Row click/tap on the screen: select, or confirm if already selected. */
   onIntent(cb: (intent: ScreenIntent) => void): void;
   onSelect(cb: (index: number) => void): void;
@@ -70,6 +79,24 @@ const statusRight = () =>
   `<span class="ek-sb-r"><span class="ek-clock"><b>${clockNow()}</b> GMT+8</span><span class="ek-bat" aria-hidden="true"></span></span>`;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
+// Works › APPS, coming soon: a phone whose nine app tiles install one by one (the next one dithered, as
+// if downloading) under a firmware-style progress bar that creeps to 99 % and holds there. Stepped, like
+// an e-ink partial refresh: each step redraws at once, nothing eases. Then a full refresh, and again.
+const phoneGlyph = `
+<svg class="sc-phone" viewBox="0 0 64 100" aria-hidden="true">
+  <defs><pattern id="sc-dither" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="2" height="2"/><rect x="2" y="2" width="2" height="2"/></pattern></defs>
+  <rect class="sc-phone-body" x="4" y="3" width="56" height="94" rx="9"/>
+  <rect class="sc-phone-ink" x="24" y="9" width="16" height="3" rx="1.5"/>
+  ${Array.from({ length: 9 }, (_, k) => `<rect class="sc-tile" x="${9 + (k % 3) * 17}" y="${22 + Math.floor(k / 3) * 17}" width="12" height="12" rx="3.5"/>`).join('')}
+  <rect class="sc-phone-ink" x="22" y="86" width="20" height="3" rx="1.5"/>
+</svg>`;
+const BLOCKS = 20;
+// Each step: [percent, what it is doing, ms before the next step]. About 8 s to 99 %, then it holds 3 s.
+const INSTALL: [number, number, number][] = [
+  [0, 0, 600], [6, 0, 450], [13, 0, 520], [19, 1, 640], [27, 1, 420], [34, 1, 560], [42, 2, 700], [49, 2, 380],
+  [57, 2, 520], [64, 2, 460], [72, 3, 620], [79, 3, 400], [86, 3, 540], [92, 3, 680], [97, 4, 900], [99, 4, 3000],
+];
+const DOING = ['Sketching user flows…', 'Designing screens…', 'Building the app…', 'Testing on phones…', 'Almost there…'];
 // Card reader glyph: the wallet in profile with the key half inserted in its side slot; the arrow
 // blinks in e-ink steps.
 const readerGlyph = `
@@ -123,7 +150,7 @@ export function createScreen(): Screen {
   // Idle overlay: lists and About fall back to the mark after IDLE_MS without input. Appearing is
   // silent (nobody asked for it); waking plays the refresh swish, since the visitor caused it.
   let idleTimer = 0;
-  const idleable = () => current === 'works' || current === 'chronicle' || current === 'about' || (current === 'contact' && contactState === 'prompt');
+  const idleable = () => (current === 'works' && worksPage === 'web') || current === 'chronicle' || current === 'about' || (current === 'contact' && contactState === 'prompt');
   function sleep() {
     if (!idleable()) return;
     saver.hidden = false;
@@ -143,8 +170,8 @@ export function createScreen(): Screen {
   }
   wake();
 
-  const listLen = () => (current === 'works' ? projects.length : current === 'chronicle' ? events.length : current === 'contact' ? CHANNELS.length : 0);
-  const listKey = () => (current === 'works' || current === 'chronicle' || current === 'contact' ? current : null);
+  const listLen = () => (appsShowing() ? 0 : current === 'works' ? projects.length : current === 'chronicle' ? events.length : current === 'contact' ? CHANNELS.length : 0);
+  const listKey = () => (appsShowing() ? null : current === 'works' || current === 'chronicle' || current === 'contact' ? current : null);
 
   function windowed<T>(items: readonly T[], sel: number): { item: T; i: number }[] {
     const rows = visibleRows();
@@ -160,16 +187,59 @@ export function createScreen(): Screen {
       const on = tab === current;
       return `<span data-softkey="${tab}" class="${on ? 'on' : ''}" style="left:${(180 + x * PX_PER_W).toFixed(1)}px">0${i + 1}</span>`;
     }).join('');
-    return `<header class="ek-sb ek-soft">${keys}</header><header class="ek-sb ek-status"><span>${LABEL[current]}</span>${statusRight()}</header>`;
+    // Works names its two pages after its own name; the one showing is inverted, and both can be tapped.
+    const name =
+      current === 'works'
+        ? `<span class="ek-pages">WORKS ${(['web', 'apps'] as const).map((p) => `<span data-page="${p}" class="${p === worksPage ? 'on' : ''}">${p.toUpperCase()}</span>`).join('')}</span>`
+        : `<span>${LABEL[current]}</span>`;
+    return `<header class="ek-sb ek-soft">${keys}</header><header class="ek-sb ek-status">${name}${statusRight()}</header>`;
   }
 
   // Bottom edge: labels for the two face keys under it (‹ Back, ✓). They are tappable too: on a phone the
   // label is the bigger target, and it is what people try first.
   function footer(left: string, mid: string, right: string, midKey?: 'copy') {
-    const ok = right === '…' ? '' : ' data-key="confirm"';
+    const ok = right === '…' || right === '—' ? '' : ' data-key="confirm"';
     const m = midKey ? ` data-key="${midKey}" class="ek-act"` : '';
     return `<footer class="ek-ab"><span data-key="back">${left}</span><span${m}>${mid}</span><span class="ek-hold"${ok}>${right}</span></footer>`;
   }
+  let worksPage: WorksPage = 'web';
+  let pageCb: (page: WorksPage) => void = () => {};
+  const appsShowing = () => current === 'works' && worksPage === 'apps';
+  let installTimer = 0;
+  /** Draws one step of the install: the bar's blocks, the percentage, the line under it and the tiles. */
+  function installStep(pct: number, doing: number) {
+    const view = el.querySelector('.sc-soon');
+    if (!view) return;
+    view.querySelectorAll('.sc-blocks i').forEach((b, i) => b.classList.toggle('on', i < Math.round((pct / 100) * BLOCKS)));
+    view.querySelector('.sc-pct')!.textContent = `${pct}%`;
+    view.querySelector('.sc-doing')!.textContent = DOING[doing];
+    // Tiles 1–8 land at 11 % apiece; the next one, and the ninth for ever, shows as downloading.
+    let next = -1;
+    view.querySelectorAll<SVGRectElement>('.sc-tile').forEach((t, k) => {
+      const on = k < 8 && pct >= (k + 1) * 11;
+      if (!on && next < 0 && pct > 0) next = k;
+      t.setAttribute('class', `sc-tile${on ? ' on' : k === next ? ' load' : ''}`);
+    });
+  }
+  const stopInstall = () => clearTimeout(installTimer);
+  /** Runs the install from 0 % (reduced motion: shows the held 99 % step and stays there). */
+  function startInstall() {
+    stopInstall();
+    if (motion.reduced()) return installStep(99, 4);
+    let k = 0;
+    const step = () => {
+      if (!appsShowing()) return;
+      const [pct, doing, ms] = INSTALL[k];
+      installStep(pct, doing);
+      k = (k + 1) % INSTALL.length;
+      installTimer = window.setTimeout(() => {
+        if (k === 0) flash(); // round again after a full refresh, like the panel clearing its ghosting
+        step();
+      }, ms);
+    };
+    step();
+  }
+
   // Contact, Email selected: the middle of the footer is a Copy key; after a copy it says how it went.
   let copyNote: string | null = null;
   let copyTimer = 0;
@@ -187,6 +257,15 @@ export function createScreen(): Screen {
           <footer class="ek-ab"><span data-softkey="works">01 Works</span><span>Scroll ↓</span><span class="ek-hold" data-softkey="contact">04 Contact</span></footer>`;
         break;
       case 'works': {
+        if (worksPage === 'apps') {
+          html = `${softkeys()}<section class="ek-view sc-center sc-soon">${phoneGlyph}
+            <p class="sc-stamp">COMING SOON</p>
+            <p class="sc-soon-t">Installing Mobile Apps</p>
+            <div class="sc-meter"><span class="sc-blocks">${'<i></i>'.repeat(BLOCKS)}</span><b class="sc-pct">0%</b></div>
+            <p class="ek-sub sc-doing">${DOING[0]}</p></section>
+            ${footer('‹ Web', '2 / 2', '—')}`;
+          break;
+        }
         const sel = index.works;
         const p = projects[sel];
         html = `${softkeys()}
@@ -232,10 +311,12 @@ export function createScreen(): Screen {
         }
         break;
     }
+    stopInstall();
     el.dataset.mode = current;
     el.innerHTML = html;
     el.append(saver);
     mountLogo();
+    if (appsShowing()) startInstall();
     if (current === 'contact' && contactState === 'reading') {
       // Start the stepped bar on the next frame so the clip-path transition runs from empty.
       requestAnimationFrame(() => el.querySelector('.sc-reading')?.classList.add('go'));
@@ -244,7 +325,7 @@ export function createScreen(): Screen {
 
   function confirm(): ScreenIntent {
     switch (current) {
-      case 'works': return { type: 'project', id: projects[index.works].id };
+      case 'works': return worksPage === 'apps' ? { type: 'none' } : { type: 'project', id: projects[index.works].id };
       case 'chronicle': return { type: 'event', id: events[index.chronicle].id };
       case 'about': return { type: 'about' };
       case 'contact':
@@ -254,6 +335,8 @@ export function createScreen(): Screen {
   }
 
   el.addEventListener('click', (e) => {
+    const page = (e.target as HTMLElement).closest<HTMLElement>('[data-page]');
+    if (page) return intentCb({ type: 'page', page: page.dataset.page as WorksPage });
     const faceKey = (e.target as HTMLElement).closest<HTMLElement>('[data-key]');
     if (faceKey) return intentCb({ type: 'key', key: faceKey.dataset.key as 'back' | 'confirm' | 'copy' });
     const soft = (e.target as HTMLElement).closest<HTMLElement>('[data-softkey]');
@@ -275,6 +358,7 @@ export function createScreen(): Screen {
 
   render();
   COARSE.addEventListener('change', render);
+  motion.subscribe(() => appsShowing() && startInstall()); // the Motion switch: play the install, or hold it at 99 %
   // The clock changes in place on the minute, without a refresh flash.
   const tickClock = () => {
     const now = clockNow();
@@ -289,6 +373,10 @@ export function createScreen(): Screen {
       if (mode === current) return;
       current = mode;
       if (mode !== 'contact') contactState = 'prompt';
+      if (mode !== 'works' && worksPage !== 'web') {
+        worksPage = 'web';
+        pageCb('web');
+      }
       refresh();
       render();
     },
@@ -330,6 +418,17 @@ export function createScreen(): Screen {
         if (current === 'contact') render();
       }, 1600);
     },
+    worksPage: () => worksPage,
+    setWorksPage(page) {
+      if (page === worksPage) return;
+      worksPage = page;
+      if (current === 'works') {
+        refresh();
+        render();
+      }
+      pageCb(page);
+    },
+    onPage: (cb) => (pageCb = cb),
     onIntent: (cb) => (intentCb = cb),
     onSelect: (cb) => (selectCb = cb),
     flash,

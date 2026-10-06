@@ -179,8 +179,14 @@
         <div class="copy-side panels">
           <div class="panel" role="tabpanel" id="panel-works" aria-labelledby="tab-works" data-panel="works" data-active>
             <h3 class="sr">Selected works</h3>
-            <p class="lede">10 projects across Web3 networks, AI platforms and protocols.</p>
-            <p class="hint">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open</p>
+            <div class="work-kind" role="group" aria-label="Kind of work">
+              <button type="button" data-kind="web" aria-pressed="true">Web</button>
+              <button type="button" data-kind="apps" aria-pressed="false">Mobile apps</button>
+            </div>
+            <p class="lede" data-kind-text="web">10 projects across Web3 networks, AI platforms and protocols.</p>
+            <p class="lede" data-kind-text="apps" hidden>Mobile app design and development. Coming soon.</p>
+            <p class="hint" data-kind-text="web">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open · <kbd>→</kbd> apps</p>
+            <p class="hint" data-kind-text="apps" hidden><kbd>←</kbd> or Back for web projects</p>
             <ul class="focus-list" data-list="works"></ul>
           </div>
           <div class="panel" role="tabpanel" id="panel-chronicle" aria-labelledby="tab-chronicle" data-panel="chronicle">

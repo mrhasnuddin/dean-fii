@@ -58,3 +58,27 @@
 .screen .sc-reading .ek-bar i { clip-path: inset(0 100% 0 0); transition: clip-path 750ms steps(8); }
 .screen .sc-reading.go .ek-bar i { clip-path: inset(0 0 0 0); }
 @media (prefers-reduced-motion: reduce) { .screen .sc-reading .ek-bar i { transition: none; } }
+
+/* Works' two pages in the status strip: WORKS, then WEB and APPS, the one showing inverted. Tappable. */
+.ek-pages { display: inline-flex; align-items: center; gap: 6px; }
+.ek-pages [data-page] { padding: 1px 6px; border: 1.5px solid var(--ink); cursor: pointer; letter-spacing: 0.08em; }
+.ek-pages [data-page].on { background: var(--ink); color: var(--paper); }
+@media (pointer: coarse) { .ek-pages [data-page] { position: relative; } .ek-pages [data-page]::after { content: ''; position: absolute; inset: -8px -4px; } }
+
+/* Works › APPS, coming soon: the phone installing its apps under a firmware-style bar (screen.ts). */
+.sc-soon { gap: 9px; padding-top: 12px; }
+.sc-phone { width: 62px; height: 97px; flex: none; }
+.sc-phone-body { fill: none; stroke: var(--ink); stroke-width: 3; }
+.sc-phone-ink { fill: var(--ink); }
+.sc-tile { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.sc-tile.load { fill: url(#sc-dither); stroke-dasharray: none; }
+.sc-tile.on { fill: var(--ink); stroke-dasharray: none; }
+#sc-dither rect { fill: var(--ink); }
+.sc-stamp { background: var(--ink); color: var(--paper); font-size: 11px; font-weight: 700; letter-spacing: 0.18em; padding: 4px 10px; margin-top: 4px; }
+.sc-soon-t { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+.sc-meter { display: flex; align-items: center; gap: 10px; }
+.sc-blocks { display: flex; gap: 2px; border: 2px solid var(--ink); padding: 2px; }
+.sc-blocks i { width: 8px; height: 12px; }
+.sc-blocks i.on { background: var(--ink); }
+.sc-pct { min-width: 4ch; text-align: right; font-size: 14px; }
+.sc-doing { min-height: 1.35em; }
