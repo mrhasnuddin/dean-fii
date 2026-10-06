@@ -23,10 +23,11 @@ export const toolLogo = (id: string) => `/media/tool-logos/${id}.svg`;
 export const profile = {
   name: 'Dean',
   studio: 'Dean Studio',
-  roles: ['UI/UX Designer', 'Frontend Developer', 'Creative Designer'],
-  // Dean's own bio (2026-09-28, lightly edited for flow; no claims added). Design/build, then speaking.
+  roles: ['AI Native UI/UX Designer', 'Frontend Developer', 'Creative Designer'],
+  // Dean's own bio (2026-09-28, lightly edited for flow; no claims added; 2026-10-07: AI-native designer who
+  // ships the frontend, in place of vibe coding / AI-assisted). Design/build, then speaking.
   bio: [
-    'UI/UX designer, frontend developer using AI-assisted workflows, and creative designer, focused on user interfaces, landing pages and frontend builds that are easy to understand.',
+    'An AI-native designer who also ships the frontend, so design goes straight into the build with no handoff in between. UI/UX and creative design for user interfaces, landing pages and frontend builds that are easy to understand.',
     'An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics.',
   ],
   toolGroups: [

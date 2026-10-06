@@ -32,7 +32,7 @@ export function buildListView(root: HTMLElement): void {
     <header class="lv-head">
       <p class="lv-kicker">Dean Studio</p>
       <h1 class="lv-title"><span class="h-sans">Dean</span> <span class="h-serif">Studio.</span></h1>
-      <p class="lv-lede">UI/UX designer, frontend developer and creative designer, focused on making complex Web3 products understandable through interfaces, landing pages and frontend implementation.</p>
+      <p class="lv-lede">AI-native designer who also ships the frontend, so there’s no handoff between design and build. UI/UX and creative design that make complex Web3 products easy to understand.</p>
       <nav class="lv-nav" aria-label="Sections">
         <a href="#lv-works">Works</a><a href="#lv-chronicle">Events</a><a href="#lv-about">About</a><a href="#lv-contact">Contact</a>
       </nav>
