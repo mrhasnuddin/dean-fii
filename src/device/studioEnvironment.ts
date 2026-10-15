@@ -3,11 +3,12 @@
 // softboxes, so reflections read as crisp light bands on glass, foil and champagne metal.
 //
 // Generating it (PMREM) compiles three shaders and took ~1.6 s of a blocked main thread on every first
-// load, so the site ships the result instead: generated/studio-env.bin, written by lab/bake-env.html
+// load, so the site ships the result instead: generated/studio-env.dat, written by lab/bake-env.html
+// (.dat, not .bin: download managers such as IDM grab every .bin request and pop up a download dialog)
 // (docs/device-design.md §23). `loadBakedEnvironment` decodes it in a few ms; `createStudioEnvironment`
 // stays as the generator for the labs, for the bake, and as the fallback.
 import * as THREE from 'three';
-import envUrl from './generated/studio-env.bin?url';
+import envUrl from './generated/studio-env.dat?url';
 
 function softbox(w: number, h: number, color: string, intensity: number, pos: [number, number, number], look: [number, number, number]) {
   const m = new THREE.Mesh(
@@ -89,7 +90,7 @@ function unpack(planes: Uint8Array): Uint16Array {
 }
 
 /**
- * Decodes generated/studio-env.bin: zlib of four byte planes (R, G, B mantissas, then the shared RGBE
+ * Decodes generated/studio-env.dat: zlib of four byte planes (R, G, B mantissas, then the shared RGBE
  * exponent), each delta-coded. Resolves null when the file or DecompressionStream is unavailable (the
  * caller then generates the environment) or with `?env=live`, which forces the generator for comparison.
  */

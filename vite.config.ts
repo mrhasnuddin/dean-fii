@@ -21,7 +21,7 @@ function reviewCapture(): Plugin {
         const chunks: Buffer[] = [];
         req.on('data', (c: Buffer) => chunks.push(c));
         req.on('end', () => {
-          writeFileSync(resolve(import.meta.dirname, 'src/device/generated/studio-env.bin'), Buffer.concat(chunks));
+          writeFileSync(resolve(import.meta.dirname, 'src/device/generated/studio-env.dat'), Buffer.concat(chunks));
           res.end('ok');
         });
       });

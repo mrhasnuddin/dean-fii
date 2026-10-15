@@ -64,3 +64,9 @@
   .lv-about-body { grid-template-columns: 1fr; }
   .lv-portrait { max-width: 280px; }
 }
+
+/* How I work (workflowSection.ts): the figure beside its steps on wide screens, stacked below 960 px. */
+.lv-wf-body { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(28px, 3vw, 48px); align-items: center; }
+.lv-wf .dt-wf-fig { margin: 0; }
+@media (max-width: 960px) { .lv-wf-body { grid-template-columns: 1fr; gap: 18px; } }
+

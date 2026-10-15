@@ -1,0 +1,68 @@
+/* The workflow figure (live.ts) in the site's palette: anatomy's dark tokens, retuned to the panel. */
+.wf {
+  --anatomy-card: #141519; --anatomy-paper: #141519; --anatomy-page: #0f1014;
+  --anatomy-text: #b9b5ac; --anatomy-strong: #ece8df; --anatomy-muted: #8b8d96;
+  --anatomy-face: #1d1e23; --anatomy-top: #202127;
+  --anatomy-shade-0: #121317; --anatomy-shade-1: #15161a; --anatomy-shade-2: #18191e; --anatomy-shade-3: #1b1c21;
+  --anatomy-lit-top: #2b2a27; --anatomy-lit-shade: #222120;
+  --anatomy-hi: #d8d4cb; --anatomy-mid: #6c6d75; --anatomy-lo: #3f4047; --anatomy-faint: #2a2b31; --anatomy-lit: #e4cf9f;
+  --anatomy-halo: #060607; --anatomy-dot: #d8d4cb;
+  --anatomy-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --wf-gold: #e4cf9f;
+}
+.wf .iso-figure { margin: 0; }
+.wf .iso-plate { padding: 40px 6px 54px; box-shadow: 0 0 0 1px #2a2c33; border-radius: 12px; }
+.wf .iso-plate-corners { inset: 14px 16px; }
+.wf .iso-plate-corner[data-corner='hint'] { bottom: 0; }
+
+.wf-stage { position: relative; touch-action: pan-y; outline: none; }
+/* phones: the figure would read small in a narrow card, so the stage is drawn about 116% wide inside it */
+@media (max-width: 560px) {
+  .wf .iso-plate { overflow: hidden; padding: 34px 0 46px; }
+  .wf-stage { width: 116%; margin: -4% -8% -3%; }
+  .wf .iso-plate-corner[data-corner='hint'] { display: none; } /* "hover" means nothing on a phone, and it ran into the readout */
+}
+.wf-stage:focus-visible { outline: 1px solid var(--anatomy-muted); outline-offset: 6px; border-radius: 6px; }
+.wf-stage > canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; mix-blend-mode: screen; }
+.wf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* stickers: the cube's six colours, muted to the site (colour is the subject here) */
+.wf-st { stroke: #0b0b0d; stroke-width: 0.5px; vector-effect: non-scaling-stroke; }
+.wf-st[data-c='0'] { fill: #e4cf9f; } /* U champagne */
+.wf-st[data-c='1'] { fill: #e3ded1; } /* R paper */
+.wf-st[data-c='2'] { fill: #8e9099; } /* F steel */
+.wf-st[data-c='3'] { fill: #3d3e45; } /* D graphite */
+.wf-st[data-c='4'] { fill: #a8794e; } /* L bronze */
+.wf-st[data-c='5'] { fill: #5d6b7a; } /* B slate */
+
+/* the handheld's screen: a dark backlit LCD with gold type */
+.wf-bezel { fill: #0d0e11; }
+.wf-lcd { fill: #17150f; }
+.wf-screen text { font-family: var(--anatomy-mono); fill: var(--wf-gold); letter-spacing: 0.02em; }
+.wf-t-small { font-size: 4.1px; font-weight: 500; opacity: 0.78; }
+.wf-t-big { font-size: 8.4px; font-weight: 700; }
+.wf-seg { fill: none; stroke: var(--wf-gold); stroke-opacity: 0.4; stroke-width: 0.35; }
+.wf-seg-on { fill: var(--wf-gold); }
+.wf-refresh .wf-lcd-in { animation: wf-refresh 260ms steps(3, end); }
+@keyframes wf-refresh { 0% { opacity: 0.15; } 40% { opacity: 0.7; } 70% { opacity: 0.35; } 100% { opacity: 1; } }
+
+/* lamps: the handheld's power lamp is lit; the dock's lamp lights while it sends */
+[data-part='power'] circle { fill: var(--wf-gold); }
+[data-part='dock-led'] circle { transition: fill 160ms ease-out; }
+[data-part='dock-led'][data-on] circle { fill: var(--wf-gold); }
+.wf-bead { fill: var(--wf-gold); opacity: 0; pointer-events: none; }
+.wf-stage[data-gl] .wf-bead { display: none; }
+.wf-stage[data-solved] [data-part='ring'] .iso-line { stroke: var(--wf-gold); transition: stroke 600ms ease-out; }
+
+/* the controls that answer: D-pad, A and B */
+.wf [data-hit] { cursor: pointer; }
+.wf [data-hit][data-press] { transform: translate(0.4px, 0.9px); }
+@media (hover: hover) and (pointer: fine) { .wf [data-hit]:hover .iso-edge, .wf [data-hit]:hover .iso-line { stroke: var(--wf-gold); } }
+@media (prefers-reduced-motion: reduce) { .wf-refresh .wf-lcd-in { animation: none; } }
+html.motion-off .wf-refresh .wf-lcd-in { animation: none; }
+
+/* a step plugged into a cubie: its icon printed on the sticker; the step on show is outlined */
+.wf-st[data-mk] { stroke: var(--wf-gold); stroke-width: 1px; }
+.wf-st[data-mk][data-on] { stroke: #fff6dc; stroke-width: 1.8px; }
+.wf-ic { fill: none; stroke: #17181c; stroke-width: 1.15px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.wf-ic[data-c='3'], .wf-ic[data-c='5'] { stroke: #ece8df; }

@@ -20,6 +20,13 @@ export const toolNames: Record<ToolId, string> = {
 };
 export const toolLogo = (id: string) => `/media/tool-logos/${id}.svg`;
 
+/** About › How I work (the workflow figure's steps). */
+export interface WorkflowCopy {
+  intro: string;
+  steps: readonly { title: string; text: string; subs?: readonly { title: string; text: string }[] }[];
+  closing: string;
+}
+
 export const profile = {
   name: 'Dean',
   studio: 'Dean Studio',
@@ -30,6 +37,28 @@ export const profile = {
     'An AI-native designer who also ships the frontend, so design goes straight into the build with no handoff in between. UI/UX and creative design for user interfaces, landing pages and frontend builds that are easy to understand.',
     'An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics.',
   ],
+  // Dean's AI-native workflow (2026-10-15, his steps, polished): drawn as the cube figure in About (§32).
+  workflow: {
+    intro: 'Six steps from a client’s brief to a shipped site, with AI agents doing the building.',
+    steps: [
+      { title: 'Brief', text: 'I start with the client: what the site is for, who it’s for and the look they have in mind.' },
+      { title: 'Ideation', text: 'I turn the brief into a direction, with references from Pinterest, open-source libraries and marketplaces, until a design and theme fit.' },
+      {
+        title: 'Framework',
+        text: 'Before any code, I brief the AI agent (Claude, Codex or Antigravity) on the project.',
+        subs: [
+          { title: 'Skills', text: 'I install the skills.md files the build needs, before anything else.' },
+          { title: 'Design system', text: 'The agent sets up the design system and tokens first.' },
+          { title: 'Motion', text: 'I decide the motion, interactions and micro-interactions.' },
+          { title: 'Prompting', text: 'I prompt, review and refine, and repeat until it’s right.' },
+        ],
+      },
+      { title: 'Prototype', text: 'A working build comes early, on localhost or deployed to free hosting such as Vercel, GitHub Pages or Netlify.' },
+      { title: 'Iteration', text: 'Any change to ideas, design or direction happens here.' },
+      { title: 'Ship', text: 'Once the design and functionality work as intended, it’s complete and deployed for the client.' },
+    ],
+    closing: 'I give the instructions. AI carries them out.',
+  },
   toolGroups: [
     { title: 'Web Design & Creative', tools: ['figma', 'photoshop'] as ToolId[] },
     { title: 'Web Development & Creative', tools: ['gemini', 'claude', 'codex'] as ToolId[] },

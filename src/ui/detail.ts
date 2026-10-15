@@ -2,7 +2,9 @@
 // free). Slides in over the text column so the wallet stays visible; bottom sheet on phones.
 import './detail.css';
 import { countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
-import { mountFlow, type Flow, type FlowHandle } from './flowFigure';
+import { mountFlow, type Flow } from './flowFigure';
+import { ARROW, bindSteps, watchWraps } from './stepChips';
+import { mountWorkflowSection, workflowBody } from './workflowSection';
 
 export type DetailTarget = { kind: 'project'; id: string } | { kind: 'event'; id: string } | { kind: 'about' };
 
@@ -18,10 +20,6 @@ export interface Detail {
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const tool = (t: string) =>
   `<li class="dt-tool"><img src="${toolLogo(t)}" alt="" width="20" height="20"><span>${toolNames[t as ToolId] ?? t}</span></li>`;
-
-// The arrow into a stage: straight on along a row; at the start of a wrapped row, down from the row above
-// and on (markWraps picks which). Both are the same size, so swapping them never moves the layout.
-const ARROW = `<svg class="dt-arrow" viewBox="0 0 14 14" aria-hidden="true"><path class="dt-a-on" d="M2 7h9M8 4l3 3-3 3"/><path class="dt-a-turn" d="M3 1.5v3.5a2.5 2.5 0 0 0 2.5 2.5H11M8 4.5l3 3-3 3"/></svg>`;
 
 /** Design flow: the chain figure (blocks = stages, drawn by flowFigure.ts), the stages in order, and how it went. */
 function flowSection(flow: Flow) {
@@ -60,63 +58,42 @@ export function createDetail(): Detail {
   let closeCb = () => {};
   let navCb: (t: DetailTarget) => void = () => {};
   let inviteCb = () => {};
-  // The live figure of the panel showing, if any: torn down when the panel changes or closes.
-  let flowHandle: FlowHandle | null = null;
-  let flowToken = 0;
-  let wrapWatch: ResizeObserver | null = null;
-  let letGo = 0; // a tap on a stage holds it a while, then lets the chain play again
+  // The live figure of the panel showing, if any (and its step chips): torn down when the panel changes or closes.
+  let stopLive = () => {};
+  let liveToken = 0;
   function stopFlow() {
-    flowToken++;
-    flowHandle?.destroy();
-    flowHandle = null;
-    wrapWatch?.disconnect();
-    wrapWatch = null;
-    clearTimeout(letGo);
-  }
-  /** Marks each stage that starts a new row, so its arrow turns down from the row above. */
-  function markWraps(list: HTMLElement) {
-    const items = [...list.children] as HTMLElement[];
-    items.forEach((li, i) => li.classList.toggle('is-wrap', i > 0 && li.offsetTop > items[i - 1].offsetTop + 4));
-  }
-  /** The stages list follows the figure (its pointer, its play) and drives it: hover, focus or tap a stage to show it. */
-  function bindSteps(list: HTMLElement, handle: FlowHandle) {
-    const items = [...list.querySelectorAll<HTMLElement>('.dt-step')];
-    const at = (e: Event) => Number((e.target as Element).closest<HTMLElement>('.dt-step')?.dataset.i ?? -1);
-    list.addEventListener('pointerover', (e) => {
-      const i = at(e);
-      if (e.pointerType === 'mouse' && i >= 0 && (e.target as Element).closest('.dt-chip')) handle.hold(i);
-    });
-    list.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && handle.hold(-1));
-    list.addEventListener('focusin', (e) => handle.hold(at(e)));
-    list.addEventListener('focusout', (e) => !list.contains(e.relatedTarget as Node) && handle.hold(-1));
-    list.addEventListener('click', (e) => {
-      const i = at(e);
-      if (i < 0 || (e as PointerEvent).pointerType === 'mouse') return;
-      handle.hold(i);
-      clearTimeout(letGo);
-      if ((e as PointerEvent).pointerType) letGo = window.setTimeout(() => handle.hold(-1), 3200); // a tap, not a key
-    });
-    return (a: number) => items.forEach((li, i) => li.classList.toggle('is-on', i === (a < 0 ? items.length - 1 : a)));
+    liveToken++;
+    stopLive();
+    stopLive = () => {};
   }
   function startFlow(t: DetailTarget) {
     stopFlow();
+    if (t.kind === 'about') {
+      const section = dlg.querySelector<HTMLElement>('.dt-wf');
+      if (section) stopLive = mountWorkflowSection(section);
+      return;
+    }
     if (t.kind !== 'project') return;
     const stage = dlg.querySelector<HTMLElement>('.dt-fig-stage');
     const readEl = dlg.querySelector<HTMLElement>('.dt-fig-read');
     const p = projects.find((x) => x.id === t.id);
     if (!stage || !readEl || !p) return;
     const list = dlg.querySelector<HTMLElement>('.dt-steps');
-    if (list) {
-      wrapWatch = new ResizeObserver(() => markWraps(list));
-      wrapWatch.observe(list);
-    }
-    const token = flowToken;
+    const stopWraps = list ? watchWraps(list) : () => {};
+    const token = liveToken;
     let mark = (_a: number) => {};
+    let teardown = () => stopWraps();
+    stopLive = () => teardown();
     mountFlow(stage, readEl, p.flow, 'chain', { auto: true, onPick: (a) => mark(a) })
       .then((h) => {
-        if (token !== flowToken) return h.destroy();
-        flowHandle = h;
-        if (list) mark = bindSteps(list, h);
+        if (token !== liveToken) return h.destroy();
+        const chips = list ? bindSteps(list, h) : null;
+        if (chips) mark = chips.mark;
+        teardown = () => {
+          stopWraps();
+          chips?.dispose();
+          h.destroy();
+        };
       })
       .catch(() => stage.closest('.dt-fig')?.remove()); // no figure: the stages and the text still say it
   }
@@ -149,6 +126,7 @@ export function createDetail(): Detail {
       head = `<p class="dt-eyebrow">About</p><h2 id="detail-title">${profile.name}</h2><p class="dt-roles">${profile.roles.join(' · ')}</p>`;
       body = `<div class="dt-media"><img class="dt-main dt-portrait" src="${profile.portrait.color}" alt="Dean speaking on stage with a microphone"></div>
         ${profile.bio.map((b) => `<p class="dt-desc">${esc(b)}</p>`).join('')}
+        <section class="dt-flow dt-wf" aria-labelledby="dt-wf-title"><h3 class="dt-h3" id="dt-wf-title">How I work</h3>${workflowBody()}</section>
         ${profile.toolGroups.map((g) => `<h3 class="dt-h3">${esc(g.title)}</h3><ul class="dt-tools">${g.tools.map(tool).join('')}</ul>`).join('')}
         <h3 class="dt-h3">Languages</h3><ul class="dt-tools">${profile.languages
           .map((l) => `<li class="dt-tool"><img src="${l.flag}" alt="" width="20" height="14"><span>${l.name}</span></li>`)

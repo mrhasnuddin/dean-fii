@@ -4,6 +4,7 @@
 import './listView.css';
 import { countries, events, profile, projects, toolLogo, toolNames } from '../content/portfolio';
 import { createContactCard } from './contactCard';
+import { mountWorkflowSection, workflowBody } from './workflowSection';
 
 export type ViewMode = 'device' | 'list';
 const KEY = 'dean-view';
@@ -83,6 +84,13 @@ export function buildListView(root: HTMLElement): void {
       <p class="lv-contact-lede">Email, LinkedIn or WhatsApp.</p>
       <div class="lv-card"></div>
     </section>
-    </div>`;
+    </div>
+
+    <section class="lv-sec lv-wf dt-wf" id="lv-how" aria-labelledby="lv-how-h">
+      <h2 id="lv-how-h">How I work</h2>
+      <div class="lv-wf-body">${workflowBody()}</div>
+    </section>`;
   root.querySelector('.lv-card')!.append(createContactCard('card'));
+  // The workflow figure stays mounted with the list; it sleeps whenever the list is hidden or scrolled away.
+  mountWorkflowSection(root.querySelector<HTMLElement>('.lv-wf')!);
 }

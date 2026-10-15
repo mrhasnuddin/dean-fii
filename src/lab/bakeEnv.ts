@@ -1,6 +1,6 @@
 // Bakes the studio environment (docs/device-design.md §23): renders it with the PMREM generator, packs the
 // half-float pixels as RGBE bytes (shared exponent, ~0.4 % error), splits them into four planes, delta-codes
-// each and deflates the lot; the dev server stores it as src/device/generated/studio-env.bin.
+// each and deflates the lot; the dev server stores it as src/device/generated/studio-env.dat.
 // "Verify" decodes that file with the site's own loader and compares it with a fresh render.
 import * as THREE from 'three';
 import { ENV_H, ENV_W, loadBakedEnvironment, renderStudioEnvironment } from '../device/studioEnvironment';
