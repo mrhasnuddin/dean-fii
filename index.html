@@ -125,14 +125,43 @@
     </div>
   </header>
 
-  <!-- Bottom-right: the Device / List view switch (mirrored by the wallet's side switch), then Sound
-       effects, Music and Motion as animated icons: the icon moves while the setting is on. -->
-  <div class="prefs" role="group" aria-label="View and preferences">
+  <!-- Bottom-right, two controls: the Device / List view switch (mirrored by the wallet's side switch) and the eye.
+       On the device the eye is a tutorial (§36): for about 4.6 s a callout on each of the three site settings (the
+       volume knob and the Motion and Sound sliders on its left face) says what it does. In the List view, which has
+       no device, it opens the settings tray below. The device's parts are on it all the time either way. -->
+  <div class="prefs" role="group" aria-label="View and settings">
     <button class="view-switch" id="view-toggle" type="button" role="switch" aria-checked="false" aria-label="List view">
       <span class="vs-opt vs-device" aria-hidden="true">Device</span>
       <span class="vs-track" aria-hidden="true"><i></i></span>
       <span class="vs-opt vs-list" aria-hidden="true">List</span>
     </button>
+    <button class="icon-btn eye-btn" id="eye-toggle" type="button" aria-pressed="false" aria-controls="settings-tray" aria-label="Settings" title="Settings">
+      <svg class="eye" viewBox="0 0 24 24" aria-hidden="true">
+        <g class="eye-open">
+          <path class="eye-shape" d="M2 12c2.6-4.7 6-7 10-7s7.4 2.3 10 7c-2.6 4.7-6 7-10 7S4.6 16.7 2 12Z"/>
+          <g class="eye-iris"><circle class="eye-ring" cx="12" cy="12" r="3.6"/><circle class="eye-pupil" cx="12" cy="12" r="1.5"/></g>
+        </g>
+        <g class="eye-shut">
+          <path class="eye-lid" d="M2.5 11.5c2.4 3.3 5.6 5 9.5 5s7.1-1.7 9.5-5"/>
+          <path class="eye-lash" d="M6 15.3l-1.6 2.4M12 16.6v3M18 15.3l1.6 2.4"/>
+        </g>
+      </svg>
+    </button>
+  </div>
+
+  <!-- The eye's callouts: placed over the three settings parts by scene/tips.ts, a line from each to its part. -->
+  <div class="tips" id="tips" aria-hidden="true">
+    <svg class="tips-lines" width="100%" height="100%"></svg>
+    <div class="tip" style="--i: 0" data-tip="motion"><b>Motion</b><span>Slide to turn animation on or off.</span></div>
+    <div class="tip" style="--i: 1" data-tip="volume"><b>Volume</b><span>Drag, scroll or tap to mute.</span></div>
+    <div class="tip" style="--i: 2" data-tip="sound"><b>Sound</b><span>Slide to turn effects and music on or off.</span></div>
+  </div>
+
+  <!-- The site's settings as real controls: shown here in the List view while the eye is on (there is no device to
+       show them on), and for the keyboard whenever focus is inside (the device's own parts are not focusable).
+       The volume range is the wallet knob's twin; Sound and Music are what the Sound slider switches together. -->
+  <div class="settings-tray" id="settings-tray" role="group" aria-label="Site settings">
+    <input class="volume-range" id="volume" type="range" min="0" max="100" step="5" value="60" aria-label="Volume" />
     <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true" aria-label="Sound effects" title="Sound effects">
       <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </button>
@@ -142,6 +171,11 @@
     <button class="icon-btn" id="motion-toggle" type="button" aria-pressed="true" aria-label="Motion" title="Motion">
       <svg class="bounce" viewBox="0 0 24 24" aria-hidden="true"><ellipse class="b-shadow" cx="12" cy="20.5" rx="4.6" ry="1.1"/><circle class="b-ball" cx="12" cy="16.2" r="3.8"/><path class="b-floor" d="M3.5 20.5h17"/></svg>
     </button>
+  </div>
+
+  <!-- Top right, under the header: "Reset view" while the wallet is turned, panned or zoomed away from its pose. -->
+  <div class="view-chips" role="group" aria-label="Device view">
+    <button class="chip" id="view-reset" type="button" hidden>Reset view</button>
   </div>
 
   <main id="main">
@@ -182,17 +216,20 @@
             <div class="work-kind" role="group" aria-label="Kind of work">
               <button type="button" data-kind="web" aria-pressed="true">Web</button>
               <button type="button" data-kind="apps" aria-pressed="false">Mobile apps</button>
+              <button type="button" data-kind="motion" aria-pressed="false">Motion</button>
             </div>
             <p class="lede" data-kind-text="web">10 projects across Web3 networks, AI platforms and protocols.</p>
             <p class="lede" data-kind-text="apps" hidden>Mobile app design and development. Coming soon.</p>
-            <p class="hint" data-kind-text="web">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open · <kbd>→</kbd> apps</p>
-            <p class="hint" data-kind-text="apps" hidden><kbd>←</kbd> or Back for web projects</p>
+            <p class="lede" data-kind-text="motion" hidden>Motion design reels, made with AI agents. Coming soon.</p>
+            <p class="hint" data-kind-text="web">Wheel or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open · <kbd>→</kbd> apps and motion</p>
+            <p class="hint" data-kind-text="apps" hidden><kbd>←</kbd> or Back for web projects · <kbd>→</kbd> motion</p>
+            <p class="hint" data-kind-text="motion" hidden><kbd>←</kbd> or Back for web projects · or pull the memory card out</p>
             <ul class="focus-list" data-list="works"></ul>
           </div>
           <div class="panel" role="tabpanel" id="panel-chronicle" aria-labelledby="tab-chronicle" data-panel="chronicle">
             <h3 class="sr">Events</h3>
             <p class="lede">8 events, 3 countries: speaking, hosting and community work.</p>
-            <p class="hint">Roller or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open</p>
+            <p class="hint">Wheel or <kbd>↑</kbd> <kbd>↓</kbd> to browse · ✓ or <kbd>Enter</kbd> to open</p>
             <ul class="focus-list" data-list="chronicle"></ul>
           </div>
           <div class="panel" role="tabpanel" id="panel-about" aria-labelledby="tab-about" data-panel="about">

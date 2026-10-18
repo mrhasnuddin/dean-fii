@@ -56,7 +56,7 @@
 
 .dt-eyebrow { margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .dt-eyebrow strong { color: var(--ink-light); font-weight: 500; }
-.detail h2 { margin: 10px 0 6px; font: 400 clamp(36px, 4.4vw, 56px)/1 var(--font-display); letter-spacing: -0.01em; }
+.detail h2 { margin: 10px 0 6px; font: var(--display-weight) calc(clamp(36px, 4.4vw, 56px) * var(--display-scale))/1 var(--font-display); letter-spacing: calc(var(--display-tracking) / 2); }
 .dt-roles { margin: 0 0 24px; color: var(--champagne); font: 500 14px/1.4 var(--font-ui); }
 
 .dt-media { display: grid; gap: 10px; margin-bottom: 26px; }
@@ -138,7 +138,7 @@
 .dt-wf-subtext { display: grid; }
 .dt-wf-subtext p { grid-area: 1 / 1; margin: 0; font-size: clamp(14px, 0.4vw + 9px, 16px); line-height: 1.55; color: #cfcac0; visibility: hidden; opacity: 0; transition: opacity 180ms ease-out, visibility 0s linear 180ms; }
 .dt-wf-subtext p.is-on { visibility: visible; opacity: 1; transition: opacity 220ms ease-out 40ms, visibility 0s; }
-.dt-wf-close { margin: 0 0 34px; font: 400 clamp(24px, 1.2vw + 10px, 30px)/1.25 var(--font-display); color: var(--ink-light); text-indent: -0.4em; padding-left: 0.4em; } /* the opening quote hangs */
+.dt-wf-close { margin: 0 0 34px; font: var(--display-weight) calc(clamp(24px, 1.2vw + 10px, 30px) * var(--display-scale))/1.25 var(--font-display); color: var(--ink-light); text-indent: -0.4em; padding-left: 0.4em; } /* the opening quote hangs */
 @media (prefers-reduced-motion: reduce) { .dt-wf-now, .dt-wf-subtext p { transition: none; } }
 .dt-wf .dt-steps { margin-bottom: 22px; }
 /* The tour's timer: the pill on show fills from the left as its time runs out (and Framework's sub-step too). */

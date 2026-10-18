@@ -57,7 +57,7 @@ export const profile = {
       { title: 'Iteration', text: 'Any change to ideas, design or direction happens here.' },
       { title: 'Ship', text: 'Once the design and functionality work as intended, it’s complete and deployed for the client.' },
     ],
-    closing: 'I give the instructions. AI carries them out.',
+    closing: 'AI speeds up the work. A human still steers it.',
   },
   toolGroups: [
     { title: 'Web Design & Creative', tools: ['figma', 'photoshop'] as ToolId[] },

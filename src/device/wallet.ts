@@ -7,8 +7,14 @@ import { applyRestState, refineForm, refineMaterials, runtimeOf, type GpuTier, t
 export interface Wallet {
   root: THREE.Group;
   runtime: WalletRuntime;
-  /** Keychain lanyard-bar anchor (X = bar axis). */
-  keychainAnchor: THREE.Object3D;
+  /** Where the USB-C cable leaves the plug in the bottom port (local −Y = the way out). */
+  cableAnchor: THREE.Object3D;
+  /** The plug's rig: it slides out of the port and away when the cable is unplugged (scene/power.ts). */
+  usbRig: THREE.Object3D;
+  /** Memory-card slot on the bottom face (local +Y = into the body, +Z = the front). */
+  memorySlot: THREE.Object3D;
+  /** The battery window's five LED segments (bottom to top) and the bolt above them. */
+  battery: { segments: THREE.MeshStandardMaterial[]; bolt: THREE.MeshStandardMaterial };
   /** CSS3D screen socket: +Z out of the display, 0.795 W wide. */
   screenSocket: THREE.Object3D;
   /** Card reader mouth on the +X face (normal +X); the key card's short edge enters along −X. */
@@ -25,7 +31,10 @@ export function createWallet(opts: { tier?: GpuTier; envMap?: THREE.Texture | nu
   return {
     root,
     runtime,
-    keychainAnchor: runtime.sockets['shell:keychain-anchor'],
+    cableAnchor: runtime.sockets['shell:usb-plug'],
+    usbRig: runtime.nodes['usb-rig'],
+    memorySlot: runtime.sockets['shell:memory-slot'],
+    battery: runtime.nodes['shell'].userData.battery as Wallet['battery'],
     screenSocket: runtime.sockets['display:css3d-screen'],
     cardSlot: runtime.sockets['shell:card-slot'],
     led: (root.userData.materials as { led: THREE.MeshStandardMaterial }).led,

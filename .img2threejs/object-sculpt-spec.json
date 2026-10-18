@@ -1273,7 +1273,7 @@
               -0.66
             ]
           ],
-          "depth": 0.15
+          "depth": 0.22
         },
         "handRefinement": "ExtrudeGeometry bevelEnabled (bevelSize = bevelThickness = 0.03, 4 segments) on the outline inset by 0.03; depth t − 0.06 (generator emits bevelEnabled:false)."
       },
@@ -1290,7 +1290,7 @@
         "position": [
           0,
           0,
-          -0.075
+          -0.11
         ],
         "rotation": [
           0,
@@ -1335,7 +1335,7 @@
             "localPosition": [
               0,
               0,
-              0.15
+              0.22
             ],
             "normal": [
               0,
@@ -1348,7 +1348,7 @@
             "localPosition": [
               -0.3,
               -0.73,
-              0.075
+              0.11
             ],
             "normal": [
               0,
@@ -1362,7 +1362,7 @@
             "localPosition": [
               0.5,
               -0.02,
-              0.075
+              0.11
             ],
             "normal": [
               1,
@@ -1635,7 +1635,7 @@
         "position": [
           0,
           0,
-          0.149
+          0.219
         ],
         "rotation": [
           0,
@@ -2215,12 +2215,12 @@
         "localStart": [
           0.3,
           -0.59,
-          0.147
+          0.217
         ],
         "localEnd": [
           0.3,
           -0.59,
-          0.161
+          0.231
         ]
       },
       "dimensions": {
@@ -2234,7 +2234,7 @@
         "position": [
           0.3,
           -0.59,
-          0.154
+          0.224
         ],
         "rotation": [
           0,
@@ -2378,7 +2378,7 @@
         "position": [
           0.3,
           -0.59,
-          0.1515
+          0.2215
         ],
         "rotation": [
           0,
@@ -2517,12 +2517,12 @@
         "localStart": [
           -0.32,
           -0.59,
-          0.148
+          0.218
         ],
         "localEnd": [
           -0.32,
           -0.59,
-          0.158
+          0.228
         ]
       },
       "dimensions": {
@@ -2536,7 +2536,7 @@
         "position": [
           -0.32,
           -0.59,
-          0.153
+          0.223
         ],
         "rotation": [
           0,
@@ -2681,12 +2681,12 @@
         "localStart": [
           -0.37,
           0.29,
-          0.045
+          0.08
         ],
         "localEnd": [
           -0.37,
           0.29,
-          0.105
+          0.14
         ]
       },
       "dimensions": {
@@ -2700,7 +2700,7 @@
         "position": [
           -0.37,
           0.29,
-          0.075
+          0.11
         ],
         "rotation": [
           0,
@@ -2838,7 +2838,7 @@
         "position": [
           0,
           0.7515,
-          0.075
+          0.11
         ],
         "rotation": [
           0,
@@ -3528,7 +3528,7 @@
         "position": [
           0.5125,
           0.515,
-          0.075
+          0.11
         ],
         "rotation": [
           0,
@@ -3666,7 +3666,7 @@
         "position": [
           0.5004,
           -0.02,
-          0.075
+          0.11
         ],
         "rotation": [
           0,
@@ -3814,7 +3814,7 @@
         "position": [
           0,
           -0.7515,
-          0.075
+          0.11
         ],
         "rotation": [
           0,
@@ -3952,7 +3952,7 @@
         "position": [
           -0.3,
           -0.7504,
-          0.075
+          0.11
         ],
         "rotation": [
           1.5708,
@@ -4090,7 +4090,7 @@
         "position": [
           0.43,
           -0.02,
-          0.075
+          0.11
         ],
         "rotation": [
           0,

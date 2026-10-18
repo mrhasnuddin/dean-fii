@@ -18,7 +18,7 @@ if not TEMPLATE_FILE.exists():
 MAT_TEMPLATE = json.loads(TEMPLATE_FILE.read_text(encoding="utf-8"))
 
 # ---------------------------------------------------------------- measured / designed constants
-BODY = dict(w=1.0, h=1.5, t=0.15, corner=0.09, edge=0.03)
+BODY = dict(w=1.0, h=1.5, t=0.22, corner=0.09, edge=0.03)  # DC-3 (2026-10-18): 0.15 → 0.22, a handheld rather than a slab
 FRONT_Z = BODY["t"] / 2
 SCREEN = dict(w=0.795, h=1.06, cy=0.115)            # active area, 3:4
 WINDOW = dict(w=0.836, h=1.11, cy=0.113)            # glass window incl. lighter border

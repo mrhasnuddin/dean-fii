@@ -1,13 +1,11 @@
 // DeanFi3 entry: one page, one wallet (docs/device-design.md §10). Two places, no footer: the Hero
 // and the Console. Scroll only moves between them; in the Console the wallet's top tabs, the on-page tab bar,
-// keys 1–4 and deep links choose the section. The e-ink screen, roller, ✓ and Back drive the content;
+// keys 1–4 and deep links choose the section. The e-ink screen, ✓ and Back drive the content;
 // details open in a panel with shareable hash routes (#/work/:id, #/stage/:id, #/about; legacy
 // #/tools → About). A List view shows everything as a plain page, without 3D.
-import '@fontsource/instrument-serif/400.css';
-import '@fontsource-variable/inter';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource/ibm-plex-mono/700.css';
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource-variable/jetbrains-mono';
 import './styles/site.css';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -16,6 +14,9 @@ import { createStage } from './scene/stage';
 import { createChoreography, TABS, type TabId } from './scene/choreography';
 import { createControls, type Controls } from './scene/controls';
 import { createContactSequence, type ContactSequence } from './scene/contactSequence';
+import { createMemorySequence } from './scene/memorySequence';
+import { createPower } from './scene/power';
+import { createTips } from './scene/tips';
 import { createDetail, type DetailTarget } from './ui/detail';
 import type { ScreenIntent, WorksPage } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
@@ -25,6 +26,7 @@ import { copyText } from './ui/clipboard';
 import { motion } from './motion';
 import { sfx } from './audio/sfx';
 import { music } from './audio/music';
+import { volume } from './audio/volume';
 import { loadBakedEnvironment } from './device/studioEnvironment';
 import type { Sticker } from './device/stickers';
 
@@ -113,7 +115,7 @@ const loader = document.getElementById('loader')!;
 const LOADER_MIN_MS = 1350; // the mark has faded in (450 ms) and the sparkle has twinkled once (900 ms)
 // Every face the page draws, requested now. A face is otherwise fetched only when text first uses it, and
 // the screen's mono 500/700 were first used after the reveal, so its text swapped fonts in front of the visitor.
-const FACES = ['400 1em "IBM Plex Mono"', '500 1em "IBM Plex Mono"', '700 1em "IBM Plex Mono"', '400 1em "Instrument Serif"', '400 1em "Inter Variable"'];
+const FACES = ['400 1em "JetBrains Mono Variable"', '500 1em "JetBrains Mono Variable"', '700 1em "JetBrains Mono Variable"', '500 1em "Bricolage Grotesque Variable"', '400 1em "Hanken Grotesk Variable"', '600 1em "Hanken Grotesk Variable"'];
 const fontsLoaded = Promise.all(FACES.map((f) => document.fonts.load(f))).then(() => document.fonts.ready);
 function liftLoader(ready: Promise<unknown>, then: () => void) {
   const min = motion.reduced() ? 0 : Math.max(0, LOADER_MIN_MS - performance.now());
@@ -241,6 +243,29 @@ document.addEventListener('click', (e) => {
 });
 
 // ---------------------------------------------------------------- preferences
+// The eye (§36). On the device it is a short tutorial: callouts on the wallet's three site settings (the volume knob
+// and the Motion and Sound sliders), all at once, for about 4.6 s. The List view has no device, so there it opens the
+// settings tray (real controls) and keeps it open until pressed again.
+const eyeBtn = document.getElementById('eye-toggle') as HTMLButtonElement;
+let tipsOn = false; // device view: the callouts are up
+let trayOpen = false; // List view: the tray is open
+let onTips: (on: boolean) => void = () => {};
+const syncEye = () => {
+  eyeBtn.setAttribute('aria-pressed', String(view === 'list' ? trayOpen : tipsOn));
+  document.documentElement.classList.toggle('settings-open', trayOpen);
+};
+eyeBtn.addEventListener('click', () => {
+  if (view === 'list') {
+    trayOpen = !trayOpen;
+    sfx.play('toggle', { rate: trayOpen ? 1.15 : 0.9 });
+    announce(trayOpen ? 'Settings shown' : 'Settings hidden');
+  } else {
+    tipsOn = !tipsOn;
+    sfx.play('toggle', { rate: tipsOn ? 1.15 : 0.9 });
+    onTips(tipsOn);
+  }
+  syncEye();
+});
 const motionBtn = document.getElementById('motion-toggle') as HTMLButtonElement;
 function updateMotionUi() {
   const reduced = motion.reduced();
@@ -262,6 +287,12 @@ sfx.onPlay(() => {
   meterTimer = window.setTimeout(() => soundBtn.classList.remove('is-playing'), 450);
 });
 soundBtn.addEventListener('click', () => sfx.set(!sfx.enabled()));
+// Volume: the device's knob sets it; this twin (visually hidden, still a real range input) is for the keyboard
+// and screen readers, and keeps the knob in step both ways.
+const volumeInput = document.getElementById('volume') as HTMLInputElement;
+volumeInput.value = String(Math.round(volume.level() * 100));
+volume.subscribe((l) => (volumeInput.value = String(Math.round(l * 100))));
+volumeInput.addEventListener('input', () => volume.set(Number(volumeInput.value) / 100));
 sfx.subscribe(updateSoundUi);
 updateSoundUi();
 // Music: its own switch (the record spins while it is on). The click sound is the toggle's own, so
@@ -275,6 +306,7 @@ musicBtn.addEventListener('click', () => {
 music.subscribe(updateMusicUi);
 updateMusicUi();
 motion.subscribe((reduced) => {
+  controls?.setMotionSwitch(!reduced);
   if (reduced) {
     lenis?.destroy();
     lenis = null;
@@ -328,7 +360,11 @@ if (!webglAvailable()) {
   const chor = createChoreography(stage, hero, consoleEl);
   const contactSeq: ContactSequence = createContactSequence(stage, chor, announce);
   const { screen } = stage;
-  if (import.meta.env.DEV) Object.assign(window, { __stage: stage, __chor: chor }); // console debugging only
+  const memory = createMemorySequence(stage, announce);
+  const power = createPower(stage);
+  stage.onFrame((dt) => power.update(dt));
+  power.onChange((plugged) => announce(plugged ? 'Charger plugged in. The device is charging.' : 'Charger unplugged. The device is on battery.'));
+  if (import.meta.env.DEV) Object.assign(window, { __stage: stage, __chor: chor, __power: power }); // console debugging only
 
   // One way in for every tab source (wallet tabs, tab bar, keys 1–4, softkeys, deep links).
   selectTab = (tab) => {
@@ -341,15 +377,24 @@ if (!webglAvailable()) {
     showTab(tab);
     if (tab !== 'contact' && contactSeq.state() !== 'idle') contactSeq.putAway(contactSeq.state() === 'running');
   });
+  // Focus (§37): in the Console the camera comes in on the screen, and the page copy goes quiet (`html.focus`,
+  // site.css): what the screen already says is out of sight, what only the copy says stays.
+  const syncFocus = () => document.documentElement.classList.toggle('focus', stage.focus.enabled && chor.place() === 'console');
   chor.onPlace((place) => {
     if (place === 'hero' && contactSeq.state() !== 'idle') contactSeq.putAway(true);
+    syncFocus();
   });
-  // Works' two pages (§31): WEB, the projects, and APPS, mobile apps (coming soon). Flipped by pressing
-  // 01 again (the wallet key, the softkey or key 1), ← →, WEB/APPS on the screen or the switch beside the
-  // wallet; the Back key on APPS goes back to WEB. The switch and its text follow the screen.
+  syncFocus();
+  // Works' three pages (§31, §34): WEB, the projects; APPS, mobile apps; MOTION, motion design (both coming
+  // soon). Flipped by pressing 01 again (the wallet key, the softkey or key 1), ← →, the names on the screen,
+  // the switch beside the wallet, or the memory-card slot (MOTION); the Back key on a coming-soon page goes
+  // back to WEB. The switch and its text follow the screen, and the memory card is in the slot exactly while
+  // MOTION shows.
+  const PAGES: WorksPage[] = ['web', 'apps', 'motion'];
+  const PAGE_SAYS: Record<WorksPage, string> = { web: 'Web projects', apps: 'Mobile apps: coming soon', motion: 'Motion reel: coming soon' };
   const kindBtns = [...document.querySelectorAll<HTMLButtonElement>('.work-kind [data-kind]')];
   function flipWorks(page?: WorksPage) {
-    const to = page ?? (screen.worksPage() === 'web' ? 'apps' : 'web');
+    const to = page ?? PAGES[(PAGES.indexOf(screen.worksPage()) + 1) % PAGES.length];
     if (to === screen.worksPage()) return;
     sfx.play('press');
     screen.setWorksPage(to);
@@ -357,7 +402,9 @@ if (!webglAvailable()) {
   screen.onPage((page) => {
     kindBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === page)));
     document.querySelectorAll<HTMLElement>('[data-kind-text]').forEach((el) => (el.hidden = el.dataset.kindText !== page));
-    if (chor.tab() === 'works') announce(page === 'apps' ? 'Mobile apps: coming soon' : 'Web projects');
+    if (page === 'motion') memory.insert();
+    else memory.eject();
+    if (chor.tab() === 'works') announce(PAGE_SAYS[page]);
   });
   kindBtns.forEach((b) => b.addEventListener('click', () => flipWorks(b.dataset.kind as WorksPage)));
   /** A tab key or softkey: pressed again on Works, it flips Works' page; otherwise it chooses the section. */
@@ -370,7 +417,8 @@ if (!webglAvailable()) {
     if (view !== 'device' || detail.isOpen() || screen.mode() !== 'works' || chor.place() !== 'console') return;
     if ((e.target as HTMLElement).closest?.('input, textarea, select, dialog, [contenteditable], [role="tab"], a, button')) return;
     e.preventDefault();
-    flipWorks(e.key === 'ArrowRight' ? 'apps' : 'web');
+    const i = PAGES.indexOf(screen.worksPage()) + (e.key === 'ArrowRight' ? 1 : -1);
+    flipWorks(PAGES[Math.min(PAGES.length - 1, Math.max(0, i))]);
   });
 
   // A deep link or ✓ opens a detail: the Console behind it shows the same section and item.
@@ -413,7 +461,7 @@ if (!webglAvailable()) {
       case 'event': return openDetail({ kind: 'event', id: i.id });
       case 'about': return openDetail({ kind: 'about' });
       case 'contact':
-        chor.flip.reset(true);
+        chor.view.reset(true);
         return contactSeq.run();
       case 'tab': return pressTab(i.tab);
       case 'page': return flipWorks(i.page);
@@ -428,15 +476,7 @@ if (!webglAvailable()) {
     }
   }
   screen.onIntent(handleIntent);
-  screen.onSelect(() => sfx.play('detent')); // roller, arrow keys or a row tap: one detent per step
-
-  // The coin swinging into the wallet: a coin tick as loud as the hit (quieter than a tap on it). Only a hit from a free swing counts
-  // (keychain.ts), only real swings pass the floor, and clinks are at least 300 ms apart (sfx.ts).
-  const CLINK_MIN = 0.45;
-  stage.onFrame(() => {
-    const v = stage.keychain.takeImpact();
-    if (v > CLINK_MIN) sfx.play('coin', { volume: Math.min(0.7, 0.2 + (v - CLINK_MIN) / 3) });
-  });
+  screen.onSelect(() => sfx.play('detent')); // the wheel, arrow keys or a row tap: one detent per step
 
   // Easter egg (§24): a back sticker latched open shows its site as a link pill; it heals when the wallet
   // is turned back to the front by any route (tab, Back key, scroll).
@@ -461,7 +501,7 @@ if (!webglAvailable()) {
   qrLink.addEventListener('click', () => controls?.healSticker());
   qrPill.querySelector('.qr-close')!.addEventListener('click', () => controls?.healSticker());
   stage.onFrame(() => {
-    if (qrOpen && !chor.flip.isBack()) controls?.healSticker();
+    if (qrOpen && !chor.view.isBack()) controls?.healSticker();
   });
 
   controls = createControls(stage, document.getElementById('webgl') as HTMLCanvasElement, {
@@ -477,9 +517,9 @@ if (!webglAvailable()) {
     back: () => {
       if (qrOpen) controls?.healSticker();
       else if (detail.isOpen()) detail.close();
-      else if (chor.flip.isBack()) chor.flip.reset();
+      else if (chor.view.isOff()) chor.view.reset();
       else if (contactSeq.state() === 'ready') contactSeq.putAway();
-      else if (screen.mode() === 'works' && screen.worksPage() === 'apps') flipWorks('web');
+      else if (screen.mode() === 'works' && screen.worksPage() !== 'web') flipWorks('web');
     },
     // The side switch: the knob visibly slides first, then the page changes view.
     toggleView: () => {
@@ -487,19 +527,99 @@ if (!webglAvailable()) {
       controls?.setViewSwitch(true);
       setTimeout(() => setView('list'), motion.reduced() ? 0 : 220);
     },
-    toTop: () => scrollToEl(0),
-    flip: chor.flip,
+    toggleMotion: () => motion.set(!motion.userOn()),
+    // The Sound slider: effects and music together (the tray still has them apart).
+    toggleSound: () => {
+      const on = !(sfx.enabled() || music.enabled());
+      music.set(on);
+      sfx.set(on);
+    },
+    // The memory-card slot: on the Motion page it sends the card away (back to WEB); anywhere else the card
+    // flies in from below, and once it is home the page opens.
+    toggleMemory: () => {
+      if (screen.mode() === 'works' && screen.worksPage() === 'motion') return flipWorks('web');
+      selectTab('works');
+      memory.insert(() => (chor.tab() === 'works' ? flipWorks('motion') : memory.eject())); // chor.tab() is set at once; screen.mode() trails it
+    },
+    togglePlug: () => power.toggle(),
+    // The pinhole: reboot. The screen shows its boot mark, then the place it was; the card goes out, the cable
+    // goes back in, WEB comes back.
+    reset: () => {
+      sfx.play('power');
+      chor.view.reset();
+      memory.eject();
+      power.plug();
+      flipWorks('web');
+      const back = () => screen.setMode(chor.place() === 'console' ? chor.tab() : 'hello');
+      screen.setMode('boot');
+      setTimeout(back, motion.reduced() ? 0 : 1200);
+      announce('Device restarted');
+    },
+    view: chor.view,
   });
+  controls.setMotionSwitch(!motion.reduced());
+  const syncSound = () => controls?.setSoundSwitch(sfx.enabled() || music.enabled());
+  sfx.subscribe(syncSound);
+  music.subscribe(syncSound);
+  syncSound();
+
+  // The eye on the device: callouts on the three settings (tips.ts), each part makes a small move to show what it
+  // does, and the wallet turns to show its left face if that is not toward the visitor already. When the callouts
+  // go, it turns back, unless the visitor took hold of it in the meantime.
+  const tips = createTips(stage, document.getElementById('tips') as HTMLElement);
+  let turnedByEye = false;
+  let grabsAtTurn = 0;
+  onTips = (on) => {
+    if (!on) return tips.hide();
+    announce('Device settings. The knob sets the volume: drag it, scroll over it or tap it to mute. The top slider turns motion on or off. The bottom slider turns sound on or off.');
+    turnedByEye = !tips.facing();
+    if (turnedByEye) {
+      grabsAtTurn = chor.view.grabs();
+      chor.view.show(0.75, 0.06);
+    }
+    stage.focus.hold(true); // the whole wallet in view, for the left face
+    tips.show();
+    controls?.nudge();
+  };
+  tips.onHide(() => {
+    stage.focus.hold(false);
+    tipsOn = false;
+    syncEye();
+    if (turnedByEye && chor.view.grabs() === grabsAtTurn) chor.view.reset();
+    turnedByEye = false;
+  });
+  addEventListener('keydown', (e) => e.key === 'Escape' && tips.isOn() && tips.hide());
+
+  // The Reset view chip (§35) shows while the wallet is turned, panned or zoomed away from its pose.
+  const resetChip = document.getElementById('view-reset') as HTMLButtonElement;
+  let viewOff = false;
+  const syncChips = () => {
+    resetChip.hidden = !viewOff || view !== 'device';
+  };
+  chor.view.onChange((off) => {
+    viewOff = off;
+    syncChips();
+  });
+  resetChip.addEventListener('click', () => {
+    sfx.play('press', { rate: 0.9 });
+    chor.view.reset();
+  });
+  syncChips();
   onViewChange = (v) => {
     stage.setActive(v === 'device');
     controls?.setViewSwitch(v === 'list');
-    if (v === 'list') contactSeq.putAway(true);
+    if (v === 'list') {
+      contactSeq.putAway(true);
+      tips.hide();
+    }
+    syncChips();
+    syncEye();
   };
 
   // Contact: the panel's CTA runs or ends the card reader; the primary action goes there from anywhere.
   cta.addEventListener('click', () => {
     if (contactSeq.state() === 'ready') return contactSeq.putAway();
-    chor.flip.reset(true); // the reader is on the front-facing wallet's side
+    chor.view.reset(true); // the reader is on the front-facing wallet's side
     contactSeq.run();
   });
   const goContact = (e: Event) => {
@@ -508,7 +628,7 @@ if (!webglAvailable()) {
     if (view === 'list') return selectTab('contact');
     chor.setTab('contact');
     showTab('contact');
-    chor.flip.reset(true);
+    chor.view.reset(true);
     scrollToEl(consoleEl, () => contactSeq.state() === 'idle' && contactSeq.run());
   };
   hire.addEventListener('click', goContact);

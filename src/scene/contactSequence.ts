@@ -30,7 +30,7 @@ export function createContactSequence(
   layout: { cardEntry: THREE.Vector3 },
   announce: (msg: string) => void,
 ): ContactSequence {
-  const { scene, tilt, actor, wallet, keychain, card, screen } = stage;
+  const { scene, tilt, actor, wallet, card, screen } = stage;
   const SIDE = new THREE.Euler(0.04, -0.5, 0); // actor: the reader side turned toward the visitor
   const READ = new THREE.Euler(0, 0.22, 0); // actor: screen back toward the visitor, the slotted card sticking out right
   const ENTRY_ROT = new THREE.Euler(0.35, -0.9, 0.3);
@@ -61,14 +61,14 @@ export function createContactSequence(
     tilt.quaternion.identity();
     tilt.position.set(0, 0, 0);
     tilt.scale.setScalar(1);
-    wallet.root.updateMatrixWorld(true);
+    stage.rig.updateMatrixWorld(true); // the whole chain: the scroll pose and the section pose may have changed since the last frame
     const pos = wallet.root.localToWorld(new THREE.Vector3(OUTSIDE_X, SLOT_Y, 0));
     const quat = wallet.root.getWorldQuaternion(new THREE.Quaternion());
     actor.rotation.copy(saved.rot);
     tilt.quaternion.copy(saved.tq);
     tilt.position.copy(saved.tp);
     tilt.scale.copy(saved.ts);
-    wallet.root.updateMatrixWorld(true);
+    stage.rig.updateMatrixWorld(true);
     return { pos, quat };
   }
 
@@ -112,7 +112,6 @@ export function createContactSequence(
     tl.call(() => seat(OUTSIDE_X), [], IN); // from here it moves with the wallet
     tl.to(card.group.position, { x: INSIDE_X, duration: LATCH - IN, ease: 'power3.out' }, IN);
     tl.call(() => {
-      keychain.nudge(0.5);
       screen.setContactState('reading');
       sfx.play('toggle'); // the card seats
       sfx.play('process'); // and the reader writes (the screen's stepped bar runs 750 ms)

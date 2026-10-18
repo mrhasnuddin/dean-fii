@@ -1,5 +1,5 @@
 /* Site screen modes, layered on the e-ink base (einkScreen.css). 360 × 480 CSS px. */
-.screen { position: relative; font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; user-select: none; }
+.screen { position: relative; touch-action: pan-y; font-family: var(--font-mono); user-select: none; }
 
 /* Softkey labels under the four top tabs (positions from the spec). They are the wallet's tab numbers,
    the active one inverted with a caret up to its key. Tappable: they select the section too. */
@@ -82,3 +82,12 @@
 .sc-blocks i.on { background: var(--ink); }
 .sc-pct { min-width: 4ch; text-align: right; font-size: 14px; }
 .sc-doing { min-height: 1.35em; }
+
+/* Works › MOTION: the film strip, drawn like the phone above it (screen.ts SOON). */
+.sc-film { width: 96px; height: 61px; flex: none; margin: 8px 0 12px; }
+.sc-soon[data-soon='motion'] { gap: 8px; }
+
+/* A line over the screen's foot for a moment: the volume knob's level (screen.toast). */
+.sc-toast { position: absolute; left: 50%; bottom: 62px; transform: translate(-50%, 6px); margin: 0; padding: 6px 14px; background: var(--ink); color: var(--paper); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; white-space: nowrap; opacity: 0; pointer-events: none; z-index: 3; }
+.sc-toast.on { opacity: 1; transform: translate(-50%, 0); }
+

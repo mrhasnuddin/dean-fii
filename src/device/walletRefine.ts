@@ -8,7 +8,9 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 import { D_PATH, STAR_PATH } from '../brand/logo';
 import { coinFaceMaps } from './coinTextures';
-import { createLanyardSlot } from './keychain';
+import { roundedRectShape } from './shapes';
+import { addSideParts } from './sideParts';
+import { createUsbCPlug, makeHeadMaterial, PLUG_REACH } from './cable';
 
 export type WalletRuntime = {
   nodes: Record<string, THREE.Object3D>;
@@ -16,29 +18,33 @@ export type WalletRuntime = {
   sockets: Record<string, THREE.Object3D>;
 };
 
-// Side/top/bottom faces are flat only within |z| ≤ t/2 − edge = 0.045 W; every recess stays inside it.
-const BODY = { w: 1, h: 1.5, t: 0.15, corner: 0.09, edge: 0.03 };
+// DC-3 (2026-10-18, Dean): the body is thicker, 0.15 → 0.22 W, like a handheld rather than a slab.
+// Side/top/bottom faces are flat only within |z| ≤ t/2 − edge = 0.08 W; every recess stays inside it.
+export const BODY = { w: 1, h: 1.5, t: 0.22, corner: 0.09, edge: 0.03 };
+
+/**
+ * The generated factory places every part for the thickness it was authored at (its front-face socket
+ * says which). Parts on the front move forward by the difference, parts mid-thickness by half of it,
+ * and the shell node back by half, so the body stays centred on the root. A factory regenerated at the
+ * new thickness finds no difference and nothing moves.
+ */
+function retargetThickness(nodes: Record<string, THREE.Object3D>, sockets: Record<string, THREE.Object3D>): void {
+  const front = sockets['shell:front-face'];
+  if (!front) return;
+  const dz = BODY.t - front.position.z;
+  if (Math.abs(dz) < 1e-6) return;
+  for (const id of ['front-glass', 'key-confirm', 'confirm-led-ring', 'key-back']) nodes[id]?.position.setZ(nodes[id].position.z + dz);
+  for (const id of ['roller', 'tabs', 'switch-view', 'card-slot', 'port', 'lanyard-slot', 'contact-card']) nodes[id]?.position.setZ(nodes[id].position.z + dz / 2);
+  front.position.z += dz;
+  for (const id of ['shell:keychain-anchor', 'shell:card-slot']) sockets[id]?.position.setZ(sockets[id].position.z + dz / 2);
+  nodes['shell']?.position.setZ(nodes['shell'].position.z - dz / 2);
+}
 
 export function runtimeOf(root: THREE.Object3D): WalletRuntime {
   return root.userData.sculptRuntime as WalletRuntime;
 }
 
-/** Rounded rectangle centred on the origin (optionally elliptical corners for unit-scaled parents). */
-export function roundedRectShape(w: number, h: number, r: number, cx = 0, cy = 0): THREE.Shape {
-  const s = new THREE.Shape();
-  const x = cx - w / 2;
-  const y = cy - h / 2;
-  s.moveTo(x + r, y);
-  s.lineTo(x + w - r, y);
-  s.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false);
-  s.lineTo(x + w, y + h - r);
-  s.absarc(x + w - r, y + h - r, r, 0, Math.PI / 2, false);
-  s.lineTo(x + r, y + h);
-  s.absarc(x + r, y + h - r, r, Math.PI / 2, Math.PI, false);
-  s.lineTo(x, y + r);
-  s.absarc(x + r, y + r, r, Math.PI, Math.PI * 1.5, false);
-  return s;
-}
+export { roundedRectShape };
 
 function swap(mesh: THREE.Mesh | undefined, geometry: THREE.BufferGeometry): void {
   if (!mesh) return;
@@ -80,6 +86,7 @@ export function refineForm(root: THREE.Object3D): void {
   if (root.userData.formRefined) return;
   root.userData.formRefined = true;
   const { nodes, meshes, sockets } = runtimeOf(root);
+  retargetThickness(nodes, sockets);
   const b = BODY.edge;
 
   // Shell: 0.03 W face-to-side roll-off. Outline inset by the bevel so the bevel grows it back to
@@ -140,27 +147,6 @@ export function refineForm(root: THREE.Object3D): void {
     bumpScale: 1.4,
   }));
 
-  // Roller: smooth 96-segment disc + 72 knurl ridges (repetition system roller-knurl), riding the disc.
-  // DC-2: 0.06 W thick and 0.05 W proud of the side, so it reads (and hits) as a scroll wheel.
-  swap(meshes['roller'], new THREE.CylinderGeometry(0.18, 0.18, 0.06, 96));
-  const rollerMesh = meshes['roller'];
-  if (rollerMesh) {
-    const ridge = new THREE.BoxGeometry(0.006, 0.06, 0.009);
-    const knurl = new THREE.InstancedMesh(ridge, rollerMesh.material as THREE.Material, 72);
-    const m = new THREE.Matrix4();
-    const q = new THREE.Quaternion();
-    for (let i = 0; i < 72; i++) {
-      const a = (i / 72) * Math.PI * 2;
-      q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -a);
-      m.compose(new THREE.Vector3(Math.cos(a) * 0.182, 0, Math.sin(a) * 0.182), q, new THREE.Vector3(1, 1, 1));
-      knurl.setMatrixAt(i, m);
-    }
-    knurl.name = 'roller-knurl';
-    knurl.userData.explodeWithParent = true;
-    knurl.userData.handBuilt = true;
-    rollerMesh.add(knurl);
-  }
-
   // Tabs, switch, card: rounded boxes at their real sizes (generator geometry was unit boxes pre-scaled).
   // DC-2 (surface pass): tabs 0.08 W tall with the section number engraved on the front face.
   const glyphMat = new THREE.MeshStandardMaterial({
@@ -213,27 +199,13 @@ export function refineForm(root: THREE.Object3D): void {
   const recess = (name: string, w: number, h: number, pos: THREE.Vector3, rotY: number) =>
     onSide(new THREE.Mesh(new THREE.ShapeGeometry(roundedRectShape(w, h, Math.min(w, h) * 0.45), 8), recessMat), name, pos, rotY);
   const zMid = BODY.t / 2; // shell node frame spans z 0..t
-  const L = -0.5 - 0.0004;
   const R = 0.5 + 0.0004;
-  recess('roller-slot', 0.07, 0.27, new THREE.Vector3(L, 0.29, zMid), -Math.PI / 2);
   recess('switch-slot', 0.05, 0.19, new THREE.Vector3(R, 0.47, zMid), Math.PI / 2);
 
-  // Side glyphs (engraved, 0.001 W decals): ▲ ▼ around the roller; device / list icons at the
-  // switch's two ends (up = the 3D device view, down = the list view).
+  // Side glyphs (engraved, 0.001 W decals): device / list icons at the view switch's two ends
+  // (up = the 3D device view, down = the list view).
   const glyph = (name: string, shape: THREE.Shape | THREE.Shape[], pos: THREE.Vector3, rotY: number) =>
     onSide(new THREE.Mesh(new THREE.ShapeGeometry(shape, 4), glyphMat), name, pos, rotY);
-  const tri = (up: boolean) => {
-    const s = new THREE.Shape();
-    const k = up ? 1 : -1;
-    s.moveTo(0, 0.013 * k);
-    s.lineTo(0.013, -0.009 * k);
-    s.lineTo(-0.013, -0.009 * k);
-    s.closePath();
-    return s;
-  };
-  // On the −X face (rotY −π/2) shape +X points toward +Z, so the glyph's X is across the band.
-  glyph('roller-arrow-up', tri(true), new THREE.Vector3(L, 0.29 + 0.165, zMid), -Math.PI / 2);
-  glyph('roller-arrow-down', tri(false), new THREE.Vector3(L, 0.29 - 0.165, zMid), -Math.PI / 2);
   const deviceIcon = roundedRectShape(0.024, 0.034, 0.005);
   deviceIcon.holes.push(roundedRectShape(0.014, 0.018, 0.002, 0, 0.004) as unknown as THREE.Path);
   glyph('switch-icon-device', deviceIcon, new THREE.Vector3(R, 0.47 + 0.13, zMid), Math.PI / 2);
@@ -272,12 +244,35 @@ export function refineForm(root: THREE.Object3D): void {
     );
     portGroup.add(opening, tongue);
     shellNode?.add(portGroup);
+
+    // A USB-C plug seated in the port (cable.ts): its steel shell comes out of the opening, its boot and
+    // strain relief follow, and the cable leaves from the 'usb-plug' socket at the far end of the boot.
+    // The plug is built tip-down, so it turns upside down to point its tip up into the bottom face.
+    // The plug, its socket (where the cable starts) and the cable's anchor ride one rig, which slides out of
+    // the port and away when the cable is unplugged (scene/power.ts).
+    const rig = new THREE.Group();
+    rig.name = 'usb-rig';
+    rig.position.set(0, -0.75, zMid);
+    const plug = createUsbCPlug();
+    plug.name = 'usb-c-plug-seated';
+    plug.rotation.z = Math.PI;
+    plug.position.y = -PLUG_REACH;
+    const socket = new THREE.Object3D();
+    socket.name = 'usb-plug';
+    socket.position.copy(plug.position);
+    rig.add(plug, socket);
+    shellNode?.add(rig);
+    nodes['usb-rig'] = rig;
+    sockets['shell:usb-plug'] = socket;
   }
 
-  // Lanyard slot: the keychain module's slot (bevel lip + dark opening) at the keychain-anchor socket.
+  // The generator's lanyard slot is retired with the keychain (DC-4); the memory-card slot takes its place.
   const slotMesh = meshes['lanyard-slot'];
   if (slotMesh) slotMesh.visible = false;
-  sockets['shell:keychain-anchor']?.add(createLanyardSlot());
+
+  // DC-4 (2026-10-18): the left face's Motion slider, volume knob (in place of the thumb roller) and battery
+  // window, and the bottom face's memory-card slot and reset pinhole (sideParts.ts).
+  if (shellNode) addSideParts({ shell: shellNode, nodes, meshes, sockets, zMid, recess, onSide, glyphMat });
 
   // Back plate: raised D-star (0.3 W tall, champagne) and engraved studio name, both reading correctly from behind.
   const back = nodes['back-plate'];
@@ -364,7 +359,9 @@ export function refineMaterials(root: THREE.Object3D, tier: GpuTier = 'high', en
   set('front-glass', glass);
   set('display', paper);
   set('key-confirm', champagne);
-  set('roller', champagne);
+  set('volume-knob', champagne);
+  set('motion-switch', polymer);
+  set('sound-switch', polymer);
   set('tab-01', champagne);
   for (const id of ['tab-02', 'tab-03', 'tab-04', 'key-back', 'switch-view']) set(id, polymer);
   // Surface-pass parts that share a material: the card reader LED is the Confirm ring's emissive (one
@@ -373,12 +370,17 @@ export function refineMaterials(root: THREE.Object3D, tier: GpuTier = 'high', en
     const m = o as THREE.Mesh;
     if (!m.isMesh) return;
     if (m.userData.led) m.material = led;
-    if (m.name === 'switch-grip') m.material = polymer;
+    if (m.name === 'switch-grip' || m.name === 'motion-grip' || m.name === 'sound-grip') m.material = polymer;
   });
   set('tabs', dark);
+  // The charger's head is thin-film like the body (satin graphite on the low tier).
+  const plugHead = makeHeadMaterial(tier);
+  root.traverse((o) => {
+    if (o.name === 'usb-head') (o as THREE.Mesh).material = plugHead;
+  });
   set('confirm-led-ring', led);
   set('contact-card', card);
-  const knurl = meshes['roller']?.getObjectByName('roller-knurl') as THREE.InstancedMesh | undefined;
+  const knurl = meshes['volume-knob']?.getObjectByName('volume-knurl') as THREE.InstancedMesh | undefined;
   if (knurl) knurl.material = champagne;
 
   // Since three r163 a material lit by scene.environment gets scene.environmentIntensity, ignoring its
@@ -397,7 +399,7 @@ export function refineMaterials(root: THREE.Object3D, tier: GpuTier = 'high', en
       }
     });
   }
-  root.userData.materials = { shell, back, glass, paper, champagne, polymer, dark, led, card };
+  root.userData.materials = { shell, back, glass, paper, champagne, polymer, dark, led, card, plugHead };
 }
 
 /**

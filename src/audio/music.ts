@@ -13,6 +13,7 @@
 // accurately; looping the whole file would click at the codec's padding.
 import type { Howl } from 'howler';
 import loopInfo from './music.json';
+import { volume } from './volume';
 
 const KEY = 'dean-music';
 const SRC = ['/audio/music.webm', '/audio/music.mp3'];
@@ -45,7 +46,8 @@ const activated = () => gestured || navigator.userActivation?.hasBeenActive === 
 function load() {
   if (loading) return;
   loading = true;
-  void import('howler').then(({ Howl }) => {
+  void import('howler').then(({ Howl, Howler }) => {
+    volume.attach(Howler);
     const h: Howl = new Howl({
       src: SRC,
       sprite: { loop: loopInfo.loop as [number, number, boolean] },

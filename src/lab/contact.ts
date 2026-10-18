@@ -8,7 +8,6 @@ import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer
 import gsap from 'gsap';
 import { createWallet } from '../device/wallet';
 import { createStudioEnvironment } from '../device/studioEnvironment';
-import { Keychain } from '../device/keychain';
 import { CARD, createKeyCard } from '../device/keyCard';
 import { createEinkScreen } from '../ui/einkScreen';
 import { createContactCard, setContactCardWritten } from '../ui/contactCard';
@@ -40,12 +39,6 @@ const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 50);
 const wallet = createWallet({ envMap: env });
 scene.add(wallet.root);
 
-const keychain = new Keychain({
-  anchor: wallet.keychainAnchor,
-  collider: { object: wallet.root, halfExtents: new THREE.Vector3(0.5, 0.75, 0.075) },
-  reducedMotion: reduceMotion,
-});
-scene.add(keychain.group);
 
 const card = createKeyCard(env);
 card.group.visible = false; // off until the visitor asks to get in touch
@@ -103,7 +96,6 @@ function layout() {
 }
 addEventListener('resize', layout);
 layout();
-keychain.reset();
 
 // ---------------------------------------------------------------- helpers
 const live = document.getElementById('live')!;
@@ -175,11 +167,10 @@ function run() {
   tl.add(slerpTo(card.group, tap.quat, 0.56, 'power2.inOut'), 0);
   tl.to(card.group.position, { x: tap.pos.x, y: tap.pos.y, z: tap.pos.z, duration: 0.14, ease: 'power2.in' }, 0.56); // accelerate into the tap
 
-  // C · contact (0.7 s): card rides with the wallet; recoil, LED flash, keychain swing, e-ink refresh.
+  // C · contact (0.7 s): card rides with the wallet; recoil, LED flash, e-ink refresh.
   const T = 0.7;
   tl.call(() => {
     wallet.root.attach(card.group);
-    keychain.nudge(0.7);
     screen.setState('reading');
   }, [], T);
   tl.to(wallet.root.rotation, { z: 0.035, duration: 0.07, ease: 'power1.out' }, T);
@@ -278,7 +269,7 @@ function updateCssFacing() {
 // ---------------------------------------------------------------- loop
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
-  keychain.update(clock.getDelta());
+  clock.getDelta();
   renderer.render(scene, camera);
   updateCssFacing();
   css.render(scene, camera);

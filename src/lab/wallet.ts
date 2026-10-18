@@ -4,8 +4,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { applyRestState, refineForm, refineMaterials, runtimeOf, type GpuTier } from '../device/walletRefine';
-import { Keychain } from '../device/keychain';
+import { applyRestState, BODY, refineForm, refineMaterials, runtimeOf, type GpuTier } from '../device/walletRefine';
+import { Cable } from '../device/cable';
 
 const PASS_ORDER = ['blockout', 'structural-pass', 'form-refinement', 'material-pass', 'surface-pass', 'lighting-pass', 'interaction-pass', 'optimization-pass'];
 
@@ -24,7 +24,7 @@ const VIEWS: Record<string, { az: number; el: number; dist?: number; size?: [num
   // Pose fitted by two 27-point grids scored with the Tier-1 formulas (.img2threejs/iou.py) against
   // .img2threejs/analysis/ref1-silhouette.png: az 40, tilt −10, el 0 → IoU 0.929, aspectΔ 0.001, scaleΔ 0.012.
   'ref-match': { az: 40, el: 0, dist: 3.85, tilt: -10, size: [758, 986] }, // 2× the reference's 379×493 frame
-  'three-quarter': { az: -32, el: 8 }, // site hero pose: left edge (roller) toward the camera
+  'three-quarter': { az: -32, el: 8 }, // site hero pose: left edge (Motion slider, volume knob, battery) toward the camera
   front: { az: 0, el: 0 },
   left: { az: -90, el: 0 },
   right: { az: 90, el: 0 },
@@ -34,10 +34,10 @@ const VIEWS: Record<string, { az: number; el: number; dist?: number; size?: [num
   'chin-closeup': { az: -18, el: -8, dist: 2.2 },
   // Surface pass (DC-2): the affordance details up close.
   'right-closeup': { az: 62, el: 6, dist: 2.6 }, // card slot + lip + reader LED, view switch + icons
-  'left-closeup': { az: -62, el: 6, dist: 2.6 }, // roller + ▲▼ marks
+  'left-closeup': { az: -62, el: 6, dist: 2.6 }, // Motion slider, volume knob, battery window
   'top-closeup': { az: 0, el: 28, dist: 1.5, fy: 0.66 }, // numbered tabs 01–04, focused on the top edge
   'underside': { az: -30, el: -40, dist: 3.2 },
-  // Showcase: site hero pose with room for the keychain below.
+  // Showcase: site hero pose with room for the cable and the memory card below.
   hero: { az: -28, el: 6, dist: 6.2, tilt: -4, size: [900, 1200], fy: -0.35 },
   'hero-back': { az: 150, el: 8, dist: 6.2, size: [900, 1200], fy: -0.35 },
 };
@@ -108,14 +108,14 @@ async function main() {
   scene.add(model);
   status.textContent = `pass: ${pass} · ${createName}`;
 
-  // ?keychain=1 hangs the real keychain module from the wallet's keychain-anchor socket.
-  let keychain: Keychain | null = null;
-  const anchor = runtimeOf(model).sockets['shell:keychain-anchor'];
-  if (new URLSearchParams(location.search).get('keychain') === '1' && anchor) {
-    keychain = new Keychain({ anchor, collider: { object: model, halfExtents: new THREE.Vector3(0.5, 0.75, 0.075) } });
-    scene.add(keychain.group);
+  // ?cable=1 hangs the USB-C cable from the plug in the bottom port.
+  let cable: Cable | null = null;
+  const plug = runtimeOf(model).sockets['shell:usb-plug'];
+  if (new URLSearchParams(location.search).get('cable') === '1' && plug) {
+    cable = new Cable({ anchor: plug, collider: { object: model, halfExtents: new THREE.Vector3(BODY.w / 2, BODY.h / 2, BODY.t / 2) } });
+    scene.add(cable.group);
     model.updateMatrixWorld(true);
-    keychain.update(1 / 60);
+    cable.update(1 / 60);
   }
   const clock = new THREE.Clock();
 
@@ -132,11 +132,12 @@ async function main() {
 
   renderer.setAnimationLoop(() => {
     if (capturing) return;
-    keychain?.update(clock.getDelta());
+    const dt = clock.getDelta();
+    cable?.update(dt);
     controls.update();
     renderer.render(scene, camera);
   });
-  Object.assign(window, { keychain, model });
+  Object.assign(window, { model });
 }
 
 let capturing = false; // the interactive loop must not re-render (and reset roll) mid-capture

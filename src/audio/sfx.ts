@@ -8,6 +8,7 @@
 // imported on that first gesture, so no AudioContext exists before it. Nothing plays in a hidden tab.
 import type { Howl } from 'howler';
 import sprite from './sprite.json';
+import { volume } from './volume';
 
 export type SfxName = keyof typeof sprite;
 export interface PlayOptions {
@@ -21,7 +22,7 @@ const KEY = 'dean-sound';
 const MASTER = 0.8;
 const SRC = ['/audio/sfx.webm', '/audio/sfx.mp3'];
 // Minimum gap between repeats (ms). A press often arrives twice for one action (the key, then the
-// panel it opens): the second is dropped. The roller and the coin can fire in bursts.
+// panel it opens): the second is dropped. The knob and the list can fire in bursts.
 const THROTTLE: Partial<Record<SfxName, number>> = { hover: 60, press: 70, detent: 45, toggle: 90, coin: 300, air: 150, peel: 100, rip: 450, unpeel: 200 };
 // Random pitch spread so repeats never sound machine-gunned.
 const SPREAD: Partial<Record<SfxName, number>> = { hover: 0.03, press: 0.02, detent: 0.04, toggle: 0.02, coin: 0.06 };
@@ -47,8 +48,9 @@ const activated = () => gestured || navigator.userActivation?.hasBeenActive === 
 
 function load(): Promise<Howl | null> {
   loading ??= import('howler').then(
-    ({ Howl }) =>
+    ({ Howl, Howler }) =>
       new Promise<Howl | null>((resolve) => {
+        volume.attach(Howler);
         const h: Howl = new Howl({
           src: SRC,
           sprite: sprite as unknown as Record<string, [number, number]>,

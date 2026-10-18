@@ -7,7 +7,7 @@
   --anatomy-lit-top: #2b2a27; --anatomy-lit-shade: #222120;
   --anatomy-hi: #d8d4cb; --anatomy-mid: #6c6d75; --anatomy-lo: #3f4047; --anatomy-faint: #2a2b31; --anatomy-lit: #e4cf9f;
   --anatomy-halo: #060607; --anatomy-dot: #d8d4cb;
-  --anatomy-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --anatomy-mono: var(--font-mono);
   --wf-gold: #e4cf9f;
 }
 .wf .iso-figure { margin: 0; }
