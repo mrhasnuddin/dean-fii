@@ -17,6 +17,7 @@ import { createContactSequence, type ContactSequence } from './scene/contactSequ
 import { createMemorySequence } from './scene/memorySequence';
 import { createPower } from './scene/power';
 import { createTips } from './scene/tips';
+import { createVolumePill, usePill, type VolumePill } from './scene/volumePill';
 import { createDetail, type DetailTarget } from './ui/detail';
 import type { ScreenIntent, WorksPage } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
@@ -56,6 +57,7 @@ document.querySelector('[data-list="chronicle"]')!.innerHTML = events.map((e) =>
 
 // ---------------------------------------------------------------- smooth scroll + Hero ↔ Console snap
 let controls: Controls | null = null;
+let volumePill: VolumePill | null = null; // docs §40: the touch stand-in for the knob
 let qrOpen: Sticker | null = null; // the back sticker whose QR is showing (see showQr)
 let lenis: Lenis | null = null;
 let view: ViewMode = 'device';
@@ -342,7 +344,9 @@ const hire = document.getElementById('hire') as HTMLAnchorElement;
 function webglAvailable() {
   try {
     const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    gl?.getExtension('WEBGL_lose_context')?.loseContext(); // only a probe: free its context now (iOS keeps few alive, and a pull-to-refresh reload overlaps the old page)
+    return !!gl;
   } catch {
     return false;
   }
@@ -357,6 +361,13 @@ if (!webglAvailable()) {
   liftLoader(Promise.resolve(), () => {});
 } else {
   const stage = createStage(document.getElementById('webgl') as HTMLCanvasElement, document.getElementById('css3d')!, await studioEnv);
+  // A reload (pull-to-refresh) leaves the old page's GPU memory alive while the new one starts, which iOS Safari can't always afford.
+  // `persisted` pages go to the back-forward cache and come back as they were, so only a real unload frees the context.
+  addEventListener('pagehide', (e) => {
+    if (e.persisted) return;
+    stage.renderer.dispose();
+    stage.renderer.forceContextLoss();
+  });
   const chor = createChoreography(stage, hero, consoleEl);
   const contactSeq: ContactSequence = createContactSequence(stage, chor, announce);
   const { screen } = stage;
@@ -506,6 +517,7 @@ if (!webglAvailable()) {
 
   controls = createControls(stage, document.getElementById('webgl') as HTMLCanvasElement, {
     sticker: showQr,
+    knobTap: () => usePill() && !!volumePill && (volumePill.open(), true),
     selectTab: (n) => pressTab(TABS[n - 1]),
     roll: (d) => screen.move(d),
     canRoll: (d) => {
@@ -558,7 +570,8 @@ if (!webglAvailable()) {
     view: chor.view,
   });
   controls.setMotionSwitch(!motion.reduced());
-  const syncSound = () => controls?.setSoundSwitch(sfx.enabled() || music.enabled());
+  volumePill = createVolumePill(stage, document.getElementById('vol-pill') as HTMLElement, controls);
+  const syncSound =() => controls?.setSoundSwitch(sfx.enabled() || music.enabled());
   sfx.subscribe(syncSound);
   music.subscribe(syncSound);
   syncSound();
@@ -567,11 +580,15 @@ if (!webglAvailable()) {
   // does, and the wallet turns to show its left face if that is not toward the visitor already. When the callouts
   // go, it turns back, unless the visitor took hold of it in the meantime.
   const tips = createTips(stage, document.getElementById('tips') as HTMLElement);
+  const volumeTip = document.querySelector('.tip[data-tip="volume"] span') as HTMLElement;
+  // Its callout is the big target the sliver of a knob is not: a tap on it opens the pill too (the callouts go with the tap).
+  volumeTip.parentElement!.addEventListener('click', () => usePill() && volumePill?.open());
   let turnedByEye = false;
   let grabsAtTurn = 0;
   onTips = (on) => {
     if (!on) return tips.hide();
-    announce('Device settings. The knob sets the volume: drag it, scroll over it or tap it to mute. The top slider turns motion on or off. The bottom slider turns sound on or off.');
+    volumeTip.textContent = usePill() ? 'Tap for a volume slider.' : 'Drag, scroll or tap to mute.';
+    announce(`Device settings. The knob sets the volume: ${usePill() ? 'tap it for a volume slider' : 'drag it, scroll over it or tap it to mute'}. The top slider turns motion on or off. The bottom slider turns sound on or off.`);
     turnedByEye = !tips.facing();
     if (turnedByEye) {
       grabsAtTurn = chor.view.grabs();

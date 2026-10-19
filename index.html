@@ -173,6 +173,16 @@
     </button>
   </div>
 
+  <!-- The volume pill (docs §40), touch screens up to 900 px wide: the knob is a sliver at the screen's edge there, so a tap on it
+       (or on its callout) opens this slider beside it for a few seconds. scene/volumePill.ts places it. -->
+  <div class="vol-pill" id="vol-pill" role="group" aria-label="Volume">
+    <button class="vol-mute" id="vol-mute" type="button" aria-pressed="false" aria-label="Mute">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="vp-body" d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="vp-waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.6a7.6 7.6 0 0 1 0 10.8"/><path class="vp-slash" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+    </button>
+    <input class="vol-range" id="vol-range" type="range" min="0" max="100" step="5" value="100" aria-label="Volume" />
+    <output class="vol-val" for="vol-range" aria-hidden="true">100</output>
+  </div>
+
   <!-- Top right, under the header: "Reset view" while the wallet is turned, panned or zoomed away from its pose. -->
   <div class="view-chips" role="group" aria-label="Device view">
     <button class="chip" id="view-reset" type="button" hidden>Reset view</button>

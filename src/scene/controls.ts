@@ -38,6 +38,8 @@ export interface ControlHandlers {
   view: { begin(): void; by(turn: number, pitch: number): void; release(turnSpeed: number, pitchSpeed: number): void; reset(): void; isOff(): boolean };
   /** A sticker's flap was latched open (its QR is showing), or null once it is back down. */
   sticker(s: Sticker | null): void;
+  /** A tap on the volume knob. Return true to take it (the touch volume pill, which docs §40 explains); false lets the knob mute. */
+  knobTap(): boolean;
 }
 
 export interface Controls {
@@ -51,6 +53,10 @@ export interface Controls {
   setSoundSwitch(on: boolean): void;
   /** The eye's tutorial: each site setting makes a small move of its own (the knob turns and back, the sliders slide and back). */
   nudge(): void;
+  /** Set the site volume the way the knob does: the screen's toast and a detent per 5 %. 0 to 1. */
+  setVolume(v: number): void;
+  /** Mute, or bring back the level from before. */
+  toggleMute(): void;
   /** Press a face key as if tapped (its label on the screen was tapped). */
   pressKey(id: 'key-confirm' | 'key-back'): void;
   /** Put the open sticker back (the link pill's ✕). */
@@ -372,7 +378,7 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
         h.sticker(s);
       }
     } else if (drag.kind === 'knob') {
-      if (!drag.moved && e.type === 'pointerup') toggleMute(); // a cancel (the page took the touch to scroll) is not a tap
+      if (!drag.moved && e.type === 'pointerup' && !h.knobTap()) toggleMute(); // a cancel (the page took the touch to scroll) is not a tap
     } else if (drag.turning) {
       if (drag.pan) h.view.release(0, 0);
       else {
@@ -580,6 +586,8 @@ export function createControls(stage: Stage, canvas: HTMLCanvasElement, h: Contr
       gsap.to(sw.position, { y: SOUND_SW.y + (on ? SOUND_SW.travel : -SOUND_SW.travel), duration: motion.reduced() ? 0 : 0.18, ease: 'power2.out', overwrite: 'auto' });
     },
     nudge,
+    setVolume,
+    toggleMute,
     pressKey,
     healSticker: () => healSticker(),
   };
