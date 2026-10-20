@@ -52,7 +52,7 @@
   .dt-cta:hover { background: var(--champagne-light); }
   .dt-pager button:hover { color: var(--champagne); }
 }
-:is(.dt-close, .dt-cta, .dt-pager button, .dt-thumb):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+:is(.dt-close, .dt-cta, .dt-pager button, .dt-thumb, .dt-pp):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
 
 .dt-eyebrow { margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .dt-eyebrow strong { color: var(--ink-light); font-weight: 500; }
@@ -60,6 +60,8 @@
 .dt-roles { margin: 0 0 24px; color: var(--champagne); font: 500 14px/1.4 var(--font-ui); }
 
 .dt-media { display: grid; gap: 10px; margin-bottom: 26px; }
+.dt-motion { position: relative; }
+.dt-pp { position: absolute; right: 12px; bottom: 12px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgb(15 16 20 / 0.72); backdrop-filter: blur(8px); color: var(--ink-light); font: 500 11px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
 .dt-main { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; }
 .dt-portrait { aspect-ratio: 4 / 5; max-width: clamp(320px, 26vw, 440px); }
 .dt-thumbs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, clamp(96px, 8vw, 150px)); gap: 8px; } /* up to 96–150 px each (with the panel), shrinking together so four fit a phone */
@@ -72,6 +74,7 @@
 .dt-tools { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .dt-tool { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font: 500 14px/1 var(--font-ui); }
 .dt-tool img { object-fit: contain; }
+.dt-stack { font: 500 13px/1 var(--font-mono); color: var(--ink-light); }
 
 .dt-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1 var(--font-mono); }
 .dt-pager button { display: grid; gap: 6px; min-width: 0; flex: 1 1 0; background: none; border: 0; color: var(--ink-light); padding: 8px 4px; text-align: left; }

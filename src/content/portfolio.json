@@ -14,7 +14,11 @@
       ],
       "stack": [
         "Next.js",
-        "React"
+        "React",
+        "Tailwind CSS",
+        "Framer Motion",
+        "TanStack Query",
+        "viem"
       ],
       "tags": [
         "L1 Network",
@@ -59,7 +63,9 @@
       ],
       "stack": [
         "Next.js",
-        "React"
+        "React",
+        "Tailwind CSS",
+        "GSAP"
       ],
       "tags": [
         "Incubator",
@@ -102,7 +108,10 @@
       "stack": [
         "Next.js",
         "React",
-        "Turbopack"
+        "Turbopack",
+        "Tailwind CSS",
+        "GSAP",
+        "Lenis"
       ],
       "tags": [
         "AI Platform",
@@ -110,7 +119,7 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.kairma.ai/",
-      "description": "Kairma deploys AI employees on an on-premise appliance, keeping brand data local. I designed and built the site on my own. It pulls live AI model rankings from the OpenRouter API, the quote page unfolds as you scroll, and the icons and components are animated. I used AI-assisted tools for the imagery.",
+      "description": "Kairma deploys AI employees inside cross-border operations, with brand data kept local on a sealed, on-premise runtime. I designed and built the site on my own. Its model router section pulls live AI model rankings from the OpenRouter API, each part of the platform is shown as an isometric illustration, and the page moves with smooth scrolling. I used AI-assisted tools for the imagery.",
       "flow": {
         "steps": [
           "Ideation",
@@ -128,7 +137,8 @@
         "/media/projects/kairma-3.webp",
         "/media/projects/kairma-4.webp"
       ],
-      "eink": "/media/eink/kairma.png"
+      "eink": "/media/eink/kairma.png",
+      "motion": "/media/motion/kairma"
     },
     {
       "id": "paygo",
@@ -144,7 +154,12 @@
       ],
       "stack": [
         "React",
-        "Vite"
+        "Vite",
+        "Tailwind CSS",
+        "Three.js",
+        "React Three Fiber",
+        "GSAP",
+        "Framer Motion"
       ],
       "tags": [
         "Payments",
@@ -186,7 +201,9 @@
       "stack": [
         "Next.js",
         "React",
-        "Turbopack"
+        "Turbopack",
+        "Tailwind CSS",
+        "Paper Shaders"
       ],
       "tags": [
         "Institutional",
@@ -227,7 +244,11 @@
       "stack": [
         "Next.js",
         "React",
-        "Turbopack"
+        "Turbopack",
+        "Tailwind CSS",
+        "Framer Motion",
+        "Lenis",
+        "WebGL"
       ],
       "tags": [
         "Growth Partner",
@@ -272,7 +293,10 @@
       "stack": [
         "Next.js",
         "React",
-        "Turbopack"
+        "Turbopack",
+        "Tailwind CSS",
+        "Framer Motion",
+        "Lenis"
       ],
       "tags": [
         "Corporate",
@@ -313,7 +337,12 @@
       ],
       "stack": [
         "React",
-        "Vite"
+        "Vite",
+        "Tailwind CSS",
+        "Three.js",
+        "React Three Fiber",
+        "GSAP",
+        "Framer Motion"
       ],
       "tags": [
         "Web4",
@@ -351,9 +380,9 @@
         "gemini"
       ],
       "stack": [
-        "React",
         "Vite",
-        "Tailwind CSS"
+        "Tailwind CSS",
+        "Vanilla JS"
       ],
       "tags": [
         "DAO",
@@ -395,7 +424,9 @@
       ],
       "stack": [
         "React",
-        "Vite"
+        "Vite",
+        "Tailwind CSS",
+        "Framer Motion"
       ],
       "tags": [
         "Stablecoin",

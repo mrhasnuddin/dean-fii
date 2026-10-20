@@ -2,6 +2,7 @@
 // free). Slides in over the text column so the wallet stays visible; bottom sheet on phones.
 import './detail.css';
 import { countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
+import { motion } from '../motion';
 import { mountFlow, type Flow } from './flowFigure';
 import { ARROW, bindSteps, watchWraps } from './stepChips';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
@@ -39,7 +40,15 @@ function flowSection(flow: Flow) {
   </section>`;
 }
 
-function gallery(images: string[], alt: string) {
+/** A project with a recorded walkthrough (public/media/motion/<id>.mp4 + -poster.webp) shows it in place of the thumbnails. */
+function walkthrough(src: string, alt: string) {
+  return `<div class="dt-media dt-motion">
+    <video class="dt-main" src="${src}.mp4" poster="${src}-poster.webp" muted loop playsinline preload="metadata" aria-label="${esc(alt)}, a walkthrough of the landing page"></video>
+    <button type="button" class="dt-pp" aria-label="Pause the walkthrough">Pause</button></div>`;
+}
+
+function gallery(images: string[], alt: string, motionSrc?: string) {
+  if (motionSrc) return walkthrough(motionSrc, alt);
   return `<div class="dt-media">
     <img class="dt-main" src="${images[0]}" alt="${esc(alt)}, image 1 of ${images.length}" decoding="async">
     <div class="dt-thumbs" role="group" aria-label="Images">${images
@@ -108,10 +117,11 @@ export function createDetail(): Detail {
       const p = projects[i];
       head = `<p class="dt-eyebrow">${esc(p.category)} · Project ${String(i + 1).padStart(2, '0')}/${projects.length}</p>
         <h2 id="detail-title">${esc(p.title)}</h2><p class="dt-roles">${p.roles.map(esc).join(' · ')}</p>`;
-      body = `${gallery(p.images, p.title)}
+      body = `${gallery(p.images, p.title, p.motion)}
         <p class="dt-desc">${esc(p.description)}</p>
         ${flowSection(p.flow)}
-        <h3 class="dt-h3">Tools used</h3><ul class="dt-tools">${p.tools.map(tool).join('')}</ul>`;
+        <h3 class="dt-h3">Tools used</h3><ul class="dt-tools">${p.tools.map(tool).join('')}</ul>
+        <h3 class="dt-h3">Tech stack</h3><ul class="dt-tools">${p.stack.map((t) => `<li class="dt-tool dt-stack">${esc(t)}</li>`).join('')}</ul>`;
       actions = `<a class="dt-cta" href="${p.link}" target="_blank" rel="noopener noreferrer">Visit site <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`;
       pager = pagerHtml(i, projects.length, 'project');
     } else if (t.kind === 'event') {
@@ -168,7 +178,23 @@ export function createDetail(): Detail {
     const go = el.closest<HTMLButtonElement>('[data-go]');
     if (go) navCb({ kind: go.dataset.kind as 'project' | 'event', id: go.dataset.go! });
   });
+  // The walkthrough plays unless motion is reduced (the poster shows then); the button always works.
+  function startMotion() {
+    const v = dlg.querySelector<HTMLVideoElement>('video.dt-main');
+    const b = dlg.querySelector<HTMLButtonElement>('.dt-pp');
+    if (!v || !b) return;
+    const sync = () => {
+      b.textContent = v.paused ? 'Play' : 'Pause';
+      b.setAttribute('aria-label', `${v.paused ? 'Play' : 'Pause'} the walkthrough`);
+    };
+    v.addEventListener('play', sync);
+    v.addEventListener('pause', sync);
+    b.addEventListener('click', () => (v.paused ? void v.play() : v.pause()));
+    if (!motion.reduced()) v.play().catch(() => {});
+    sync();
+  }
   dlg.addEventListener('close', () => {
+    dlg.querySelector('video')?.pause();
     stopFlow();
     current = null;
     closeCb();
@@ -179,6 +205,7 @@ export function createDetail(): Detail {
       current = t;
       stopFlow();
       render(t);
+      startMotion();
       startFlow(t);
       if (!dlg.open) dlg.showModal();
       dlg.querySelector<HTMLElement>('.dt-scroll')?.scrollTo(0, 0);
