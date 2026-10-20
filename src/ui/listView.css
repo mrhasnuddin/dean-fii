@@ -18,6 +18,7 @@
 .lv-grid a { display: grid; gap: 8px; color: var(--ink-light); text-decoration: none; }
 .lv-grid img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; margin-bottom: 6px; }
 /* Mobile apps and Motion: a line each under the web projects until the first one ships. */
+.lv-h3 { margin: 40px 0 16px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .lv-soon { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 32px 0 0; padding: 16px 18px; border: 1px dashed var(--line); border-radius: 12px; color: #b9b5ad; font-size: 15px; }
 .lv-soon + .lv-soon { margin-top: 12px; }
 .lv-soon strong { color: var(--ink-light); font-weight: 500; }

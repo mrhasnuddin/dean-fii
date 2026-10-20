@@ -2,10 +2,17 @@
 // data.ts overrides). Facts only: see REVAMP-HANDOFF.md for what must not be invented.
 import data from './portfolio.json';
 
-export type Project = (typeof data.projects)[number];
+export type Project = (typeof data.projects)[number] & {
+  /** Web3 products: the network it runs on (shown as a tag with the network's own logo). */
+  chain?: { name: string; logo: string };
+  /** A redesign: the app it was redesigned from. */
+  original?: { title: string; link: string };
+};
 export type SpeakingEvent = (typeof data.events)[number];
 
 export const projects: Project[] = data.projects;
+/** Works › Mobile apps. */
+export const apps: Project[] = data.apps;
 export const events: SpeakingEvent[] = data.events;
 
 export const countries: Record<string, string> = { CN: 'China', ID: 'Indonesia', MY: 'Malaysia' };

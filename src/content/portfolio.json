@@ -557,5 +557,56 @@
       ],
       "eink": "/media/eink/blockchain-evolution.png"
     }
+  ],
+  "apps": [
+    {
+      "id": "naro",
+      "title": "NARO",
+      "category": "On-chain Asset Launchpad",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer"
+      ],
+      "tools": [
+        "codex",
+        "figma"
+      ],
+      "stack": [
+        "React",
+        "Vite",
+        "Three.js",
+        "ethers.js"
+      ],
+      "chain": {
+        "name": "BSC Testnet",
+        "logo": "/media/chain-logos/bsc.svg"
+      },
+      "original": {
+        "title": "Original app on BSC",
+        "link": "https://naroradar.com/"
+      },
+      "tags": [
+        "Dapp",
+        "Launchpad"
+      ],
+      "status": "Testnet",
+      "link": "https://naro-mu.vercel.app/",
+      "description": "NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, made by UXUY and Radar DAO. It was my first Dapp. I reverse engineered the original app, then redesigned it mobile first, with breakpoints up to a desktop version. It runs on BSC Testnet because the original is deployed on BSC. It has Swap, Mining, Data, Me and My Team screens, and a test data mode.",
+      "flow": {
+        "steps": [
+          "Reverse Engineer",
+          "Redesign",
+          "Iteration"
+        ],
+        "text": "I started from the original app: I reverse engineered how it works, redesigned it mobile first with a desktop version, then iterated on it."
+      },
+      "images": [
+        "/media/projects/naro-1.webp",
+        "/media/projects/naro-2.webp",
+        "/media/projects/naro-3.webp",
+        "/media/projects/naro-4.webp"
+      ],
+      "eink": "/media/eink/naro.png"
+    }
   ]
 }

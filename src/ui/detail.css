@@ -52,7 +52,7 @@
   .dt-cta:hover { background: var(--champagne-light); }
   .dt-pager button:hover { color: var(--champagne); }
 }
-:is(.dt-close, .dt-cta, .dt-pager button, .dt-thumb, .dt-pp):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+:is(.dt-close, .dt-cta, .dt-pager button, .dt-thumb, .dt-pp, .dt-orig):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
 
 .dt-eyebrow { margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .dt-eyebrow strong { color: var(--ink-light); font-weight: 500; }
@@ -75,6 +75,7 @@
 .dt-tool { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font: 500 14px/1 var(--font-ui); }
 .dt-tool img { object-fit: contain; }
 .dt-stack { font: 500 13px/1 var(--font-mono); color: var(--ink-light); }
+.dt-orig { display: inline-flex; align-items: center; gap: 6px; color: var(--champagne); font: 500 14px/1.2 var(--font-ui); text-decoration: underline; text-underline-offset: 3px; }
 
 .dt-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1 var(--font-mono); }
 .dt-pager button { display: grid; gap: 6px; min-width: 0; flex: 1 1 0; background: none; border: 0; color: var(--ink-light); padding: 8px 4px; text-align: left; }

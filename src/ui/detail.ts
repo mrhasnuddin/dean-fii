@@ -1,7 +1,7 @@
 // Detail panel for a project, an event or About: a native <dialog> (focus trap, Esc, inert page for
 // free). Slides in over the text column so the wallet stays visible; bottom sheet on phones.
 import './detail.css';
-import { countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
+import { apps, countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
 import { motion } from '../motion';
 import { mountFlow, type Flow } from './flowFigure';
 import { ARROW, bindSteps, watchWraps } from './stepChips';
@@ -85,7 +85,7 @@ export function createDetail(): Detail {
     if (t.kind !== 'project') return;
     const stage = dlg.querySelector<HTMLElement>('.dt-fig-stage');
     const readEl = dlg.querySelector<HTMLElement>('.dt-fig-read');
-    const p = projects.find((x) => x.id === t.id);
+    const p = [...projects, ...apps].find((x) => x.id === t.id);
     if (!stage || !readEl || !p) return;
     const list = dlg.querySelector<HTMLElement>('.dt-steps');
     const stopWraps = list ? watchWraps(list) : () => {};
@@ -113,17 +113,23 @@ export function createDetail(): Detail {
     let actions = '';
     let pager = '';
     if (t.kind === 'project') {
-      const i = projects.findIndex((p) => p.id === t.id);
-      const p = projects[i];
-      head = `<p class="dt-eyebrow">${esc(p.category)} · Project ${String(i + 1).padStart(2, '0')}/${projects.length}</p>
+      const isApp = apps.some((a) => a.id === t.id);
+      const group = isApp ? apps : projects;
+      const i = group.findIndex((p) => p.id === t.id);
+      const p = group[i];
+      head = `<p class="dt-eyebrow">${esc(p.category)} · ${isApp ? 'Mobile app' : 'Project'} ${String(i + 1).padStart(2, '0')}/${String(group.length).padStart(2, '0')}</p>
         <h2 id="detail-title">${esc(p.title)}</h2><p class="dt-roles">${p.roles.map(esc).join(' · ')}</p>`;
       body = `${gallery(p.images, p.title, p.motion)}
         <p class="dt-desc">${esc(p.description)}</p>
         ${flowSection(p.flow)}
         <h3 class="dt-h3">Tools used</h3><ul class="dt-tools">${p.tools.map(tool).join('')}</ul>
-        <h3 class="dt-h3">Tech stack</h3><ul class="dt-tools">${p.stack.map((t) => `<li class="dt-tool dt-stack">${esc(t)}</li>`).join('')}</ul>`;
+        <h3 class="dt-h3">Tech stack</h3><ul class="dt-tools">${p.stack.map((t) => `<li class="dt-tool dt-stack">${esc(t)}</li>`).join('')}</ul>${
+          p.chain ? `<h3 class="dt-h3">Network</h3><ul class="dt-tools"><li class="dt-tool dt-stack"><img src="${p.chain.logo}" alt="" width="18" height="18"><span>${esc(p.chain.name)}</span></li></ul>` : ''
+        }${
+          p.original ? `<h3 class="dt-h3">Redesigned from</h3><a class="dt-orig" href="${p.original.link}" target="_blank" rel="noopener noreferrer">${esc(p.original.title)} <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>` : ''
+        }`;
       actions = `<a class="dt-cta" href="${p.link}" target="_blank" rel="noopener noreferrer">Visit site <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`;
-      pager = pagerHtml(i, projects.length, 'project');
+      pager = group.length > 1 ? pagerHtml(i, projects.length, 'project') : '';
     } else if (t.kind === 'event') {
       const i = events.findIndex((e) => e.id === t.id);
       const e = events[i];

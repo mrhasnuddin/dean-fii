@@ -11,7 +11,7 @@ import './screen.css';
 import { LOGO_PATHS } from '../brand/logo';
 import { createPixelLogo } from './pixelLogo';
 import { contact, emailDisplay, whatsappDisplay } from '../content/contact';
-import { countries, events, profile, projects, toolNames } from '../content/portfolio';
+import { apps, countries, events, profile, projects, toolNames } from '../content/portfolio';
 import { motion } from '../motion';
 
 export type ScreenMode = 'boot' | 'hello' | 'works' | 'chronicle' | 'about' | 'contact';
@@ -157,7 +157,7 @@ export function createScreen(): Screen {
   // Standby (lock screen): the status bar with the clock, then the idle mark.
   saver.innerHTML = `<header class="ek-sb"><span>Standby</span>${statusRight()}</header>
     <section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>`;
-  const index: Record<'works' | 'chronicle' | 'contact', number> = { works: 0, chronicle: 0, contact: 0 };
+  const index: Record<'works' | 'apps' | 'chronicle' | 'contact', number> = { works: 0, apps: 0, chronicle: 0, contact: 0 };
   let intentCb: (i: ScreenIntent) => void = () => {};
   let selectCb: (i: number) => void = () => {};
 
@@ -189,7 +189,7 @@ export function createScreen(): Screen {
   // Idle overlay: lists and About fall back to the mark after IDLE_MS without input. Appearing is
   // silent (nobody asked for it); waking plays the refresh swish, since the visitor caused it.
   let idleTimer = 0;
-  const idleable = () => (current === 'works' && worksPage === 'web') || current === 'chronicle' || current === 'about' || (current === 'contact' && contactState === 'prompt');
+  const idleable = () => (current === 'works' && !soonShowing()) || current === 'chronicle' || current === 'about' || (current === 'contact' && contactState === 'prompt');
   function sleep() {
     if (!idleable()) return;
     saver.hidden = false;
@@ -209,8 +209,10 @@ export function createScreen(): Screen {
   }
   wake();
 
-  const listLen = () => (soonShowing() ? 0 : current === 'works' ? projects.length : current === 'chronicle' ? events.length : current === 'contact' ? CHANNELS.length : 0);
-  const listKey = () => (soonShowing() ? null : current === 'works' || current === 'chronicle' || current === 'contact' ? current : null);
+  const worksList = () => (worksPage === 'apps' ? apps : projects);
+  const worksKey = () => (worksPage === 'apps' ? 'apps' : 'works');
+  const listLen = () => (soonShowing() ? 0 : current === 'works' ? worksList().length : current === 'chronicle' ? events.length : current === 'contact' ? CHANNELS.length : 0);
+  const listKey = () => (soonShowing() ? null : current === 'works' ? worksKey() : current === 'chronicle' || current === 'contact' ? current : null);
 
   function windowed<T>(items: readonly T[], sel: number): { item: T; i: number }[] {
     const rows = visibleRows();
@@ -247,13 +249,13 @@ export function createScreen(): Screen {
   let toastTimer = 0;
   let worksPage: WorksPage = 'web';
   let pageCb: (page: WorksPage) => void = () => {};
-  const soonShowing = () => current === 'works' && worksPage !== 'web';
+  const soonShowing = () => current === 'works' && (worksPage === 'motion' || (worksPage === 'apps' && !apps.length));
   let installTimer = 0;
   /** Draws one step of the install: the bar's blocks, the percentage, the line under it and the tiles. */
   function installStep(pct: number, doing: number) {
     const view = el.querySelector('.sc-soon');
-    if (!view || worksPage === 'web') return;
-    const soon = SOON[worksPage];
+    if (!view || !soonShowing()) return;
+    const soon = SOON[worksPage as 'apps' | 'motion'];
     view.querySelectorAll('.sc-blocks i').forEach((b, i) => b.classList.toggle('on', i < Math.round((pct / 100) * BLOCKS)));
     view.querySelector('.sc-pct')!.textContent = `${pct}%`;
     view.querySelector('.sc-doing')!.textContent = soon.doing[doing];
@@ -301,8 +303,8 @@ export function createScreen(): Screen {
           <footer class="ek-ab"><span data-softkey="works">01 Works</span><span>Scroll ↓</span><span class="ek-hold" data-softkey="contact">04 Contact</span></footer>`;
         break;
       case 'works': {
-        if (worksPage !== 'web') {
-          const soon = SOON[worksPage];
+        if (soonShowing()) {
+          const soon = SOON[worksPage as 'apps' | 'motion'];
           html = `${softkeys()}<section class="ek-view sc-center sc-soon" data-soon="${worksPage}">${soon.glyph}
             <p class="sc-stamp">COMING SOON</p>
             <p class="sc-soon-t">${soon.title}</p>
@@ -311,15 +313,16 @@ export function createScreen(): Screen {
             ${footer('‹ Web', soon.of, '—')}`;
           break;
         }
-        const sel = index.works;
-        const p = projects[sel];
+        const list = worksList();
+        const sel = index[worksKey()];
+        const p = list[sel];
         html = `${softkeys()}
           <section class="ek-view sc-list">
             <figure class="sc-well"><img src="${p.eink}" alt="" draggable="false"><figcaption>${esc(p.category)}</figcaption></figure>
-            <ul class="ek-list sc-rows">${windowed(projects, sel)
+            <ul class="ek-list sc-rows">${windowed(list, sel)
               .map(({ item, i }) => `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${esc(item.title)}</span><small>${esc(item.tags[0])}</small></li>`)
               .join('')}</ul></section>
-          ${footer('‹ Back', `${sel + 1} of ${projects.length}`, 'Open ✓')}`;
+          ${footer(worksPage === 'apps' ? '‹ Web' : '‹ Back', `${sel + 1} of ${list.length}`, 'Open ✓')}`;
         break;
       }
       case 'chronicle': {
@@ -370,7 +373,7 @@ export function createScreen(): Screen {
 
   function confirm(): ScreenIntent {
     switch (current) {
-      case 'works': return worksPage !== 'web' ? { type: 'none' } : { type: 'project', id: projects[index.works].id };
+      case 'works': return soonShowing() ? { type: 'none' } : { type: 'project', id: worksList()[index[worksKey()]].id };
       case 'chronicle': return { type: 'event', id: events[index.chronicle].id };
       case 'about': return { type: 'about' };
       case 'contact':

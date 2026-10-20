@@ -21,7 +21,7 @@ import { createVolumePill, usePill, type VolumePill } from './scene/volumePill';
 import { createDetail, type DetailTarget } from './ui/detail';
 import type { ScreenIntent, WorksPage } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
-import { events, profile, projects } from './content/portfolio';
+import { apps, events, profile, projects } from './content/portfolio';
 import { contact, emailAddress, mailtoHref, whatsappHref } from './content/contact';
 import { copyText } from './ui/clipboard';
 import { motion } from './motion';
@@ -52,7 +52,7 @@ const announce = (msg: string) => {
   lead.textContent = `${profile.bio[0]} `;
   document.querySelector('[data-bio]')!.append(lead, profile.bio.slice(1).join(' '));
 }
-document.querySelector('[data-list="works"]')!.innerHTML = projects.map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
+document.querySelector('[data-list="works"]')!.innerHTML = [...projects, ...apps].map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
 document.querySelector('[data-list="chronicle"]')!.innerHTML = events.map((e) => `<li><a href="#/stage/${e.id}">${e.place}: ${e.title}</a></li>`).join('');
 
 // ---------------------------------------------------------------- smooth scroll + Hero ↔ Console snap
@@ -215,7 +215,7 @@ detail.onInvite(() => selectTab('contact'));
 function route() {
   const h = location.hash;
   let m: RegExpMatchArray | null;
-  if ((m = h.match(/^#\/work\/([\w-]+)$/)) && projects.some((p) => p.id === m![1])) return openDetail({ kind: 'project', id: m[1] }, false);
+  if ((m = h.match(/^#\/work\/([\w-]+)$/)) && [...projects, ...apps].some((p) => p.id === m![1])) return openDetail({ kind: 'project', id: m[1] }, false);
   if ((m = h.match(/^#\/stage\/([\w-]+)$/)) && events.some((e) => e.id === m![1])) return openDetail({ kind: 'event', id: m[1] }, false);
   if (h === '#/about' || h === '#/tools') return openDetail({ kind: 'about' }, false);
   detail.close();
@@ -396,13 +396,13 @@ if (!webglAvailable()) {
     syncFocus();
   });
   syncFocus();
-  // Works' three pages (§31, §34): WEB, the projects; APPS, mobile apps; MOTION, motion design (both coming
+  // Works' three pages (§31, §34, §42): WEB, the projects; APPS, mobile apps; MOTION, motion design (coming
   // soon). Flipped by pressing 01 again (the wallet key, the softkey or key 1), ← →, the names on the screen,
   // the switch beside the wallet, or the memory-card slot (MOTION); the Back key on a coming-soon page goes
   // back to WEB. The switch and its text follow the screen, and the memory card is in the slot exactly while
   // MOTION shows.
   const PAGES: WorksPage[] = ['web', 'apps', 'motion'];
-  const PAGE_SAYS: Record<WorksPage, string> = { web: 'Web projects', apps: 'Mobile apps: coming soon', motion: 'Motion reel: coming soon' };
+  const PAGE_SAYS: Record<WorksPage, string> = { web: 'Web projects', apps: 'Mobile apps', motion: 'Motion reel: coming soon' };
   const kindBtns = [...document.querySelectorAll<HTMLButtonElement>('.work-kind [data-kind]')];
   function flipWorks(page?: WorksPage) {
     const to = page ?? PAGES[(PAGES.indexOf(screen.worksPage()) + 1) % PAGES.length];
@@ -435,10 +435,11 @@ if (!webglAvailable()) {
   // A deep link or ✓ opens a detail: the Console behind it shows the same section and item.
   onDetailOpen = (t) => {
     const tab = TAB_FOR[t.kind];
-    if (t.kind === 'project') flipWorks('web');
+    const isApp = t.kind === 'project' && apps.some((a) => a.id === t.id);
+    if (t.kind === 'project') flipWorks(isApp ? 'apps' : 'web');
     if (chor.tab() !== tab) selectTab(tab);
     if (chor.place() !== 'console' && view === 'device') scrollToEl(consoleEl, undefined, true);
-    const list = t.kind === 'project' ? projects : t.kind === 'event' ? events : null;
+    const list = t.kind === 'project' ? (isApp ? apps : projects) : t.kind === 'event' ? events : null;
     if (list && 'id' in t) {
       const i = list.findIndex((x) => x.id === t.id);
       if (i >= 0 && screen.mode() === tab) screen.select(i);
@@ -447,7 +448,7 @@ if (!webglAvailable()) {
 
   const listLength = () => {
     const m = screen.mode();
-    return m === 'works' ? (screen.worksPage() === 'web' ? projects.length : 0) : m === 'chronicle' ? events.length : 0;
+    return m === 'works' ? (screen.worksPage() === 'web' ? projects.length : screen.worksPage() === 'apps' ? apps.length : 0) : m === 'chronicle' ? events.length : 0;
   };
   // Copy Dean's email (the screen's Copy key, or C on the keyboard while Email is selected): the address
   // is only joined here, on request, like the mailto link.

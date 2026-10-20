@@ -2,7 +2,7 @@
 // Device / List switch (bottom-right) or the wallet's side switch; also the fallback without WebGL.
 // Same content and routes as the device: every item opens the same detail panel (#/work/:id …).
 import './listView.css';
-import { countries, events, profile, projects, toolLogo, toolNames } from '../content/portfolio';
+import { apps, countries, events, profile, projects, toolLogo, toolNames } from '../content/portfolio';
 import { createContactCard } from './contactCard';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
 
@@ -48,7 +48,14 @@ export function buildListView(root: HTMLElement): void {
           <strong>${esc(p.title)}</strong>
           <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`)
         .join('')}</ul>
-      <p class="lv-soon"><strong>Mobile apps</strong> <span>Coming soon</span> Mobile app design and development.</p>
+      <h3 class="lv-h3">Mobile apps</h3>
+      <ul class="lv-grid">${apps
+        .map((p) => `<li><a href="#/work/${p.id}">
+          <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
+          <span class="lv-meta">${esc(p.category)}</span>
+          <strong>${esc(p.title)}</strong>
+          <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`)
+        .join('')}</ul>
       <p class="lv-soon"><strong>Motion</strong> <span>Coming soon</span> Motion design reels, made with AI agents.</p>
     </section>
 
