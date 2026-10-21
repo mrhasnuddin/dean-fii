@@ -17,13 +17,12 @@ export const events: SpeakingEvent[] = data.events;
 
 export const countries: Record<string, string> = { CN: 'China', ID: 'Indonesia', MY: 'Malaysia' };
 
-export type ToolId = 'figma' | 'photoshop' | 'gemini' | 'claude' | 'claude-code' | 'codex';
+export type ToolId = 'figma' | 'photoshop' | 'gemini' | 'claude' | 'codex';
 export const toolNames: Record<ToolId, string> = {
   figma: 'Figma',
   photoshop: 'Photoshop',
   gemini: 'Gemini',
   claude: 'Claude',
-  'claude-code': 'Claude Code',
   codex: 'Codex',
 };
 export const toolLogo = (id: string) => `/media/tool-logos/${id}.svg`;

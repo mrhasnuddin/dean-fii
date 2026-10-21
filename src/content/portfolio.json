@@ -150,7 +150,7 @@
         "Creative Designer"
       ],
       "tools": [
-        "claude-code",
+        "claude",
         "figma"
       ],
       "stack": [
