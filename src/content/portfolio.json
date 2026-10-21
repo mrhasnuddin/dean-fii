@@ -143,6 +143,49 @@
       "motion": "/media/motion/kairma"
     },
     {
+      "id": "stashcube",
+      "title": "Stashcube",
+      "category": "Curated Library",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "claude",
+        "figma"
+      ],
+      "stack": [
+        "Next.js",
+        "React",
+        "Turbopack",
+        "Tailwind CSS"
+      ],
+      "tags": [
+        "Library",
+        "Curated"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://stashcube.vercel.app/",
+      "description": "Stashcube is a curated library for AI-native designers and builders: UI libraries, 3D tools, icons, fonts, inspiration and AI skills, in one searchable place. I built it end to end with my own ideas.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "Build"
+        ],
+        "text": "It started as my own idea. I collected references in a moodboard, then built it end to end on my own."
+      },
+      "images": [
+        "/media/projects/stashcube-1.webp",
+        "/media/projects/stashcube-2.webp",
+        "/media/projects/stashcube-3.webp",
+        "/media/projects/stashcube-4.webp"
+      ],
+      "eink": "/media/eink/stashcube.png",
+      "motion": "/media/motion/stashcube"
+    },
+    {
       "id": "flowfi",
       "title": "FlowFi",
       "category": "Treasury Protocol",
@@ -230,48 +273,6 @@
         "/media/projects/paygo-4.webp"
       ],
       "eink": "/media/eink/paygo.png"
-    },
-    {
-      "id": "eniaclabs",
-      "title": "Eniac Labs",
-      "category": "Institutional Web3",
-      "roles": [
-        "UI/UX Designer",
-        "Frontend Developer",
-        "Creative Designer"
-      ],
-      "tools": [
-        "gemini"
-      ],
-      "stack": [
-        "Next.js",
-        "React",
-        "Turbopack",
-        "Tailwind CSS",
-        "Paper Shaders"
-      ],
-      "tags": [
-        "Institutional",
-        "Corporate Site"
-      ],
-      "status": "Shipped",
-      "link": "https://eniaclabs.vercel.app/",
-      "description": "Eniac Labs helps enterprises and governments move on-chain. I designed and built the site around an institutional structure, with custom SVG shapes drawn in Figma, custom icons, and AI-generated images for the thumbnails and media. It shipped, but the client didn't take it further.",
-      "flow": {
-        "steps": [
-          "Ideation",
-          "Moodboard",
-          "Build"
-        ],
-        "text": "I proposed the design direction and the ideas for an institutional business, and built it once the client agreed."
-      },
-      "images": [
-        "/media/projects/eniaclabs-1.webp",
-        "/media/projects/eniaclabs-2.webp",
-        "/media/projects/eniaclabs-3.webp",
-        "/media/projects/eniaclabs-4.webp"
-      ],
-      "eink": "/media/eink/eniaclabs.png"
     },
     {
       "id": "opencrew",

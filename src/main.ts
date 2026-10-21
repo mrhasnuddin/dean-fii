@@ -624,7 +624,12 @@ if (!webglAvailable()) {
   });
   syncChips();
   // A walkthrough clip playing in a panel: the 3D scene behind it rests (one heavy thing at a time on a phone).
-  detail.onMotion((playing) => stage.setActive(!playing && view === 'device'));
+  // It waits for the scene's first frame and its entrance: a clip that starts on a deep link must not freeze an empty canvas.
+  let clipPlaying = false;
+  let sceneUp = false;
+  const restScene = () => stage.setActive(!(clipPlaying && sceneUp) && view === 'device');
+  void stage.ready.then(() => setTimeout(() => ((sceneUp = true), restScene()), 2200));
+  detail.onMotion((playing) => ((clipPlaying = playing), restScene()));
   onViewChange = (v) => {
     stage.setActive(v === 'device');
     controls?.setViewSwitch(v === 'list');
