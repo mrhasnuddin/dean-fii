@@ -623,6 +623,8 @@ if (!webglAvailable()) {
     chor.view.reset();
   });
   syncChips();
+  // A walkthrough clip playing in a panel: the 3D scene behind it rests (one heavy thing at a time on a phone).
+  detail.onMotion((playing) => stage.setActive(!playing && view === 'device'));
   onViewChange = (v) => {
     stage.setActive(v === 'device');
     controls?.setViewSwitch(v === 'list');

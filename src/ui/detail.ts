@@ -16,6 +16,8 @@ export interface Detail {
   onClose(cb: () => void): void;
   onNavigate(cb: (target: DetailTarget) => void): void;
   onInvite(cb: () => void): void;
+  /** A walkthrough clip started (true) or stopped (false): main.ts pauses the 3D scene while one plays. */
+  onMotion(cb: (playing: boolean) => void): void;
 }
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
@@ -43,7 +45,7 @@ function flowSection(flow: Flow) {
 /** A project with a recorded walkthrough (public/media/motion/<id>.mp4 + -poster.webp) shows it in place of the thumbnails. */
 function walkthrough(src: string, alt: string) {
   return `<div class="dt-media dt-motion">
-    <video class="dt-main" src="${src}.mp4" poster="${src}-poster.webp" muted loop playsinline preload="metadata" aria-label="${esc(alt)}, a walkthrough of the landing page"></video>
+    <video class="dt-main" data-src="${src}" poster="${src}-poster.webp" muted loop playsinline preload="none" aria-label="${esc(alt)}, a walkthrough of the landing page"></video>
     <button type="button" class="dt-pp" aria-label="Pause the walkthrough">Pause</button></div>`;
 }
 
@@ -184,11 +186,19 @@ export function createDetail(): Detail {
     const go = el.closest<HTMLButtonElement>('[data-go]');
     if (go) navCb({ kind: go.dataset.kind as 'project' | 'event', id: go.dataset.go! });
   });
-  // The walkthrough plays unless motion is reduced (the poster shows then); the button always works.
+  // The walkthrough plays unless motion is reduced or the connection is saving data (the poster shows then, and nothing
+  // downloads until Play); the button always works. Phones get the smaller file (-sm).
+  let motionCb: (playing: boolean) => void = () => {};
   function startMotion() {
     const v = dlg.querySelector<HTMLVideoElement>('video.dt-main');
     const b = dlg.querySelector<HTMLButtonElement>('.dt-pp');
     if (!v || !b) return;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const still = motion.reduced() || conn?.saveData === true || /^(slow-)?2g$/.test(conn?.effectiveType ?? '');
+    v.src = `${v.dataset.src}${matchMedia('(max-width: 760px)').matches ? '-sm' : ''}.mp4`;
+    v.preload = still ? 'none' : 'metadata';
+    v.addEventListener('play', () => motionCb(true));
+    v.addEventListener('pause', () => motionCb(false));
     const sync = () => {
       b.textContent = v.paused ? 'Play' : 'Pause';
       b.setAttribute('aria-label', `${v.paused ? 'Play' : 'Pause'} the walkthrough`);
@@ -196,7 +206,7 @@ export function createDetail(): Detail {
     v.addEventListener('play', sync);
     v.addEventListener('pause', sync);
     b.addEventListener('click', () => (v.paused ? void v.play() : v.pause()));
-    if (!motion.reduced()) v.play().catch(() => {});
+    if (!still) v.play().catch(() => {});
     sync();
   }
   dlg.addEventListener('close', () => {
@@ -210,6 +220,7 @@ export function createDetail(): Detail {
     open(t) {
       current = t;
       stopFlow();
+      motionCb(false); // the panel is replaced: its clip, if any, is gone
       render(t);
       startMotion();
       startFlow(t);
@@ -222,5 +233,6 @@ export function createDetail(): Detail {
     onClose: (cb) => (closeCb = cb),
     onNavigate: (cb) => (navCb = cb),
     onInvite: (cb) => (inviteCb = cb),
+    onMotion: (cb) => (motionCb = cb),
   };
 }

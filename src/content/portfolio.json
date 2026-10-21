@@ -45,7 +45,8 @@
         "/media/projects/eni-3.webp",
         "/media/projects/eni-4.webp"
       ],
-      "eink": "/media/eink/eni.png"
+      "eink": "/media/eink/eni.png",
+      "motion": "/media/motion/eni"
     },
     {
       "id": "aseanlabs",
@@ -65,7 +66,7 @@
         "Next.js",
         "React",
         "Tailwind CSS",
-        "GSAP"
+        "WebGL"
       ],
       "tags": [
         "Incubator",
@@ -90,7 +91,8 @@
         "/media/projects/aseanlabs-3.webp",
         "/media/projects/aseanlabs-4.webp"
       ],
-      "eink": "/media/eink/aseanlabs.png"
+      "eink": "/media/eink/aseanlabs.png",
+      "motion": "/media/motion/aseanlabs"
     },
     {
       "id": "kairma",

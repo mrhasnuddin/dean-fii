@@ -2,11 +2,11 @@
 // Record a scripted walk through a live landing page and encode it as a muted looping clip (docs/device-design.md §41).
 // Headless Chrome over the DevTools protocol: it scrolls the page section by section, holds on each, moves the pointer so
 // hover and pointer effects run, and comes back to the top so the loop is seamless. Frames are the browser's own screencast;
-// ffmpeg turns them into one MP4 (H.264, plays everywhere) plus a WebP poster.
+// ffmpeg turns them into one MP4 (H.264, plays everywhere), a smaller -sm.mp4 (960 wide, for phones) and a WebP poster.
 //
-//   node scripts/media/walkthrough.mjs <url> <id> [--shot out.png] [--w 1280] [--h 800] [--fps 30] [--wait 3500] [--click "skip to os"] [--stops 7] [--scroll-to "the keep"]
+//   node scripts/media/walkthrough.mjs <url> <id> [--shot out.png] [--w 1280] [--h 800] [--fps 30] [--wait 3500] [--click "skip to os"] [--stops 7] [--scroll-to "the keep"] [--wheel 11 --hold 1500] [--crf 30]
 //
-// Outputs (public/media/motion/): <id>.mp4, <id>-poster.webp. With --shot it only saves one screenshot (--scroll-to first
+// Outputs (public/media/motion/): <id>.mp4, <id>-sm.mp4, <id>-poster.webp. With --shot it only saves one screenshot (--scroll-to first
 // scrolls to the first heading whose text matches).
 // Needs Chrome (CHROME=path to override) and ffmpeg on PATH. Windows, macOS and Linux.
 import { spawn, spawnSync } from 'node:child_process';
@@ -19,8 +19,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const args = process.argv.slice(2);
 const [url, id] = args.filter((a, i) => !a.startsWith('--') && !(args[i - 1] || '').startsWith('--'));
 const opt = (k, d) => (args.includes(`--${k}`) ? args[args.indexOf(`--${k}`) + 1] : d);
-const CLICK = opt('click', ''), STOPS = +opt('stops', 7), SCROLL_TO = opt('scroll-to', '');
-const W = +opt('w', 1280), H = +opt('h', 800), FPS = +opt('fps', 30), SETTLE = +opt('wait', 3500), SHOT = opt('shot', '');
+const WHEEL = +opt('wheel', 0), HOLD = +opt('hold', 1500), CRF = opt('crf', '30'), CLICK = opt('click', ''), STOPS = +opt('stops', 7), SCROLL_TO = opt('scroll-to', '');
+const W = +opt('w', 1280), H = +opt('h', 800), FPS = +opt('fps', 24), SETTLE = +opt('wait', 3500), SHOT = opt('shot', '');
 if (!url || !id) {
   console.error('usage: node scripts/media/walkthrough.mjs <url> <id> [--shot out.png]');
   process.exit(1);
@@ -106,7 +106,18 @@ try {
       frames.push({ t: p.metadata.timestamp, data: p.data });
     });
     await send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: W, maxHeight: H, everyNthFrame: 1 });
-    const stops = await evaluate(script);
+    // Pages that take over scrolling (a fixed-height document that changes section on wheel input) get real wheel
+    // events instead: one notch per section, held, then back up faster so the loop is seamless.
+    const wheel = (dy) => send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: W / 2, y: H / 2, deltaX: 0, deltaY: dy });
+    const wheelThrough = async () => {
+      await sleep(900);
+      for (let i = 0; i < WHEEL; i++) { await wheel(120); await sleep(HOLD); }
+      await sleep(400);
+      for (let i = 0; i < WHEEL; i++) { await wheel(-120); await sleep(450); }
+      await sleep(900);
+      return WHEEL;
+    };
+    const stops = WHEEL ? await wheelThrough() : await evaluate(script);
     await send('Page.stopScreencast');
     drifting = false;
     const span = frames[frames.length - 1].t - frames[0].t;
@@ -123,9 +134,10 @@ try {
     writeFileSync(join(work, 'list.txt'), lines.join('\n'));
     const out = join(ROOT, 'public', 'media', 'motion');
     mkdirSync(out, { recursive: true });
-    const base = ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', join(work, 'list.txt'), '-vf', `fps=${FPS},scale=${W}:${H},format=yuv420p`, '-an'];
-    const run = (a) => { const r = spawnSync('ffmpeg', [...base, ...a], { stdio: 'inherit' }); if (r.status) throw new Error('ffmpeg failed'); };
-    run(['-c:v', 'libx264', '-crf', '28', '-preset', 'slow', '-movflags', '+faststart', join(out, `${id}.mp4`)]);
+    const base = ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', join(work, 'list.txt'), '-an'];
+    const run = (a, size = `${W}:${H}`) => { const r = spawnSync('ffmpeg', [...base, '-vf', `fps=${FPS},scale=${size},format=yuv420p`, ...a], { stdio: 'inherit' }); if (r.status) throw new Error('ffmpeg failed'); };
+    run(['-c:v', 'libx264', '-crf', CRF, '-preset', 'slow', '-movflags', '+faststart', join(out, `${id}.mp4`)]);
+    run(['-c:v', 'libx264', '-crf', CRF, '-preset', 'slow', '-movflags', '+faststart', join(out, `${id}-sm.mp4`)], '960:600');
     spawnSync('ffmpeg', ['-v', 'error', '-y', '-i', join(work, 'f00000.jpg'), '-quality', '82', join(out, `${id}-poster.webp`)], { stdio: 'inherit' });
     console.log('wrote', out);
   }
