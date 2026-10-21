@@ -234,10 +234,10 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement, stu
     const top = f.portrait ? (phone ? 84 : 98) : 72;
     const bottom = f.h - (f.portrait ? (phone ? 190 : 200) : 20);
     const zScreen = Math.min(((bottom - top) * 0.98) / (SCREEN.h * f.pxW), ((f.w - (f.portrait ? 24 : 80)) * (f.portrait ? 0.96 : 0.9)) / (SCREEN.w * f.pxW));
-    const zWallet = Math.min((f.w - 16) / (1.12 * f.pxW), ((bottom - top) * 0.98) / ((f.portrait ? 1.51 : 1.72) * f.pxW));
+    const zWallet = Math.min((f.w - 16) / (1.12 * f.pxW), ((bottom - top) * 0.98) / ((f.portrait ? 1.51 : 1.95) * f.pxW)); // desktop: the body and keys (1.72 W) plus the memory card and plug that hang below it
     focusZ = THREE.MathUtils.clamp(Math.min(zScreen, zWallet), 1, f.portrait ? 1.75 : 1.45);
     const below = (top + bottom) / 2 - f.h / 2; // px the area's centre is below the view's
-    const aimY = f.dy + (f.portrait ? 0.095 : -0.01); // the middle of the span, in W from the wallet's centre
+    const aimY = f.dy + (f.portrait ? 0.095 : -0.125); // the middle of the span, in W from the wallet's centre
     focusDy = aimY + below / (focusZ * f.pxW) - camBase.y;
   }
   function applyCamera() {
