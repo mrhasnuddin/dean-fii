@@ -141,6 +141,49 @@
       "motion": "/media/motion/kairma"
     },
     {
+      "id": "flowfi",
+      "title": "FlowFi",
+      "category": "Treasury Protocol",
+      "roles": [
+        "UI/UX Designer",
+        "Frontend Developer",
+        "Creative Designer"
+      ],
+      "tools": [
+        "claude-code",
+        "figma"
+      ],
+      "stack": [
+        "Vite",
+        "Vanilla JS",
+        "GSAP"
+      ],
+      "tags": [
+        "DAO",
+        "Protocol Site"
+      ],
+      "status": "Shipped + Live",
+      "link": "https://www.flowfidao.com/",
+      "description": "FlowFi is a community-governed treasury protocol on ENI. I designed and built the site on my own: I proposed a theme and mood that suit the business, then made the custom SVGs, the design system, and the animation and motion.",
+      "flow": {
+        "steps": [
+          "Ideation",
+          "Moodboard",
+          "Build",
+          "Iteration"
+        ],
+        "text": "I proposed the design direction, then polished and adjusted it to the client's requests."
+      },
+      "images": [
+        "/media/projects/flowfi-1.webp",
+        "/media/projects/flowfi-2.webp",
+        "/media/projects/flowfi-3.webp",
+        "/media/projects/flowfi-4.webp"
+      ],
+      "eink": "/media/eink/flowfi.png",
+      "motion": "/media/motion/flowfi"
+    },
+    {
       "id": "paygo",
       "title": "PayGo",
       "category": "Machine-Native Payments",
@@ -366,47 +409,6 @@
         "/media/projects/nikola-4.webp"
       ],
       "eink": "/media/eink/nikola.png"
-    },
-    {
-      "id": "flowfi",
-      "title": "FlowFi",
-      "category": "Treasury Protocol",
-      "roles": [
-        "UI/UX Designer",
-        "Frontend Developer",
-        "Creative Designer"
-      ],
-      "tools": [
-        "gemini"
-      ],
-      "stack": [
-        "Vite",
-        "Tailwind CSS",
-        "Vanilla JS"
-      ],
-      "tags": [
-        "DAO",
-        "Protocol Site"
-      ],
-      "status": "Shipped + Live",
-      "link": "https://www.flowfidao.com/",
-      "description": "FlowFi is a community-governed treasury protocol on ENI. I designed and built the site on my own: I proposed a theme and mood that suit the business, then made the custom SVGs, the design system, and the animation and motion.",
-      "flow": {
-        "steps": [
-          "Ideation",
-          "Moodboard",
-          "Build",
-          "Iteration"
-        ],
-        "text": "I proposed the design direction, then polished and adjusted it to the client's requests."
-      },
-      "images": [
-        "/media/projects/flowfi-1.webp",
-        "/media/projects/flowfi-2.webp",
-        "/media/projects/flowfi-3.webp",
-        "/media/projects/flowfi-4.webp"
-      ],
-      "eink": "/media/eink/flowfi.png"
     },
     {
       "id": "pusc",
