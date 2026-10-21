@@ -126,7 +126,7 @@ export function createDetail(): Detail {
         <h3 class="dt-h3">Tech stack</h3><ul class="dt-tools">${p.stack.map((t) => `<li class="dt-tool dt-stack">${esc(t)}</li>`).join('')}</ul>${
           p.chain ? `<h3 class="dt-h3">Network</h3><ul class="dt-tools"><li class="dt-tool dt-stack"><img src="${p.chain.logo}" alt="" width="18" height="18"><span>${esc(p.chain.name)}</span></li></ul>` : ''
         }${
-          p.original ? `<h3 class="dt-h3">Redesigned from</h3><a class="dt-orig" href="${p.original.link}" target="_blank" rel="noopener noreferrer">${esc(p.original.title)} <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>` : ''
+          p.original ? `<h3 class="dt-h3">Production app</h3><a class="dt-orig" href="${p.original.link}" target="_blank" rel="noopener noreferrer">${esc(p.original.title)} <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>` : ''
         }`;
       actions = `<a class="dt-cta" href="${p.link}" target="_blank" rel="noopener noreferrer">Visit site <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`;
       pager = group.length > 1 ? pagerHtml(i, projects.length, 'project') : '';
