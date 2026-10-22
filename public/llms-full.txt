@@ -1,0 +1,172 @@
+# Dean Studio, in full
+
+> AI-native designer who also ships the frontend, with no handoff between design and build. UI/UX and creative design that make Web3 products easy to understand.
+
+Dean: AI-native designer who also ships the frontend, with no handoff between design and build: UI/UX and creative design for user interfaces, landing pages and frontend builds that are easy to understand. Web3 and blockchain speaker, presenter and educator.
+
+Services: UI/UX design, Frontend development, Creative design, Web3 product design.
+Knows about: AI-native design, UI/UX design, Frontend development, Creative design, Web3, Blockchain, Public speaking.
+Profile: https://www.linkedin.com/in/hasnuddin/
+Site: https://www.dean-fi.my/
+
+## Works
+
+### ENI Network (Web)
+- Category: Modular L1 Blockchain
+- Live: https://eni.top/
+- Roles: UI/UX Designer, Frontend Developer
+- Tools: figma, gemini
+- Tech stack: Next.js, React, Tailwind CSS, Framer Motion, TanStack Query, viem
+- Process: Ideation > Wireframes > MVPs > Iteration > Builds v1 to v3 > Iteration > Handover
+ENI is a modular Layer 1 blockchain built for commercial adoption. I joined a team of designers, a PM and developers as a UI/UX designer and frontend developer, and designed and built part of the site's pages, including the mobile versions of several of them.
+I was in the early team, from the first ideas to the third version of the build, before the project passed to another team. Designers, a PM and developers worked it out together through wireframes and MVPs, and every design decision answered to two things: the client's requirements and the conventions of Web3.
+
+### ASEAN Labs (Web)
+- Category: Web3 Execution Layer
+- Live: https://aseanlabs.io/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, gemini, figma
+- Tech stack: Next.js, React, Tailwind CSS, WebGL
+- Process: Ideation > Moodboard > MVPs > Build > Iteration
+ASEAN Labs helps Web3 projects build on ENI across Southeast Asia. I made the site on my own from start to finish: custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and the motion and micro-interactions throughout.
+I gathered ideas and references from the Web3 incubator space, then set the direction: a site that stands apart through quiet micro-interactions and motion. MVPs settled the look before the build, and iteration tuned it after.
+
+### Kairma (Web)
+- Category: AI Workforce Platform
+- Live: https://www.kairma.ai/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, gemini
+- Tech stack: Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis
+- Process: Ideation > Moodboard > MVPs > Iteration > Build > Iteration
+Kairma deploys AI employees inside cross-border operations, with brand data kept local on a sealed, on-premise runtime. I designed and built the site on my own. Its model router section pulls live AI model rankings from the OpenRouter API, each part of the platform is shown as an isometric illustration, and the page moves with smooth scrolling. I used AI-assisted tools for the imagery.
+The client came with the idea and the direction. I ran the consultations, then refined the UI/UX and technical decisions through MVPs and two rounds of iteration, one before the build and one after it.
+
+### Stashcube (Web)
+- Category: Curated Library
+- Live: https://stashcube.vercel.app/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, figma
+- Tech stack: Next.js, React, Turbopack, Tailwind CSS
+- Process: Ideation > Moodboard > Build
+Stashcube is a curated library for AI-native designers and builders: UI libraries, 3D tools, icons, fonts, inspiration and AI skills, in one searchable place. I built it end to end with my own ideas.
+It started as my own idea. I collected references in a moodboard, then built it end to end on my own.
+
+### FlowFi (Web)
+- Category: Treasury Protocol
+- Live: https://www.flowfidao.com/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, figma
+- Tech stack: Vite, Vanilla JS, GSAP
+- Process: Ideation > Moodboard > Build > Iteration
+FlowFi is a community-governed treasury protocol on ENI. I designed and built the site on my own: I proposed a theme and mood that suit the business, then made the custom SVGs, the design system, and the animation and motion.
+I proposed the design direction, then polished and adjusted it to the client's requests.
+
+### PayGo (Web)
+- Category: Machine-Native Payments
+- Live: https://www.paygo.ac/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: gemini
+- Tech stack: React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion
+- Process: Ideation > Moodboard > Build > Iteration > Handover
+PayGo lets APIs and AI agents pay per request through x402 on ENI Mainnet. I designed and built the developer site on my own, put together from components of a UI library, with an interactive protocol walkthrough that explains the payment flow.
+The client came with the idea and the direction, and I consulted on and refined the UI/UX and technical decisions. Once we agreed on the result, I handed the site over to the client's in-house team to run.
+
+### OpenCrew (Web)
+- Category: Global Web3 & AI Team
+- Live: https://open-crew.vercel.app/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, figma
+- Tech stack: Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL
+- Process: Ideation > Moodboard > MVPs > Build > Iteration > Maintenance
+OpenCrew is a global team and growth partner for Web3, AI and new finance projects. I designed and built the site on my own. Its client stories come from projects we incubated, and its photos are real, taken at my own offline events; they carry much of the pitch. The illustrations are custom SVGs drawn in Figma.
+I set the design direction from the business OpenCrew is in and from the client's own requests, combining and refining the two. After launch I keep maintaining it.
+
+### Fortuna HK (Web)
+- Category: Professional Services
+- Live: https://www.fortunahkholding.com/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: figma, gemini, photoshop
+- Tech stack: Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis
+- Process: Ideation > Moodboard > MVPs > Build > Iteration
+Fortuna HK provides cross-border education, wealth management and corporate services. I designed and built the multilingual site on my own, starting by helping the client choose a theme and mood that suit the business. The world clock in the footer was made at the client's request, and the imagery is AI-assisted.
+The client set the design direction. I suggested and refined what it needed, based on their requirements and the nature of the business.
+
+### Nikola (Web)
+- Category: AI Coordination Layer
+- Live: https://www.nikola.network/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: gemini
+- Tech stack: React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion
+- Process: Ideation > Moodboard > Build
+Nikola coordinates AI governance, protocol structure and capital for projects on ENI. I designed and built the site on my own, after helping the client choose a theme and mood that fit the business. Its effects and shaders come from a UI component library.
+I set the design direction and the client agreed to it. Their guidelines and documentation made the build straightforward.
+
+### PUSC (Web)
+- Category: Algorithmic Stablecoin
+- Live: https://pusc-liard.vercel.app/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: gemini, figma, photoshop
+- Tech stack: React, Vite, Tailwind CSS, Framer Motion
+- Process: Ideation > Build > Handover
+PUSC is a DAO-governed stablecoin protocol. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets. It is a microsite for PayGo.
+A microsite for PayGo with the same mood and its own variation, so there was little to settle before I built it and handed it over.
+
+### NARO (Mobile app)
+- Category: On-chain Asset Launchpad
+- Live: https://naro-mu.vercel.app/
+- Redesigned from: https://naroradar.com/
+- Roles: UI/UX Designer, Frontend Developer
+- Tools: codex, figma
+- Tech stack: React, Vite, Three.js, ethers.js
+- Network: BSC Testnet
+- Process: Prototype > Build > Iteration > Handover
+NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version built within BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.
+I mapped out the prototype flows, built the mobile-first interface on BNB Testnet, iterated on the interactions and test states, then handed over the build.
+
+## Events
+
+### Selangor AI & Semiconductor Summit 2026
+- Where: Kuala Lumpur
+- Role: Speaker
+- Links: MyDAC Malaysia https://www.mydac.org.my/en, LEJIEND https://lejiend.com/
+At the Selangor AI & Semiconductor Summit, I spoke on the Fire Stage. While the big talk was about chips and infrastructure, I focused on the human side: getting everyday Malaysians ready for the shift. I presented talent building through the MyDAC Malaysia and LEJIEND joint venture, which runs free community learning almost every week, online and at Outreach Coffee in Bukit Bintang.
+
+### ENI DeFi Week World Tour
+- Where: Changsha
+- Role: Speaker
+At the opening stop of the ENI DeFi Week World Tour, I introduced the ENI ecosystem and its vision for DeFi collaboration. Organised by ASEAN Labs, the Changsha event brought that conversation to a mainland Chinese audience, with my presentation delivered in Mandarin and English.
+
+### Web3 + RWA Global Infrastructure Summit
+- Where: Hangzhou
+- Role: Delegate
+I represented ENI at the Web3 and RWA Global Digital Infrastructure Summit in Hangzhou, connecting with builders and institutions working on real-world assets. The visit brought the ecosystem into conversations across the summit, from the signing wall to the main hall.
+
+### Monster GameFi Soft Launch
+- Where: Bali
+- Role: Host & Keynote
+I hosted the Monster GameFi soft launch under the Bali night sky, welcoming partners from HODL and Kripto 101. As host and keynote presenter, I introduced the play-to-earn vision to the community gathering for launch night.
+
+### Chain of Trust
+- Where: Kuala Lumpur
+- Role: Presenter
+At an evening hosted with CCACC and Fableration, I explored trust as a foundation for Web3. A live NOVA demonstration took the audience through contracts, mining mechanics and NFT minting, one step at a time.
+
+### Christmas Crypto Gala
+- Where: Kuala Lumpur
+- Role: Panelist
+A year-end conversation about meme markets, PayFi and Malaysia’s digital initiatives. I joined the Christmas Crypto Gala panel to discuss what could drive the next wave of crypto activity with a room full of local community members.
+
+### PayGo × ENI Community Night
+- Where: Kuala Lumpur
+- Role: Presenter
+An evening with the PayGo and ENI communities, introducing pay-as-you-go payments on ENI Mainnet to local builders. The session closed with a group photograph of the people bringing those ideas into practice.
+
+### NOVA × MEXC Builders Session
+- Where: Selangor
+- Role: Speaker
+I presented a walkthrough of offline activations and online campaigns, showing how repeated, consistent community work helps build a Web3 brand that people recognise and trust.
+
+### Blockchain Evolution 2025
+- Where: Selangor
+- Role: Speaker
+At PPAS Bangi, I spoke with builders and newcomers about crypto, PayFi and GameFi heading into 2025. The community session focused on practical routes to adoption and what those technologies could mean for the local Web3 scene.

@@ -1,0 +1,36 @@
+# Dean Studio
+
+> AI-native designer who also ships the frontend, with no handoff between design and build. UI/UX and creative design that make Web3 products easy to understand.
+
+Dean Studio is the portfolio of Dean, an AI-native UI/UX designer and frontend developer. The site is an interactive 3D hardware-wallet-style device: its screen holds the works, events, about and contact; a plain List view shows the same content as a normal page. Site: https://www.dean-fi.my/
+
+## Works (web)
+- [ENI Network](https://eni.top/): Modular L1 Blockchain. Next.js, React, Tailwind CSS, Framer Motion, TanStack Query, viem.
+- [ASEAN Labs](https://aseanlabs.io/): Web3 Execution Layer. Next.js, React, Tailwind CSS, WebGL.
+- [Kairma](https://www.kairma.ai/): AI Workforce Platform. Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis.
+- [Stashcube](https://stashcube.vercel.app/): Curated Library. Next.js, React, Turbopack, Tailwind CSS.
+- [FlowFi](https://www.flowfidao.com/): Treasury Protocol. Vite, Vanilla JS, GSAP.
+- [PayGo](https://www.paygo.ac/): Machine-Native Payments. React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion.
+- [OpenCrew](https://open-crew.vercel.app/): Global Web3 & AI Team. Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL.
+- [Fortuna HK](https://www.fortunahkholding.com/): Professional Services. Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis.
+- [Nikola](https://www.nikola.network/): AI Coordination Layer. React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion.
+- [PUSC](https://pusc-liard.vercel.app/): Algorithmic Stablecoin. React, Vite, Tailwind CSS, Framer Motion.
+
+## Mobile apps
+- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. A redesign of https://naroradar.com/; runs on BSC Testnet.
+
+## Events
+- Selangor AI & Semiconductor Summit 2026 (Kuala Lumpur, Speaker): At the Selangor AI & Semiconductor Summit, I spoke on the Fire Stage.
+- ENI DeFi Week World Tour (Changsha, Speaker): At the opening stop of the ENI DeFi Week World Tour, I introduced the ENI ecosystem and its vision for DeFi collaboration.
+- Web3 + RWA Global Infrastructure Summit (Hangzhou, Delegate): I represented ENI at the Web3 and RWA Global Digital Infrastructure Summit in Hangzhou, connecting with builders and institutions working on real-world assets.
+- Monster GameFi Soft Launch (Bali, Host & Keynote): I hosted the Monster GameFi soft launch under the Bali night sky, welcoming partners from HODL and Kripto 101.
+- Chain of Trust (Kuala Lumpur, Presenter): At an evening hosted with CCACC and Fableration, I explored trust as a foundation for Web3.
+- Christmas Crypto Gala (Kuala Lumpur, Panelist): A year-end conversation about meme markets, PayFi and Malaysia’s digital initiatives.
+- PayGo × ENI Community Night (Kuala Lumpur, Presenter): An evening with the PayGo and ENI communities, introducing pay-as-you-go payments on ENI Mainnet to local builders.
+- NOVA × MEXC Builders Session (Selangor, Speaker): I presented a walkthrough of offline activations and online campaigns, showing how repeated, consistent community work helps build a Web3 brand that people recognise and trust..
+- Blockchain Evolution 2025 (Selangor, Speaker): At PPAS Bangi, I spoke with builders and newcomers about crypto, PayFi and GameFi heading into 2025.
+
+## More
+- [Full detail of every work and event](https://www.dean-fi.my/llms-full.txt)
+- [LinkedIn](https://www.linkedin.com/in/hasnuddin/)
+- Contact: through the Get in touch section of https://www.dean-fi.my/

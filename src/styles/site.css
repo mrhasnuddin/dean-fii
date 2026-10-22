@@ -66,8 +66,14 @@ html.lenis, html.lenis body { height: auto; }
   .share:hover { color: var(--champagne-light); }
 }
 
-/* ---------- bottom-right: Device / List switch, then Sound and Motion as animated icons ---------- */
+/* ---------- Device / List switch and the eye: one quiet pill in the header cluster (phones: beside the brand, below) ---------- */
 .prefs { position: fixed; z-index: 10; right: var(--gutter); bottom: 22px; display: flex; align-items: center; gap: 10px; }
+/* Wider than a phone: the pill sits between Share and the main action, outlined and muted so "Work with Dean" stays the one filled thing. */
+@media (min-width: 761px) {
+  .prefs { position: static; height: 44px; gap: 2px; padding: 0 5px 0 14px; border: 1px solid var(--line); border-radius: 999px; background: rgb(22 23 28 / 0.6); backdrop-filter: blur(10px); }
+  .prefs .icon-btn { width: 36px; height: 36px; border: 0; background: none; backdrop-filter: none; }
+  .header-cta { gap: 18px; }
+}
 .view-switch { display: inline-flex; align-items: center; gap: 10px; background: none; border: 0; padding: 8px 4px; color: var(--muted); font: 500 12px/1 var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
 .vs-track { position: relative; width: 44px; height: 24px; border-radius: 999px; border: 1px solid var(--champagne); background: rgb(228 207 159 / 0.08); }
 .vs-track i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--champagne-light); transition: transform 200ms var(--ease-out); }
@@ -95,6 +101,14 @@ html.motion-off .vol-pill.open { transition: opacity 120ms ease, visibility 0s; 
 .vol-mute:focus-visible { outline: 1.5px solid var(--champagne); outline-offset: 1px; }
 .volume-range { width: 84px; height: 40px; margin: 0; accent-color: var(--champagne); }
 .volume-range:focus-visible { outline: 1.5px solid var(--champagne); outline-offset: 2px; border-radius: 999px; }
+/* Wider than a phone, the tray is a small vertical island hanging under the pill, its right edges level with it:
+   the volume slider upright, then Sound, Music and Motion one under another. */
+.prefs-wrap { position: relative; }
+@media (min-width: 761px) {
+  .settings-tray { position: absolute; top: calc(100% + 10px); right: 0; bottom: auto; left: auto; flex-direction: column; gap: 6px; padding: 12px 8px; border-radius: 28px; }
+  .settings-tray .icon-btn { width: 38px; height: 38px; }
+  .settings-tray .volume-range { writing-mode: vertical-lr; direction: rtl; width: 38px; height: 108px; }
+}
 /* Focus (docs §37): in the Console the camera is on the screen, and the copy goes quiet. Out of sight but still in the
    page (for screen readers, and the keyboard brings the tab bar and the kind pills back into view): everything the
    screen already says, which is the keyboard hints, the Web / Apps / Motion pills and the one-line summaries of Works
