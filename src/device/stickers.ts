@@ -40,6 +40,7 @@ export const STICKERS: StickerSpec[] = [
   { src: '/OC.svg', name: 'Open Crew', url: 'https://open-crew.vercel.app/', width: 0.36, tilt: 0.3 },
   { src: '/aseanlabs.svg', name: 'ASEAN Labs', url: 'https://aseanlabs.io/', width: 0.25, tilt: 0.45 },
   { src: '/mydac.svg', name: 'MyDAC', url: 'https://www.mydac.org.my/', width: 0.19, tilt: 0.5 },
+  { src: '/lejiend.png', name: 'LEJIEND', url: 'https://lejiend.com/', width: 0.32, tilt: 0.35 },
 ];
 
 const BODY_PAD = 0.012; // vinyl around the print (W)
