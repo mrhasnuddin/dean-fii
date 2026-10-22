@@ -8,7 +8,10 @@ export type Project = (typeof data.projects)[number] & {
   /** A redesign: the app it was redesigned from. */
   original?: { title: string; link: string };
 };
-export type SpeakingEvent = (typeof data.events)[number];
+export type SpeakingEvent = (typeof data.events)[number] & {
+  /** Organisations behind the event or the talk: their official sites, shown as a tribute under the description. */
+  links?: { title: string; link: string }[];
+};
 
 export const projects: Project[] = data.projects;
 /** Works › Mobile apps. */

@@ -137,7 +137,9 @@ export function createDetail(): Detail {
       const e = events[i];
       head = `<p class="dt-eyebrow">${esc(e.place)} · <strong>${esc(countries[e.country])}</strong></p>
         <h2 id="detail-title">${esc(e.title)}</h2><p class="dt-roles">${esc(e.role)}</p>`;
-      body = `${gallery(e.images, e.title)}<p class="dt-desc">${esc(e.description)}</p>`;
+      body = `${gallery(e.images, e.title)}<p class="dt-desc">${esc(e.description)}</p>${
+        e.links ? `<h3 class="dt-h3">The joint venture</h3><div class="dt-linkrow">${e.links.map((l) => `<a class="dt-orig" href="${l.link}" target="_blank" rel="noopener noreferrer">${esc(l.title)} <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`).join('')}</div>` : ''
+      }`;
       actions = `<button type="button" class="dt-cta" data-invite>Invite Dean</button>`;
       pager = pagerHtml(i, events.length, 'event');
     } else {

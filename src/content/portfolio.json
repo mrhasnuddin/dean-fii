@@ -459,6 +459,30 @@
   ],
   "events": [
     {
+      "id": "aisem-selangor",
+      "title": "Selangor AI & Semiconductor Summit 2026",
+      "role": "Speaker",
+      "place": "Kuala Lumpur",
+      "country": "MY",
+      "description": "At the Selangor AI & Semiconductor Summit, I spoke on the Fire Stage. While the big talk was about chips and infrastructure, I focused on the human side: getting everyday Malaysians ready for the shift. I presented talent building through the MyDAC Malaysia and LEJIEND joint venture, which runs free community learning almost every week, online and at Outreach Coffee in Bukit Bintang.",
+      "images": [
+        "/media/chronicle/KL7.webp",
+        "/media/chronicle/KL8.webp",
+        "/media/chronicle/KL9.webp"
+      ],
+      "eink": "/media/eink/aisem-selangor.png",
+      "links": [
+        {
+          "title": "MyDAC Malaysia",
+          "link": "https://www.mydac.org.my/en"
+        },
+        {
+          "title": "LEJIEND",
+          "link": "https://lejiend.com/"
+        }
+      ]
+    },
+    {
       "id": "changsha",
       "title": "ENI DeFi Week World Tour",
       "role": "Speaker",
