@@ -31,7 +31,6 @@ export function buildListView(root: HTMLElement): void {
   const tools = profile.toolGroups.flatMap((g) => g.tools);
   root.innerHTML = `
     <header class="lv-head">
-      <p class="lv-kicker">Dean Studio</p>
       <h1 class="lv-title"><span class="h-sans">Dean</span> <span class="h-serif">Studio.</span></h1>
       <p class="lv-lede">AI-native designer who also ships the frontend, so there’s no handoff between design and build. UI/UX and creative design that make complex Web3 products easy to understand.</p>
       <nav class="lv-nav" aria-label="Sections">
