@@ -677,3 +677,11 @@ On screens wider than a phone the Device / List switch and the eye leave the bot
 In the List view the eye opens the settings tray (the volume, Sound, Music and Motion). It is now a small island that hangs under the pill with its right edge level with the pill's: a vertical volume slider (`writing-mode: vertical-lr`, top is loudest) and the three icons one under another. The `.prefs-wrap` element holds the pill and the tray so the tray can be placed under the pill without measuring; on phones the tray keeps its old horizontal strip under the header. The eye's tutorial callouts on the device are unchanged (they are anchored to the device's parts and stay clear of the header).
 
 One slip while building it, kept here because it is easy to repeat: the first version put the tray's new position before its base rule in the stylesheet, so the base `bottom` still applied and stretched the tray into a 750 px capsule. Overrides for the tray go after `.settings-tray`.
+
+## 49. Clearer icons for Sound, Music and Motion (2026-10-22, Dean's request)
+
+The settings island's icons were an equalizer, a spinning record and a bouncing ball: charming, but not obvious. They are now three stroke icons in one style (22 px, champagne when on, muted when off), all inline SVG in `index.html` and styled in `site.css`:
+- **Sound effects: a sound wave.** A sine wave that scrolls while sound is on (a mask fades its ends) and speeds up for a moment as each sound plays (`main.ts` still adds `.is-playing`); off, it flattens to a dashed line.
+- **Music: a music note**, static, struck through when off.
+- **Motion: a dot with three speed lines.** The lines stream behind the dot while motion is on, and stand still and dim when it is off. Chosen over a bouncing ball (reads as "playful", not "motion"), sparkles (reads as "effects" or AI) and a play button (reads as media). Easy to swap if it does not land: it is one `<svg class="ico ico-motion">`.
+Under reduced motion (`html.motion-off`) the wave and the lines stop. The old equalizer, record and ball styles are gone.

@@ -183,50 +183,25 @@ html.is-list .view-chips { display: none; }
 .icon-btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: rgb(236 232 223 / 0.05); color: var(--muted); cursor: pointer; backdrop-filter: blur(10px); transition: border-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out); }
 .icon-btn[aria-pressed='true'] { border-color: var(--champagne); color: var(--champagne); }
 .icon-btn:active, .view-switch:active .vs-track { transform: scale(0.95); }
-/* Sound: a level meter. On, the bars breathe slowly; while a sound is actually playing they jump
-   (main.ts adds .is-playing for a moment per sound), so the liveliness means something. Off: flat. */
-.eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
-.eq i { width: 3px; height: 14px; border-radius: 2px; background: currentColor; transform-origin: bottom; transform: scaleY(0.18); transition: transform 200ms var(--ease-out); }
-.icon-btn[aria-pressed='true'] .eq i { animation: eq 2.6s ease-in-out infinite alternate; }
-.icon-btn[aria-pressed='true'] .eq i:nth-child(2) { animation-duration: 2.1s; animation-delay: -0.7s; }
-.icon-btn[aria-pressed='true'] .eq i:nth-child(3) { animation-duration: 3s; animation-delay: -1.4s; }
-.icon-btn[aria-pressed='true'] .eq i:nth-child(4) { animation-duration: 2.3s; animation-delay: -0.4s; }
-.icon-btn.is-playing[aria-pressed='true'] .eq i { animation-name: eq-live; animation-duration: 0.32s; }
-.icon-btn.is-playing[aria-pressed='true'] .eq i:nth-child(2) { animation-duration: 0.26s; }
-.icon-btn.is-playing[aria-pressed='true'] .eq i:nth-child(3) { animation-duration: 0.38s; }
-@keyframes eq { from { transform: scaleY(0.5); } to { transform: scaleY(0.9); } }
-@keyframes eq-live { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
-/* Motion: a ball that bounces off a floor line and squashes as it lands (straight up and down, so it
-   can't be mistaken for the spinning record). It drops and rests on the floor when motion is off.
-   Transforms only; the shadow widens and darkens as the ball comes down. */
-.bounce { width: 22px; height: 22px; overflow: visible; }
-.bounce .b-ball { fill: currentColor; transform-box: fill-box; transform-origin: 50% 100%; }
-.bounce .b-floor { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; opacity: 0.55; }
-.bounce .b-shadow { fill: currentColor; opacity: 0.3; transform-box: fill-box; transform-origin: 50% 50%; }
-.icon-btn[aria-pressed='true'] .b-ball { animation: bounce 1.5s infinite; }
-.icon-btn[aria-pressed='true'] .b-shadow { animation: bounce-shadow 1.5s infinite; }
-.icon-btn[aria-pressed='false'] .b-floor { stroke-dasharray: 2 3; }
-@keyframes bounce {
-  0%, 100% { transform: translateY(-9px); animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.4); }
-  45% { transform: translateY(0) scale(1, 1); }
-  50% { transform: translateY(0) scale(1.22, 0.74); animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1); }
-  57% { transform: translateY(-1.2px) scale(0.94, 1.06); animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1); }
-}
-@keyframes bounce-shadow {
-  0%, 100% { transform: scale(0.5); opacity: 0.12; animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.4); }
-  45%, 50% { transform: scale(1.15); opacity: 0.4; animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1); }
-}
-/* Music: a record. It spins while music is on (slowly: 4 s a turn), and rests when off. The arc on
-   the label is what makes the turn visible. */
-.vinyl { position: relative; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; background: color-mix(in srgb, currentColor 22%, transparent); }
-.vinyl::before { content: ''; position: absolute; inset: 1.5px; border-radius: 50%; border: 1.5px solid currentColor; border-right-color: transparent; border-bottom-color: transparent; border-left-color: transparent; opacity: 0.8; }
-.vinyl i { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: currentColor; }
-.icon-btn[aria-pressed='true'] .vinyl { animation: spin 4s linear infinite; }
-@keyframes spin { to { transform: rotate(1turn); } }
+/* The three settings icons share a 22 px stroke style. Sound: a sound wave that scrolls while sound is on (faster, for a
+   moment, as each sound plays: main.ts adds .is-playing) and flattens to a line when it is off. Music: a note, struck
+   through when off. Motion: a dot with speed lines that stream behind it, and stand still when motion is off. */
+.ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ico-wave .w-flat { opacity: 0; }
+.ico-wave .w-wave { animation: wave-scroll 2.4s linear infinite; }
+.icon-btn.is-playing .w-wave { animation-duration: 0.7s; }
+.icon-btn[aria-pressed='false'] .w-flat { opacity: 0.7; stroke-dasharray: 2 3; }
+.icon-btn[aria-pressed='false'] .w-wave { opacity: 0; animation: none; }
+@keyframes wave-scroll { to { transform: translateX(12px); } }
+.ico-music .m-off { opacity: 0; }
+.icon-btn[aria-pressed='false'] .m-off { opacity: 1; }
+.ico-motion .mo-dot { fill: currentColor; stroke: none; }
+.ico-motion .mo-lines path { stroke-dasharray: 3 3; animation: speed 0.7s linear infinite; }
+.icon-btn[aria-pressed='false'] .mo-lines { opacity: 0.35; }
+.icon-btn[aria-pressed='false'] .mo-lines path { animation: none; stroke-dasharray: none; }
+@keyframes speed { to { stroke-dashoffset: -6; } }
 /* Still icons when motion is off or reduced: the state reads from colour, fill and bar height. */
-html.motion-off .icon-btn .eq i, html.motion-off .icon-btn .b-ball, html.motion-off .icon-btn .b-shadow, html.motion-off .icon-btn .vinyl { animation: none; }
-html.motion-off .icon-btn[aria-pressed='true'] .eq i:nth-child(odd) { transform: scaleY(0.6); }
-html.motion-off .icon-btn[aria-pressed='true'] .eq i:nth-child(even) { transform: scaleY(1); }
+html.motion-off .icon-btn .w-wave, html.motion-off .icon-btn .mo-lines path { animation: none; }
 @media (hover: hover) and (pointer: fine) {
   .icon-btn:hover { background: rgb(236 232 223 / 0.1); }
   .view-switch:hover { color: var(--ink-light); }
