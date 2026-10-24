@@ -5,6 +5,7 @@ import './listView.css';
 import { FLAG_SVG } from '../brand/logo';
 import { apps, countries, events, profile, projects, toolLogo, toolNames } from '../content/portfolio';
 import { createContactCard } from './contactCard';
+import { mountHoverPeek } from './hoverPeek';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
 
 export type ViewMode = 'device' | 'list';
@@ -62,7 +63,7 @@ export function buildListView(root: HTMLElement): void {
     <section class="lv-sec" id="lv-chronicle" aria-labelledby="lv-chronicle-h">
       <h2 id="lv-chronicle-h">Events</h2>
       <ul class="lv-rows">${events
-        .map((e) => `<li><a href="#/stage/${e.id}">
+        .map((e) => `<li><a href="#/stage/${e.id}" data-peek="${e.id}">
           <span class="lv-meta">${esc(e.place)}, ${esc(countries[e.country] ?? e.country)}</span>
           <strong>${esc(e.title)}</strong>
           <span class="lv-sub">${esc(e.role)}</span></a></li>`)
@@ -99,6 +100,8 @@ export function buildListView(root: HTMLElement): void {
       <div class="lv-wf-body">${workflowBody()}</div>
     </section>`;
   root.querySelector('.lv-card')!.append(createContactCard('card'));
+  // Events: a thumbnail of the event follows the pointer over its row (thumbnails in public/media/peek/<id>.webp).
+  mountHoverPeek(root, root.querySelector<HTMLElement>('.lv-rows')!, (id) => `/media/peek/${id}.webp`);
   // The workflow figure stays mounted with the list; it sleeps whenever the list is hidden or scrolled away.
   mountWorkflowSection(root.querySelector<HTMLElement>('.lv-wf')!);
 }
