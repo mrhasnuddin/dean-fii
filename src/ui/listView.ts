@@ -2,6 +2,7 @@
 // Device / List switch (bottom-right) or the wallet's side switch; also the fallback without WebGL.
 // Same content and routes as the device: every item opens the same detail panel (#/work/:id …).
 import './listView.css';
+import { FLAG_SVG } from '../brand/logo';
 import { apps, countries, events, profile, projects, toolLogo, toolNames } from '../content/portfolio';
 import { createContactCard } from './contactCard';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
@@ -41,7 +42,7 @@ export function buildListView(root: HTMLElement): void {
     <section class="lv-sec" id="lv-works" aria-labelledby="lv-works-h">
       <h2 id="lv-works-h">Selected works</h2>
       <ul class="lv-grid">${projects
-        .map((p) => `<li><a href="#/work/${p.id}">
+        .map((p) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
           <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
           <span class="lv-meta">${esc(p.category)}</span>
           <strong>${esc(p.title)}</strong>
@@ -49,7 +50,7 @@ export function buildListView(root: HTMLElement): void {
         .join('')}</ul>
       <h3 class="lv-h3">Mobile apps</h3>
       <ul class="lv-grid">${apps
-        .map((p) => `<li><a href="#/work/${p.id}">
+        .map((p) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
           <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
           <span class="lv-meta">${esc(p.category)}</span>
           <strong>${esc(p.title)}</strong>

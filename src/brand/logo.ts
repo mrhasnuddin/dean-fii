@@ -6,3 +6,5 @@ export const LOGO_PATHS = [D_PATH, STAR_PATH] as const;
 /** Visual centre of the full mark inside its 100×100 box. */
 export const LOGO_CENTER = { x: 52, y: 49.5 } as const;
 export const LOGO_COLOR = '#f2dfb6';
+/** The mark of a flagship project: the logo's four-point star, cropped to itself (inline SVG, takes the text colour; decorative: put the word beside it). */
+export const FLAG_SVG = `<svg class="fl" viewBox="64 1 32 32" aria-hidden="true"><path d="${STAR_PATH}"/></svg>`;

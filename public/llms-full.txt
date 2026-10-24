@@ -28,8 +28,12 @@ I was in the early team, from the first ideas to the third version of the build,
 - Tools: claude, gemini, figma
 - Tech stack: Next.js, React, Tailwind CSS, WebGL
 - Process: Ideation > Moodboard > MVPs > Build > Iteration
-ASEAN Labs helps Web3 projects build on ENI across Southeast Asia. I made the site on my own from start to finish: custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and the motion and micro-interactions throughout.
-I gathered ideas and references from the Web3 incubator space, then set the direction: a site that stands apart through quiet micro-interactions and motion. MVPs settled the look before the build, and iteration tuned it after.
+ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia. I designed and built the site on my own, with custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and motion and micro-interactions throughout.
+Ideas and references from the Web3 incubator space set the direction: a site that stands apart through quiet micro-interactions and motion. MVPs settled the look before the build, and iteration tuned it after.
+The problem: Our team lacked a professional landing page to stand out in marketing and on social media. The site also needed to set out what the team offers, how it works with projects, and which projects belong to the ENI ecosystem.
+The idea: This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem.
+How it was built: Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well.
+The details: Some of the vectors are custom made by me in Figma, and the logos were made by our team. A design system set up in code keeps every page consistent, with motion and micro-interactions throughout.
 
 ### Kairma (Web)
 - Category: AI Workforce Platform
@@ -38,8 +42,12 @@ I gathered ideas and references from the Web3 incubator space, then set the dire
 - Tools: claude, gemini
 - Tech stack: Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis
 - Process: Ideation > Moodboard > MVPs > Iteration > Build > Iteration
-Kairma deploys AI employees inside cross-border operations, with brand data kept local on a sealed, on-premise runtime. I designed and built the site on my own. Its model router section pulls live AI model rankings from the OpenRouter API, each part of the platform is shown as an isometric illustration, and the page moves with smooth scrolling. I used AI-assisted tools for the imagery.
-The client came with the idea and the direction. I ran the consultations, then refined the UI/UX and technical decisions through MVPs and two rounds of iteration, one before the build and one after it.
+- Flagship project
+Kairma deploys AI employees inside cross-border operations, keeping brand data local on a sealed, on-premise runtime. I designed and built the site on my own. Its model router section shows live AI model rankings from the OpenRouter API, each part of the platform is an isometric illustration, and the page uses smooth scrolling. I used AI-assisted tools for the imagery.
+Consultations and MVPs refined the UI/UX and technical decisions. Once the client was satisfied with the MVP, the build went ahead with minimal iteration.
+The problem: The client wanted a unique landing page for their brand as an AI company, but was unsure how to convey the message about their business. The page had to explain what Kairma does: AI employees for cross-border operations, running on a sealed, on-premise runtime that keeps brand data local.
+The idea: The client loved the mythical gods in the footer image, so I explored ideas within it and took a myth-inspired direction for the animated illustrations. They are isometric, one for each part of the platform, and the page is structured so that every section uses its space with a clear purpose.
+How it was built: Consultations and MVPs refined the UI/UX and technical decisions first. AI produced the animated illustrations, guided by specific skill.md files, and the footer image was edited with a dither effect using an open-source website. Once the client was satisfied with the MVP, I moved on to the build with minimal iteration.
 
 ### Stashcube (Web)
 - Category: Curated Library
@@ -48,8 +56,13 @@ The client came with the idea and the direction. I ran the consultations, then r
 - Tools: claude, figma
 - Tech stack: Next.js, React, Turbopack, Tailwind CSS
 - Process: Ideation > Moodboard > Build
-Stashcube is a curated library for AI-native designers and builders: UI libraries, 3D tools, icons, fonts, inspiration and AI skills, in one searchable place. I built it end to end with my own ideas.
-It started as my own idea. I collected references in a moodboard, then built it end to end on my own.
+- Flagship project
+Stashcube is a curated library for AI-native designers and builders: UI libraries, 3D tools, icons, fonts, inspiration and AI skills, in one searchable place. I conceived, designed and built it end to end.
+A self-initiated project: the concept came first, a moodboard of references shaped the look, and the build followed.
+The problem: AI-native designers and builders depend on a kit of libraries and templates. I began by keeping mine in Notion, but as the collection grew it needed a better way to sort and categorise it.
+The idea: Stashcube started as a library of curated libraries for my own use. Most of them are open source, so I decided to share it with the community and the public. It now gathers over 200 links across 15 categories, from UI libraries and 3D tools to icons, fonts, inspiration and AI skills.
+The structure: Everything is sorted into categories, with a Recently added section for new finds and a My go-to stack section for my own picks.
+The look: A moodboard of references came first. From it I chose a partial-pixel theme: it has character without overpowering the content, so the libraries stay the focus.
 
 ### FlowFi (Web)
 - Category: Treasury Protocol
@@ -58,8 +71,12 @@ It started as my own idea. I collected references in a moodboard, then built it 
 - Tools: claude, figma
 - Tech stack: Vite, Vanilla JS, GSAP
 - Process: Ideation > Moodboard > Build > Iteration
-FlowFi is a community-governed treasury protocol on ENI. I designed and built the site on my own: I proposed a theme and mood that suit the business, then made the custom SVGs, the design system, and the animation and motion.
-I proposed the design direction, then polished and adjusted it to the client's requests.
+- Flagship project
+FlowFi is decentralized infrastructure for the institutional management of on-chain capital, built on ENI. It runs two treasuries: a Governance Treasury that sets the rules and consensus, and an Investor Treasury that grows capital through deployment and incubation. Its FF token launches through the Black Hole Launch, a fair-launch distribution. I designed and built the landing page that sets out the protocol, its tokenomics and its roadmap.
+The design direction was proposed first, then polished and adjusted to the client's requests.
+The problem: The client needed a landing page that explains what FlowFi is, along with its tokenomics and roadmap. There is a lot to set out: two treasuries, and a fair-launch token distribution through the Black Hole Launch.
+The idea: I looked for inspiration that resonates with FlowFi. The on-scroll trigger animation fit best, because its flowing motion blends naturally with the name. I proposed that direction first, then polished it and adjusted it to the client's requests.
+The design: The isometric illustrations are custom made by me in Figma, and the sections follow a clear structure down the page, so the protocol, its tokenomics and its roadmap each have a place of their own.
 
 ### PayGo (Web)
 - Category: Machine-Native Payments
@@ -78,8 +95,11 @@ The client came with the idea and the direction, and I consulted on and refined 
 - Tools: claude, figma
 - Tech stack: Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL
 - Process: Ideation > Moodboard > MVPs > Build > Iteration > Maintenance
-OpenCrew is a global team and growth partner for Web3, AI and new finance projects. I designed and built the site on my own. Its client stories come from projects we incubated, and its photos are real, taken at my own offline events; they carry much of the pitch. The illustrations are custom SVGs drawn in Figma.
-I set the design direction from the business OpenCrew is in and from the client's own requests, combining and refining the two. After launch I keep maintaining it.
+OpenCrew is a talent marketplace and growth partner for Web3, AI and new finance projects. People can hire its global crew of executives, advisors, consultants, regional leaders and spokespersons, placed into real roles. Its client stories come from projects we incubated, its photos are real, taken at my own offline events, and its illustrations are custom SVGs drawn in Figma.
+The black and gold theme was agreed with the team before the build, and the site is still maintained after launch.
+The project: A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it.
+The look: I proposed a black and gold theme to feel premium and high class, in line with the senior level of talent on offer, and the team agreed with the direction before the build.
+The proof: The site shows real experience and on-site activity, with photos taken at my own offline events and client stories from projects we incubated. It also presents a talent pool with professional experiences, for clarity.
 
 ### Fortuna HK (Web)
 - Category: Professional Services
@@ -120,8 +140,13 @@ A microsite for PayGo with the same mood and its own variation, so there was lit
 - Tech stack: React, Vite, Three.js, ethers.js
 - Network: BSC Testnet
 - Process: Prototype > Build > Iteration > Handover
-NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version built within BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.
+- Flagship project
+NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version, built on BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.
 I mapped out the prototype flows, built the mobile-first interface on BNB Testnet, iterated on the interactions and test states, then handed over the build.
+The starting point: The original NARO app is already live on BSC. I redesigned it mobile first, with breakpoints scaling up to a desktop version.
+The prototype: The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed.
+The look: The client's team prepared the theme and brand assets, and I worked with them for the prototype, so the interface stays true to the NARO brand.
+How it was built: I used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build.
 
 ## Events
 
@@ -129,7 +154,7 @@ I mapped out the prototype flows, built the mobile-first interface on BNB Testne
 - Where: Kuala Lumpur
 - Role: Speaker
 - Links: MyDAC Malaysia https://www.mydac.org.my/en, LEJIEND https://lejiend.com/
-At the Selangor AI & Semiconductor Summit, I spoke on the Fire Stage. While the big talk was about chips and infrastructure, I focused on the human side: getting everyday Malaysians ready for the shift. I presented talent building through the MyDAC Malaysia and LEJIEND joint venture, which runs free community learning almost every week, online and at Outreach Coffee in Bukit Bintang.
+I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026. While the programme centred on chips and infrastructure, my session addressed the human side: preparing everyday Malaysians for this shift. I presented the talent-building work of the MyDAC Malaysia and LEJIEND joint venture, which offers free community learning almost every week, online and in person at Outreach Coffee in Bukit Bintang.
 
 ### ENI DeFi Week World Tour
 - Where: Changsha

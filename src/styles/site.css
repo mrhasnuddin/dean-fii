@@ -33,6 +33,7 @@ body { margin: 0; background: var(--bg); color: var(--ink-light); font: 400 16px
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
+.fl { width: 0.9em; height: 0.9em; flex: none; fill: currentColor; vertical-align: -0.08em; }
 .sr { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 #live { position: fixed; top: 0; left: 0; } /* never extends the page: the Console is its end */
 .skip { position: fixed; left: 12px; top: 12px; z-index: 50; transform: translateY(-160%); background: var(--champagne); color: #111; padding: 10px 14px; border-radius: 999px; font-weight: 600; text-decoration: none; }

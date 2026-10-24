@@ -2,11 +2,19 @@
 // data.ts overrides). Facts only: see REVAMP-HANDOFF.md for what must not be invented.
 import data from './portfolio.json';
 
-export type Project = (typeof data.projects)[number] & {
+// The fields every project has come from the data; the optional ones are written out, because a type inferred from
+// entries that each carry a different few of them would refuse an entry with another few.
+export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship' | 'story'> & {
+  /** A recorded walkthrough of the live site (public/media/motion/<id>.mp4, -sm.mp4 and -poster.webp), shown in place of the thumbnails. */
+  motion?: string;
   /** Web3 products: the network it runs on (shown as a tag with the network's own logo). */
   chain?: { name: string; logo: string };
   /** A redesign: the app it was redesigned from. */
   original?: { title: string; link: string };
+  /** A flagship project: marked with the logo's star on the device, in the List view and in its panel, and told as a story. */
+  flagship?: boolean;
+  /** The story behind it, in the owner's words: a label and a paragraph each (the problem, the idea, how it was built). */
+  story?: { label: string; text: string }[];
 };
 export type SpeakingEvent = (typeof data.events)[number] & {
   /** Organisations behind the event or the talk: their official sites, shown as a tribute under the description. */

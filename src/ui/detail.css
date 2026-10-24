@@ -76,6 +76,11 @@
 .dt-tool img { object-fit: contain; }
 .dt-stack { font: 500 13px/1 var(--font-mono); color: var(--ink-light); }
 .dt-linkrow { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.dt-flag { display: inline-flex; align-items: center; gap: 6px; color: var(--champagne); }
+.dt-story dl { display: grid; grid-template-columns: minmax(7.5rem, 9.5rem) minmax(0, 1fr); gap: 16px 24px; margin: 0 0 8px; }
+.dt-story dt { padding-top: 4px; font: 500 11px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--champagne); }
+.dt-story dd { margin: 0; font: 400 clamp(15px, 0.5vw + 9px, 17px)/1.6 var(--font-ui); color: #d7d3ca; max-width: 70ch; }
+@media (max-width: 760px) { .dt-story dl { grid-template-columns: minmax(0, 1fr); gap: 4px; } .dt-story dd { margin-bottom: 14px; } }
 .dt-orig { display: inline-flex; align-items: center; gap: 6px; color: var(--champagne); font: 500 14px/1.2 var(--font-ui); text-decoration: underline; text-underline-offset: 3px; }
 
 .dt-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1 var(--font-mono); }

@@ -14,7 +14,8 @@
 .lv-sub { color: #b9b5ad; font-size: 14px; }
 
 .lv-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px 24px; }
-.lv-grid a { display: grid; gap: 8px; color: var(--ink-light); text-decoration: none; }
+.lv-grid a { position: relative; display: grid; gap: 8px; color: var(--ink-light); text-decoration: none; }
+.lv-flag { position: absolute; top: 10px; left: 10px; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px 6px 9px; border-radius: 999px; background: rgb(15 16 20 / 0.78); backdrop-filter: blur(8px); color: var(--champagne); font: 500 11px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .lv-grid img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; margin-bottom: 6px; }
 /* Mobile apps and Motion: a line each under the web projects until the first one ships. */
 .lv-h3 { margin: 40px 0 16px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }

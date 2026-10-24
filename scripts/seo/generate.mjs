@@ -64,7 +64,8 @@ const next = marked.test(html) ? html.replace(marked, block) : html.replace(lega
 if (next !== html) writeFileSync(join(ROOT, 'index.html'), next);
 
 // ---------------------------------------------------------------- llms.txt
-const line = (p) => `- [${p.title}](${p.link}): ${p.category}. ${p.stack.join(', ')}.`;
+const NL = String.fromCharCode(10);
+const line = (p) => `- [${p.title}](${p.link}): ${p.category}. ${p.stack.join(', ')}.${p.flagship ? ' Flagship project.' : ''}`;
 const llms = `# Dean Studio
 
 > ${description}
@@ -108,9 +109,9 @@ ${works
 - Roles: ${p.roles.join(', ')}
 - Tools: ${p.tools.join(', ')}
 - Tech stack: ${p.stack.join(', ')}${p.chain ? `\n- Network: ${p.chain.name}` : ''}
-- Process: ${p.flow.steps.join(' > ')}
+- Process: ${p.flow.steps.join(' > ')}${p.flagship ? NL + '- Flagship project' : ''}
 ${p.description}
-${p.flow.text}`,
+${p.flow.text}${p.story ? NL + p.story.map((x) => `${x.label}: ${x.text}`).join(NL) : ''}`,
   )
   .join('\n\n')}
 

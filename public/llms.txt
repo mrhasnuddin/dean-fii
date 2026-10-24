@@ -7,9 +7,9 @@ Dean Studio is the portfolio of Dean, an AI-native UI/UX designer and frontend d
 ## Works (web)
 - [ENI Network](https://eni.top/): Modular L1 Blockchain. Next.js, React, Tailwind CSS, Framer Motion, TanStack Query, viem.
 - [ASEAN Labs](https://aseanlabs.io/): Web3 Execution Layer. Next.js, React, Tailwind CSS, WebGL.
-- [Kairma](https://www.kairma.ai/): AI Workforce Platform. Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis.
-- [Stashcube](https://stashcube.vercel.app/): Curated Library. Next.js, React, Turbopack, Tailwind CSS.
-- [FlowFi](https://www.flowfidao.com/): Treasury Protocol. Vite, Vanilla JS, GSAP.
+- [Kairma](https://www.kairma.ai/): AI Workforce Platform. Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis. Flagship project.
+- [Stashcube](https://stashcube.vercel.app/): Curated Library. Next.js, React, Turbopack, Tailwind CSS. Flagship project.
+- [FlowFi](https://www.flowfidao.com/): Treasury Protocol. Vite, Vanilla JS, GSAP. Flagship project.
 - [PayGo](https://www.paygo.ac/): Machine-Native Payments. React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion.
 - [OpenCrew](https://open-crew.vercel.app/): Global Web3 & AI Team. Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL.
 - [Fortuna HK](https://www.fortunahkholding.com/): Professional Services. Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis.
@@ -17,10 +17,10 @@ Dean Studio is the portfolio of Dean, an AI-native UI/UX designer and frontend d
 - [PUSC](https://pusc-liard.vercel.app/): Algorithmic Stablecoin. React, Vite, Tailwind CSS, Framer Motion.
 
 ## Mobile apps
-- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. A redesign of https://naroradar.com/; runs on BSC Testnet.
+- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. Flagship project. A redesign of https://naroradar.com/; runs on BSC Testnet.
 
 ## Events
-- Selangor AI & Semiconductor Summit 2026 (Kuala Lumpur, Speaker): At the Selangor AI & Semiconductor Summit, I spoke on the Fire Stage.
+- Selangor AI & Semiconductor Summit 2026 (Kuala Lumpur, Speaker): I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026.
 - ENI DeFi Week World Tour (Changsha, Speaker): At the opening stop of the ENI DeFi Week World Tour, I introduced the ENI ecosystem and its vision for DeFi collaboration.
 - Web3 + RWA Global Infrastructure Summit (Hangzhou, Delegate): I represented ENI at the Web3 and RWA Global Digital Infrastructure Summit in Hangzhou, connecting with builders and institutions working on real-world assets.
 - Monster GameFi Soft Launch (Bali, Host & Keynote): I hosted the Monster GameFi soft launch under the Bali night sky, welcoming partners from HODL and Kripto 101.

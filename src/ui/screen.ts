@@ -8,7 +8,7 @@
 // flips them (§31, §34). The battery icon in the status strip follows the device's battery (scene/power.ts).
 import './einkScreen.css';
 import './screen.css';
-import { LOGO_PATHS } from '../brand/logo';
+import { FLAG_SVG as FLAG, LOGO_PATHS } from '../brand/logo';
 import { createPixelLogo } from './pixelLogo';
 import { contact, emailDisplay, whatsappDisplay } from '../content/contact';
 import { apps, countries, events, profile, projects, toolNames } from '../content/portfolio';
@@ -320,7 +320,7 @@ export function createScreen(): Screen {
           <section class="ek-view sc-list">
             <figure class="sc-well"><img src="${p.eink}" alt="" draggable="false"><figcaption>${esc(p.category)}</figcaption></figure>
             <ul class="ek-list sc-rows">${windowed(list, sel)
-              .map(({ item, i }) => `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${esc(item.title)}</span><small>${esc(item.tags[0])}</small></li>`)
+              .map(({ item, i }) => `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${esc(item.title)}${item.flagship ? `${FLAG}<span class="sr"> Flagship</span>` : ''}</span><small>${esc(item.tags[0])}</small></li>`)
               .join('')}</ul></section>
           ${footer(worksPage === 'apps' ? '‹ Web' : '‹ Back', `${sel + 1} of ${list.length}`, 'Open ✓')}`;
         break;

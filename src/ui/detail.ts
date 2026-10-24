@@ -1,6 +1,7 @@
 // Detail panel for a project, an event or About: a native <dialog> (focus trap, Esc, inert page for
 // free). Slides in over the text column so the wallet stays visible; bottom sheet on phones.
 import './detail.css';
+import { FLAG_SVG } from '../brand/logo';
 import { apps, countries, events, profile, projects, toolLogo, toolNames, type ToolId } from '../content/portfolio';
 import { motion } from '../motion';
 import { mountFlow, type Flow } from './flowFigure';
@@ -119,10 +120,11 @@ export function createDetail(): Detail {
       const group = isApp ? apps : projects;
       const i = group.findIndex((p) => p.id === t.id);
       const p = group[i];
-      head = `<p class="dt-eyebrow">${esc(p.category)} · ${isApp ? 'Mobile app' : 'Project'} ${String(i + 1).padStart(2, '0')}/${String(group.length).padStart(2, '0')}</p>
+      head = `<p class="dt-eyebrow">${p.flagship ? `<span class="dt-flag">${FLAG_SVG}Flagship</span> · ` : ''}${esc(p.category)} · ${isApp ? 'Mobile app' : 'Project'} ${String(i + 1).padStart(2, '0')}/${String(group.length).padStart(2, '0')}</p>
         <h2 id="detail-title">${esc(p.title)}</h2><p class="dt-roles">${p.roles.map(esc).join(' · ')}</p>`;
       body = `${gallery(p.images, p.title, p.motion)}
         <p class="dt-desc">${esc(p.description)}</p>
+        ${p.story ? `<section class="dt-story" aria-labelledby="dt-story-h"><h3 class="dt-h3" id="dt-story-h">The story</h3><dl>${p.story.map((s) => `<dt>${esc(s.label)}</dt><dd>${esc(s.text)}</dd>`).join('')}</dl></section>` : ''}
         ${flowSection(p.flow)}
         <h3 class="dt-h3">Tools used</h3><ul class="dt-tools">${p.tools.map(tool).join('')}</ul>
         <h3 class="dt-h3">Tech stack</h3><ul class="dt-tools">${p.stack.map((t) => `<li class="dt-tool dt-stack">${esc(t)}</li>`).join('')}</ul>${
