@@ -25,7 +25,7 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const tool = (t: string) =>
   `<li class="dt-tool"><img src="${toolLogo(t)}" alt="" width="20" height="20"><span>${toolNames[t as ToolId] ?? t}</span></li>`;
 
-/** Design flow: the chain figure (blocks = stages, drawn by flowFigure.ts), the stages in order, and how it went. */
+/** Design flow: the chain figure (blocks = stages, drawn by flowFigure.ts) and the stages in order. The story above says why; this only shows the shape. */
 function flowSection(flow: Flow) {
   const n = flow.steps.length;
   // Each stage after the first carries the arrow into it, so a wrapped row starts with its own arrow.
@@ -39,7 +39,6 @@ function flowSection(flow: Flow) {
       <figcaption class="dt-fig-read" aria-hidden="true"></figcaption>
     </figure>
     <ol class="dt-steps" aria-label="Stages, in order">${steps}</ol>
-    <p class="dt-desc">${esc(flow.text)}</p>
   </section>`;
 }
 

@@ -111,7 +111,7 @@ ${works
 - Tech stack: ${p.stack.join(', ')}${p.chain ? `\n- Network: ${p.chain.name}` : ''}
 - Process: ${p.flow.steps.join(' > ')}${p.flagship ? NL + '- Flagship project' : ''}
 ${p.description}
-${p.flow.text}${p.story ? NL + p.story.map((x) => `${x.label}: ${x.text}`).join(NL) : ''}`,
+${p.story.map((x) => `${x.label}: ${x.text}`).join(NL)}`,
   )
   .join('\n\n')}
 

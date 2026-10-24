@@ -7,7 +7,6 @@ import { motion } from '../motion';
 
 export interface Flow {
   steps: string[];
-  text: string;
 }
 interface FigureDef {
   name: string;

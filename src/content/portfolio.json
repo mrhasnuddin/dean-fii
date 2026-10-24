@@ -26,7 +26,7 @@
       ],
       "status": "Shipped + Live",
       "link": "https://eni.top/",
-      "description": "ENI is a modular Layer 1 blockchain built for commercial adoption. I joined a team of designers, a PM and developers as a UI/UX designer and frontend developer, and designed and built part of the site's pages, including the mobile versions of several of them.",
+      "description": "ENI is a modular Layer 1 blockchain built for mass commercial adoption, with a hub chain, app-chains and one-click chain launch. I was a UI/UX designer and frontend developer on the early team, and designed and built part of the site's pages, including the mobile versions of several of them.",
       "flow": {
         "steps": [
           "Ideation",
@@ -36,8 +36,7 @@
           "Builds v1 to v3",
           "Iteration",
           "Handover"
-        ],
-        "text": "I was in the early team, from the first ideas to the third version of the build, before the project passed to another team. Designers, a PM and developers worked it out together through wireframes and MVPs, and every design decision answered to two things: the client's requirements and the conventions of Web3."
+        ]
       },
       "images": [
         "/media/projects/eni-1.webp",
@@ -46,7 +45,21 @@
         "/media/projects/eni-4.webp"
       ],
       "eink": "/media/eink/eni.png",
-      "motion": "/media/motion/eni"
+      "motion": "/media/motion/eni",
+      "story": [
+        {
+          "label": "The team",
+          "text": "I was part of the early team, working with designers, a PM and developers from the first ideas through to the third version of the build, before the project passed to another team."
+        },
+        {
+          "label": "The decisions",
+          "text": "We worked it out together through wireframes and MVPs. Every design decision answered to two things: the client's requirements and the conventions of Web3."
+        },
+        {
+          "label": "Why this look",
+          "text": "ENI is a Layer 1 blockchain built for commercial adoption, so the site has to feel like serious infrastructure while speaking the visual language Web3 audiences recognise: a dark ground, neon-lit wireframe landscapes and 3D renders of the sentinel node hardware. The pages I worked on follow that system and the client's requirements, so they sit comfortably beside the rest of the site."
+        }
+      ]
     },
     {
       "id": "aseanlabs",
@@ -82,8 +95,7 @@
           "MVPs",
           "Build",
           "Iteration"
-        ],
-        "text": "Ideas and references from the Web3 incubator space set the direction: a site that stands apart through quiet micro-interactions and motion. MVPs settled the look before the build, and iteration tuned it after."
+        ]
       },
       "images": [
         "/media/projects/aseanlabs-1.webp",
@@ -103,8 +115,12 @@
           "text": "This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem."
         },
         {
+          "label": "Why this look",
+          "text": "ASEAN Labs is an incubator whose promise is execution, so the site is built to look decisive: a solid yellow ground, black linework and flat vector illustrations, with no gradients or glow in the hero. Next to the dark neon pages many Web3 teams ship, it stands out in marketing and on social media, which was the gap the team had. Mono captions and a dot grid give it a builder's workshop feel, and agency-style sections keep it easy to scan."
+        },
+        {
           "label": "How it was built",
-          "text": "Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well."
+          "text": "Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well. MVPs settled the look before the build, and iteration tuned it after."
         },
         {
           "label": "The details",
@@ -148,8 +164,7 @@
           "Iteration",
           "Build",
           "Iteration"
-        ],
-        "text": "Consultations and MVPs refined the UI/UX and technical decisions. Once the client was satisfied with the MVP, the build went ahead with minimal iteration."
+        ]
       },
       "images": [
         "/media/projects/kairma-1.webp",
@@ -168,6 +183,10 @@
         {
           "label": "The idea",
           "text": "The client loved the mythical gods in the footer image, so I explored ideas within it and took a myth-inspired direction for the animated illustrations. They are isometric, one for each part of the platform, and the page is structured so that every section uses its space with a clear purpose."
+        },
+        {
+          "label": "Why this look",
+          "text": "Kairma sells a sealed, on-premise runtime, so the page is built around a vault. The hero is the Keep drawn in isometric, a stone building with a pediment and columns that nods to the myth theme the client liked, with a key to pull and a readout showing raw data out at 0 B. Near-black, IBM Plex and one red accent, used on the Request a pilot button and on small details of the drawing, give it the sober tone an operations buyer expects from infrastructure."
         },
         {
           "label": "How it was built",
@@ -206,8 +225,7 @@
           "Ideation",
           "Moodboard",
           "Build"
-        ],
-        "text": "A self-initiated project: the concept came first, a moodboard of references shaped the look, and the build followed."
+        ]
       },
       "images": [
         "/media/projects/stashcube-1.webp",
@@ -232,8 +250,8 @@
           "text": "Everything is sorted into categories, with a Recently added section for new finds and a My go-to stack section for my own picks."
         },
         {
-          "label": "The look",
-          "text": "A moodboard of references came first. From it I chose a partial-pixel theme: it has character without overpowering the content, so the libraries stay the focus."
+          "label": "Why this look",
+          "text": "A moodboard of references came first. Stashcube is a library, so the interface stays near-black and neutral and lets the content lead, with one lime accent to show what to click. I chose a partial-pixel theme for the character: a pixel texture that fades out toward the edge nods to builder culture without covering anything. A left sidebar grouped under Build, Create and Brand lets visitors move through the collection like a file explorer."
         }
       ]
     },
@@ -268,8 +286,7 @@
           "Moodboard",
           "Build",
           "Iteration"
-        ],
-        "text": "The design direction was proposed first, then polished and adjusted to the client's requests."
+        ]
       },
       "images": [
         "/media/projects/flowfi-1.webp",
@@ -288,6 +305,10 @@
         {
           "label": "The idea",
           "text": "I looked for inspiration that resonates with FlowFi. The on-scroll trigger animation fit best, because its flowing motion blends naturally with the name. I proposed that direction first, then polished it and adjusted it to the client's requests."
+        },
+        {
+          "label": "Why this look",
+          "text": "On-chain finance often defaults to dark and neon. FlowFi manages institutional capital, so the look is pale and open instead, with one purple accent and a confident display face, a tone that reads as calm and accountable rather than speculative. The logo's layered ribbons already suggest capital in motion, which is why the flowing on-scroll animation feels native to the brand."
         },
         {
           "label": "The design",
@@ -322,7 +343,7 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.paygo.ac/",
-      "description": "PayGo lets APIs and AI agents pay per request through x402 on ENI Mainnet. I designed and built the developer site on my own, put together from components of a UI library, with an interactive protocol walkthrough that explains the payment flow.",
+      "description": "PayGo is an x402 payment gateway on ENI Mainnet that lets APIs and AI agents pay per request over plain HTTP. I designed and built the developer site on my own, put together from components of a UI library, with an interactive protocol walkthrough that explains the payment flow.",
       "flow": {
         "steps": [
           "Ideation",
@@ -330,8 +351,7 @@
           "Build",
           "Iteration",
           "Handover"
-        ],
-        "text": "The client came with the idea and the direction, and I consulted on and refined the UI/UX and technical decisions. Once we agreed on the result, I handed the site over to the client's in-house team to run."
+        ]
       },
       "images": [
         "/media/projects/paygo-1.webp",
@@ -339,7 +359,25 @@
         "/media/projects/paygo-3.webp",
         "/media/projects/paygo-4.webp"
       ],
-      "eink": "/media/eink/paygo.png"
+      "eink": "/media/eink/paygo.png",
+      "story": [
+        {
+          "label": "The brief",
+          "text": "The client came with the idea and the direction. The site makes the case for machine-native payments: AI agents cannot solve CAPTCHAs or manage 2FA, and subscriptions do not suit sporadic, high-speed tasks, so an agent needs to pay exactly for what it uses."
+        },
+        {
+          "label": "The walkthrough",
+          "text": "The payment flow is an interactive protocol walkthrough in three steps: the client sends a request, the server answers 402 Payment Required with a price, and the client pays and receives the resource."
+        },
+        {
+          "label": "Why this look",
+          "text": "PayGo's audience is developers, so the site speaks in their materials: a dark ground, Inter for clarity, and JetBrains Mono for the curl and HTTP 402 snippets that make the walkthrough credible. The headline sets its last word, Settlements, in an italic serif, a small change of voice that marks where a request ends up. A violet tint gives a technical product some warmth."
+        },
+        {
+          "label": "How it was built",
+          "text": "I consulted on and refined the UI/UX and technical decisions with the client. Once we agreed on the result, I handed the site over to the client's in-house team to run."
+        }
+      ]
     },
     {
       "id": "opencrew",
@@ -378,8 +416,7 @@
           "Build",
           "Iteration",
           "Maintenance"
-        ],
-        "text": "The black and gold theme was agreed with the team before the build, and the site is still maintained after launch."
+        ]
       },
       "images": [
         "/media/projects/opencrew-1.webp",
@@ -391,11 +428,11 @@
       "story": [
         {
           "label": "The project",
-          "text": "A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it."
+          "text": "A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it. The site is still maintained after launch."
         },
         {
-          "label": "The look",
-          "text": "I proposed a black and gold theme to feel premium and high class, in line with the senior level of talent on offer, and the team agreed with the direction before the build."
+          "label": "Why this look",
+          "text": "OpenCrew places senior operators into real roles, so the first impression has to say premium before anyone reads a word. I proposed black and gold for that: a pure black ground, white type in a firm sans, and gold as a warm glow and the Contact button, so it reads as a signal rather than decoration. The team agreed with the direction."
         },
         {
           "label": "The proof",
@@ -431,7 +468,7 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.fortunahkholding.com/",
-      "description": "Fortuna HK provides cross-border education, wealth management and corporate services. I designed and built the multilingual site on my own, starting by helping the client choose a theme and mood that suit the business. The world clock in the footer was made at the client's request, and the imagery is AI-assisted.",
+      "description": "Fortuna HK Holdings provides cross-border education, wealth management and corporate services. I designed and built the multilingual site on my own.",
       "flow": {
         "steps": [
           "Ideation",
@@ -439,8 +476,7 @@
           "MVPs",
           "Build",
           "Iteration"
-        ],
-        "text": "The client set the design direction. I suggested and refined what it needed, based on their requirements and the nature of the business."
+        ]
       },
       "images": [
         "/media/projects/fortuna-1.webp",
@@ -448,7 +484,25 @@
         "/media/projects/fortuna-3.webp",
         "/media/projects/fortuna-4.webp"
       ],
-      "eink": "/media/eink/fortuna.png"
+      "eink": "/media/eink/fortuna.png",
+      "story": [
+        {
+          "label": "The business",
+          "text": "Fortuna HK serves individuals and companies, so the site separates personal services (education and residency planning in Hong Kong, wealth and property, healthcare) from corporate services (company registration, government subsidies, capital operations)."
+        },
+        {
+          "label": "The direction",
+          "text": "The client set the design direction. I started by helping them choose a theme and mood that suit the business, then suggested and refined what the site needed, based on their requirements and the nature of the business."
+        },
+        {
+          "label": "Why this look",
+          "text": "Fortuna advises on wealth, education and corporate structure, where trust comes from restraint. The theme is a charcoal ground, thin light type and one warm bronze accent, with a single sculpted object at the centre of the hero in place of stock photography. It signals premium and discretion, and gives the site one image visitors remember."
+        },
+        {
+          "label": "The details",
+          "text": "The site is multilingual. The world clock in the footer was made at the client's request, and the imagery is AI-assisted."
+        }
+      ]
     },
     {
       "id": "nikola",
@@ -477,14 +531,13 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.nikola.network/",
-      "description": "Nikola coordinates AI governance, protocol structure and capital for projects on ENI. I designed and built the site on my own, after helping the client choose a theme and mood that fit the business. Its effects and shaders come from a UI component library.",
+      "description": "Nikola is an AI coordination layer for projects on ENI, covering AI governance, protocol design and capital. I designed and built the site on my own, with effects and shaders from a UI component library.",
       "flow": {
         "steps": [
           "Ideation",
           "Moodboard",
           "Build"
-        ],
-        "text": "I set the design direction and the client agreed to it. Their guidelines and documentation made the build straightforward."
+        ]
       },
       "images": [
         "/media/projects/nikola-1.webp",
@@ -492,7 +545,25 @@
         "/media/projects/nikola-3.webp",
         "/media/projects/nikola-4.webp"
       ],
-      "eink": "/media/eink/nikola.png"
+      "eink": "/media/eink/nikola.png",
+      "story": [
+        {
+          "label": "The product",
+          "text": "Nikola is built in three layers: an incubator, an AI governance agent and an on-chain DeFi protocol. Its product stack marks what is live and what is still in development, and the site is organised around infrastructure, products, ecosystem, governance and roadmap."
+        },
+        {
+          "label": "The direction",
+          "text": "I helped the client choose a theme and mood that fit the business, then set the design direction, and the client agreed to it."
+        },
+        {
+          "label": "Why this look",
+          "text": "Nikola is an AI coordination layer, an idea with nothing physical to show, so the hero is made of light: streaks of violet, gold and blue crossing a near-black field, like signals moving between nodes. A deep violet ground rather than flat black gives the dark theme a cooler, more technical tone, and Plus Jakarta Sans keeps the long architecture and governance sections easy to read."
+        },
+        {
+          "label": "How it was built",
+          "text": "The client's guidelines and documentation made the build straightforward, so the work moved from the agreed direction straight to the build."
+        }
+      ]
     },
     {
       "id": "pusc",
@@ -520,14 +591,13 @@
       ],
       "status": "Shipped",
       "link": "https://pusc-liard.vercel.app/",
-      "description": "PUSC is a DAO-governed stablecoin protocol. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets. It is a microsite for PayGo.",
+      "description": "PUSC is a DAO-governed, over-collateralised stablecoin protocol pegged 1:1 to USD. It is a microsite for PayGo. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets.",
       "flow": {
         "steps": [
           "Ideation",
           "Build",
           "Handover"
-        ],
-        "text": "A microsite for PayGo with the same mood and its own variation, so there was little to settle before I built it and handed it over."
+        ]
       },
       "images": [
         "/media/projects/pusc-1.webp",
@@ -535,7 +605,25 @@
         "/media/projects/pusc-3.webp",
         "/media/projects/pusc-4.webp"
       ],
-      "eink": "/media/eink/pusc.png"
+      "eink": "/media/eink/pusc.png",
+      "story": [
+        {
+          "label": "The brief",
+          "text": "PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build."
+        },
+        {
+          "label": "What the page explains",
+          "text": "The page walks through how the stablecoin works: a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout."
+        },
+        {
+          "label": "Why this look",
+          "text": "A stablecoin has to look like money before it looks like code, so the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family."
+        },
+        {
+          "label": "How it was built",
+          "text": "The shaders and assets are custom made for the site. After the build, I handed it over."
+        }
+      ]
     }
   ],
   "events": [
@@ -708,8 +796,7 @@
           "Build",
           "Iteration",
           "Handover"
-        ],
-        "text": "I mapped out the prototype flows, built the mobile-first interface on BNB Testnet, iterated on the interactions and test states, then handed over the build."
+        ]
       },
       "images": [
         "/media/projects/naro-1.webp",
@@ -729,12 +816,12 @@
           "text": "The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed."
         },
         {
-          "label": "The look",
-          "text": "The client's team prepared the theme and brand assets, and I worked with them for the prototype, so the interface stays true to the NARO brand."
+          "label": "Why this look",
+          "text": "The theme and brand assets came from the client's team: a near-black ground with one mint-green accent, the convention of trading products, where numbers need contrast and green reads as go. My part was carrying it into a layout built for the phone first, with Connect Wallet as the clear primary action and a visible BNB Testnet chip that marks the prototype as a prototype. On desktop the six destinations (Home, Swap, Mining, Data, Me and My Team) sit in a left rail."
         },
         {
           "label": "How it was built",
-          "text": "I used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build."
+          "text": "I mapped out the prototype flows, then used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build."
         }
       ]
     }
