@@ -3,20 +3,21 @@
 // change does a full refresh flash, like a real e-ink panel. `confirm()` returns what ✓ should do.
 // Idle: the Hello screen is the pixel D-star; any other screen falls back to it after IDLE_MS with
 // no input anywhere, and wakes on the next pointer move, key, wheel, scroll or touch.
-// Works has three pages: WEB (the projects), APPS (mobile apps) and MOTION (motion design), the last two
-// coming soon and shown as an update that never quite finishes. The status strip names all three; main.ts
-// flips them (§31, §34). The battery icon in the status strip follows the device's battery (scene/power.ts).
+// Works has two pages: SELECTED (the five best projects, then a "View more…" row) and ARCHIVE (the rest,
+// shown once the archive cartridge is docked in the bottom bay). The status strip names both; main.ts flips them
+// and docks the cartridge first, so the screen only loads the archive after it is in (docs/works-cartridge-blueprint.md).
+// The battery icon in the status strip follows the device's battery (scene/power.ts).
 import './einkScreen.css';
 import './screen.css';
 import { FLAG_SVG as FLAG, LOGO_PATHS } from '../brand/logo';
 import { createPixelLogo } from './pixelLogo';
 import { contact, emailDisplay, whatsappDisplay } from '../content/contact';
-import { apps, countries, events, profile, projects, toolNames } from '../content/portfolio';
+import { archiveWorks, countries, events, profile, selectedWorks, toolNames, type Project } from '../content/portfolio';
 import { motion } from '../motion';
 
 export type ScreenMode = 'boot' | 'hello' | 'works' | 'chronicle' | 'about' | 'contact';
 export type ContactState = 'prompt' | 'reading' | 'verified';
-export type WorksPage = 'web' | 'apps' | 'motion';
+export type WorksPage = 'selected' | 'archive';
 export type ScreenIntent =
   | { type: 'project'; id: string }
   | { type: 'event'; id: string }
@@ -24,7 +25,7 @@ export type ScreenIntent =
   | { type: 'contact' }
   | { type: 'channel'; channel: 'email' | 'whatsapp' | 'linkedin' }
   | { type: 'tab'; tab: 'works' | 'chronicle' | 'about' | 'contact' }
-  /** WEB, APPS or MOTION was tapped in Works' status strip. */
+  /** SELECTED or ARCHIVE was tapped in Works' status strip, or the "View more…" row was opened. */
   | { type: 'page'; page: WorksPage }
   /** A label on the bottom edge was tapped: press that face key, or (Contact, Email selected) copy the address. */
   | { type: 'key'; key: 'back' | 'confirm' | 'copy' }
@@ -42,9 +43,10 @@ export interface Screen {
   setContactState(state: ContactState): void;
   /** Feedback for a copy of the email address: the footer's middle says so for a moment. */
   copied(ok: boolean): void;
-  /** Works' page: the web projects, or mobile apps or motion (coming soon). Leaving Works goes back to WEB. */
+  /** Works' page: the selected projects, or the archive. Leaving Works goes back to SELECTED. */
   worksPage(): WorksPage;
-  setWorksPage(page: WorksPage): void;
+  /** `instant`: no "Reading cartridge…" interlude before the archive's rows (a deep link, where the cartridge is simply in). */
+  setWorksPage(page: WorksPage, instant?: boolean): void;
   onPage(cb: (page: WorksPage) => void): void;
   /** The device's battery, for the status strip's icon: level 0–1, and whether it is charging. */
   setBattery(level: number, charging: boolean): void;
@@ -85,57 +87,16 @@ const batteryHtml = () => `<span class="ek-bat" aria-hidden="true" style="--lv:$
 const statusRight = () => `<span class="ek-sb-r"><span class="ek-clock"><b>${clockNow()}</b> GMT+8</span>${batteryHtml()}</span>`;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
-// Works › APPS and MOTION, coming soon: a glyph whose tiles land one by one (the next one dithered, as if
-// downloading) under a firmware-style progress bar that creeps to 99 % and holds there. Stepped, like an
-// e-ink partial refresh: each step redraws at once, nothing eases. Then a full refresh, and again.
-const DITHER = `<defs><pattern id="sc-dither" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="2" height="2"/><rect x="2" y="2" width="2" height="2"/></pattern></defs>`;
-const phoneGlyph = `
-<svg class="sc-phone" viewBox="0 0 64 100" aria-hidden="true">${DITHER}
-  <rect class="sc-phone-body" x="4" y="3" width="56" height="94" rx="9"/>
-  <rect class="sc-phone-ink" x="24" y="9" width="16" height="3" rx="1.5"/>
-  ${Array.from({ length: 9 }, (_, k) => `<rect class="sc-tile" x="${9 + (k % 3) * 17}" y="${22 + Math.floor(k / 3) * 17}" width="12" height="12" rx="3.5"/>`).join('')}
-  <rect class="sc-phone-ink" x="22" y="86" width="20" height="3" rx="1.5"/>
+// The archive cartridge, drawn for the "View more…" row's picture: the same shape as the one on the device (a label
+// on the face, contacts on the end that goes in).
+const cartridgeGlyph = `
+<svg class="sc-cart" viewBox="0 0 100 100" aria-hidden="true">
+  <rect class="sc-cart-body" x="22" y="8" width="56" height="84" rx="8"/>
+  ${Array.from({ length: 5 }, (_, k) => `<rect class="sc-cart-ink" x="${30 + k * 9.6}" y="13" width="5.4" height="7" rx="1"/>`).join('')}
+  <rect class="sc-cart-ink" x="30" y="34" width="40" height="32" rx="3"/>
+  <path class="sc-cart-paper" d="M36 44h28M36 51h28M36 58h18"/>
+  <path class="sc-cart-body" d="M30 78h40M30 83h40"/>
 </svg>`;
-// A strip of film: sprocket holes along both edges, six frames that render one by one (the last never does).
-const filmGlyph = `
-<svg class="sc-film" viewBox="0 0 100 64" aria-hidden="true">${DITHER}
-  <rect class="sc-phone-body" x="2" y="2" width="96" height="60" rx="6"/>
-  ${Array.from({ length: 8 }, (_, k) => `<rect class="sc-phone-ink" x="${8 + k * 11.6}" y="7" width="6" height="4.5" rx="1"/><rect class="sc-phone-ink" x="${8 + k * 11.6}" y="52.5" width="6" height="4.5" rx="1"/>`).join('')}
-  ${Array.from({ length: 6 }, (_, k) => `<rect class="sc-tile" x="${7 + k * 14.6}" y="17" width="12" height="30" rx="2.5"/>`).join('')}
-</svg>`;
-const BLOCKS = 20;
-// Each step: [percent, what it is doing, ms before the next step]. About 8 s to 99 %, then it holds 3 s.
-const INSTALL: [number, number, number][] = [
-  [0, 0, 600], [6, 0, 450], [13, 0, 520], [19, 1, 640], [27, 1, 420], [34, 1, 560], [42, 2, 700], [49, 2, 380],
-  [57, 2, 520], [64, 2, 460], [72, 3, 620], [79, 3, 400], [86, 3, 540], [92, 3, 680], [97, 4, 900], [99, 4, 3000],
-];
-interface Soon {
-  glyph: string;
-  title: string;
-  doing: string[];
-  /** Tiles that finish, and the percent each one takes; the next, and any beyond, stay dithered for ever. */
-  solid: number;
-  step: number;
-  of: string;
-}
-const SOON: Record<'apps' | 'motion', Soon> = {
-  apps: {
-    glyph: phoneGlyph,
-    title: 'Installing Mobile Apps',
-    doing: ['Sketching user flows…', 'Designing screens…', 'Building the app…', 'Testing on phones…', 'Almost there…'],
-    solid: 8,
-    step: 11,
-    of: '2 / 3',
-  },
-  motion: {
-    glyph: filmGlyph,
-    title: 'Rendering Motion Reel',
-    doing: ['Storyboarding frames…', 'Animating keyframes…', 'Easing the curves…', 'Exporting at 60 fps…', 'Almost there…'],
-    solid: 5,
-    step: 17,
-    of: '3 / 3',
-  },
-};
 // Card reader glyph: the wallet in profile with the key half inserted in its side slot; the arrow
 // blinks in e-ink steps.
 const readerGlyph = `
@@ -144,6 +105,16 @@ const readerGlyph = `
   <rect x="44" y="38" width="58" height="22" rx="3" class="ek-nfc-card"/>
   <path class="ek-arc a1" d="M114 49h-8m0 0 5-5m-5 5 5 5"/>
 </svg>`;
+
+// Works' selected page ends with a row that is not a project: opening it docks the archive cartridge.
+const GHOST = { ghost: true } as const;
+type Row = Project | typeof GHOST;
+const isGhost = (r: Row): r is typeof GHOST => 'ghost' in r;
+const SELECTED_ROWS: Row[] = [...selectedWorks, GHOST];
+const PAGES: WorksPage[] = ['selected', 'archive'];
+const PAGE_LABEL: Record<WorksPage, string> = { selected: 'SELECTED', archive: 'ARCHIVE' };
+/** "Reading cartridge…" shows this long, once the cartridge has seated, before the archive's rows are drawn. */
+const READ_MS = 520;
 
 export function createScreen(): Screen {
   const el = document.createElement('div');
@@ -157,7 +128,7 @@ export function createScreen(): Screen {
   // Standby (lock screen): the status bar with the clock, then the idle mark.
   saver.innerHTML = `<header class="ek-sb"><span>Standby</span>${statusRight()}</header>
     <section class="ek-view sc-home"><div class="sc-mark"></div><p class="sc-caption">Dean Studio</p></section>`;
-  const index: Record<'works' | 'apps' | 'chronicle' | 'contact', number> = { works: 0, apps: 0, chronicle: 0, contact: 0 };
+  const index: Record<'works' | 'archive' | 'chronicle' | 'contact', number> = { works: 0, archive: 0, chronicle: 0, contact: 0 };
   let intentCb: (i: ScreenIntent) => void = () => {};
   let selectCb: (i: number) => void = () => {};
 
@@ -189,7 +160,7 @@ export function createScreen(): Screen {
   // Idle overlay: lists and About fall back to the mark after IDLE_MS without input. Appearing is
   // silent (nobody asked for it); waking plays the refresh swish, since the visitor caused it.
   let idleTimer = 0;
-  const idleable = () => (current === 'works' && !soonShowing()) || current === 'chronicle' || current === 'about' || (current === 'contact' && contactState === 'prompt');
+  const idleable = () => current === 'works' || current === 'chronicle' || current === 'about' || (current === 'contact' && contactState === 'prompt');
   function sleep() {
     if (!idleable()) return;
     saver.hidden = false;
@@ -209,10 +180,11 @@ export function createScreen(): Screen {
   }
   wake();
 
-  const worksList = () => (worksPage === 'apps' ? apps : projects);
-  const worksKey = () => (worksPage === 'apps' ? 'apps' : 'works');
-  const listLen = () => (soonShowing() ? 0 : current === 'works' ? worksList().length : current === 'chronicle' ? events.length : current === 'contact' ? CHANNELS.length : 0);
-  const listKey = () => (soonShowing() ? null : current === 'works' ? worksKey() : current === 'chronicle' || current === 'contact' ? current : null);
+  const worksList = (): readonly Row[] => (worksPage === 'archive' ? archiveWorks : SELECTED_ROWS);
+  const worksKey = () => (worksPage === 'archive' ? 'archive' : 'works');
+  // While the archive is being read (the cartridge has just seated) there is no list to move in.
+  const listLen = () => (reading ? 0 : current === 'works' ? worksList().length : current === 'chronicle' ? events.length : current === 'contact' ? CHANNELS.length : 0);
+  const listKey = () => (reading ? null : current === 'works' ? worksKey() : current === 'chronicle' || current === 'contact' ? current : null);
 
   function windowed<T>(items: readonly T[], sel: number): { item: T; i: number }[] {
     const rows = visibleRows();
@@ -231,7 +203,7 @@ export function createScreen(): Screen {
     // Works names its two pages after its own name; the one showing is inverted, and both can be tapped.
     const name =
       current === 'works'
-        ? `<span class="ek-pages">WORKS ${(['web', 'apps', 'motion'] as const).map((p) => `<span data-page="${p}" class="${p === worksPage ? 'on' : ''}">${p.toUpperCase()}</span>`).join('')}</span>`
+        ? `<span class="ek-pages">WORKS ${PAGES.map((p) => `<span data-page="${p}" class="${p === worksPage ? 'on' : ''}">${PAGE_LABEL[p]}</span>`).join('')}</span>`
         : `<span>${LABEL[current]}</span>`;
     return `<header class="ek-sb ek-soft">${keys}</header><header class="ek-sb ek-status">${name}${statusRight()}</header>`;
   }
@@ -247,44 +219,15 @@ export function createScreen(): Screen {
   toastEl.className = 'sc-toast';
   toastEl.setAttribute('aria-hidden', 'true');
   let toastTimer = 0;
-  let worksPage: WorksPage = 'web';
+  let worksPage: WorksPage = 'selected';
   let pageCb: (page: WorksPage) => void = () => {};
-  const soonShowing = () => current === 'works' && (worksPage === 'motion' || (worksPage === 'apps' && !apps.length));
-  let installTimer = 0;
-  /** Draws one step of the install: the bar's blocks, the percentage, the line under it and the tiles. */
-  function installStep(pct: number, doing: number) {
-    const view = el.querySelector('.sc-soon');
-    if (!view || !soonShowing()) return;
-    const soon = SOON[worksPage as 'apps' | 'motion'];
-    view.querySelectorAll('.sc-blocks i').forEach((b, i) => b.classList.toggle('on', i < Math.round((pct / 100) * BLOCKS)));
-    view.querySelector('.sc-pct')!.textContent = `${pct}%`;
-    view.querySelector('.sc-doing')!.textContent = soon.doing[doing];
-    // The first tiles land a step at a time; the next one, and any beyond, show as downloading.
-    let next = -1;
-    view.querySelectorAll<SVGRectElement>('.sc-tile').forEach((t, k) => {
-      const on = k < soon.solid && pct >= (k + 1) * soon.step;
-      if (!on && next < 0 && pct > 0) next = k;
-      t.setAttribute('class', `sc-tile${on ? ' on' : k === next ? ' load' : ''}`);
-    });
-  }
-  const stopInstall = () => clearTimeout(installTimer);
-  /** Runs the install from 0 % (reduced motion: shows the held 99 % step and stays there). */
-  function startInstall() {
-    stopInstall();
-    if (motion.reduced()) return installStep(99, 4);
-    let k = 0;
-    const step = () => {
-      if (!soonShowing()) return;
-      const [pct, doing, ms] = INSTALL[k];
-      installStep(pct, doing);
-      k = (k + 1) % INSTALL.length;
-      installTimer = window.setTimeout(() => {
-        if (k === 0) flash(); // round again after a full refresh, like the panel clearing its ghosting
-        step();
-      }, ms);
-    };
-    step();
-  }
+  // The archive cartridge has just seated: "Reading cartridge…" for a moment, then the rows.
+  let reading = false;
+  let readTimer = 0;
+  const stopReading = () => {
+    clearTimeout(readTimer);
+    reading = false;
+  };
 
   // Contact, Email selected: the middle of the footer is a Copy key; after a copy it says how it went.
   let copyNote: string | null = null;
@@ -303,26 +246,28 @@ export function createScreen(): Screen {
           <footer class="ek-ab"><span data-softkey="works">01 Works</span><span>Scroll ↓</span><span class="ek-hold" data-softkey="contact">04 Contact</span></footer>`;
         break;
       case 'works': {
-        if (soonShowing()) {
-          const soon = SOON[worksPage as 'apps' | 'motion'];
-          html = `${softkeys()}<section class="ek-view sc-center sc-soon" data-soon="${worksPage}">${soon.glyph}
-            <p class="sc-stamp">COMING SOON</p>
-            <p class="sc-soon-t">${soon.title}</p>
-            <div class="sc-meter"><span class="sc-blocks">${'<i></i>'.repeat(BLOCKS)}</span><b class="sc-pct">0%</b></div>
-            <p class="ek-sub sc-doing">${soon.doing[0]}</p></section>
-            ${footer('‹ Web', soon.of, '—')}`;
+        if (reading) {
+          html = `${softkeys()}<section class="ek-view sc-center sc-reading sc-cartridge"><p class="ek-title">Reading cartridge…</p><div class="ek-bar"><i></i></div><p class="ek-sub">Archive · ${archiveWorks.length} projects</p></section>
+            ${footer('‹ Eject', '—', '…')}`;
           break;
         }
         const list = worksList();
         const sel = index[worksKey()];
-        const p = list[sel];
+        const row = list[sel];
+        // The projects are counted without the "View more…" row that ends the selected page.
+        const count = worksPage === 'archive' ? archiveWorks.length : selectedWorks.length;
+        const well = isGhost(row)
+          ? `<figure class="sc-well sc-well-cart">${cartridgeGlyph}<figcaption>ARCHIVE · ${archiveWorks.length} MORE</figcaption></figure>`
+          : `<figure class="sc-well"><img src="${row.eink}" alt="" draggable="false"><figcaption>${esc(row.category)}</figcaption></figure>`;
+        const rowHtml = ({ item, i }: { item: Row; i: number }) =>
+          isGhost(item)
+            ? `<li data-index="${i}" class="sc-ghost${i === sel ? ' sel' : ''}"><span>View more…</span><small>${archiveWorks.length} projects</small></li>`
+            : `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${esc(item.title)}${item.flagship ? `${FLAG}<span class="sr"> Flagship</span>` : ''}</span><small>${esc(item.tags[0])}</small></li>`;
         html = `${softkeys()}
           <section class="ek-view sc-list">
-            <figure class="sc-well"><img src="${p.eink}" alt="" draggable="false"><figcaption>${esc(p.category)}</figcaption></figure>
-            <ul class="ek-list sc-rows">${windowed(list, sel)
-              .map(({ item, i }) => `<li data-index="${i}" class="${i === sel ? 'sel' : ''}"><span>${esc(item.title)}${item.flagship ? `${FLAG}<span class="sr"> Flagship</span>` : ''}</span><small>${esc(item.tags[0])}</small></li>`)
-              .join('')}</ul></section>
-          ${footer(worksPage === 'apps' ? '‹ Web' : '‹ Back', `${sel + 1} of ${list.length}`, 'Open ✓')}`;
+            ${well}
+            <ul class="ek-list sc-rows">${windowed(list, sel).map(rowHtml).join('')}</ul></section>
+          ${worksPage === 'archive' ? footer('‹ Eject', `${sel + 1} of ${count}`, 'Open ✓') : isGhost(row) ? footer('‹ Back', 'Archive', 'View ✓') : footer('‹ Back', `${sel + 1} of ${count}`, 'Open ✓')}`;
         break;
       }
       case 'chronicle': {
@@ -359,13 +304,11 @@ export function createScreen(): Screen {
         }
         break;
     }
-    stopInstall();
     el.dataset.mode = current;
     el.innerHTML = html;
     el.append(saver, toastEl);
     mountLogo();
-    if (soonShowing()) startInstall();
-    if (current === 'contact' && contactState === 'reading') {
+    if ((current === 'contact' && contactState === 'reading') || reading) {
       // Start the stepped bar on the next frame so the clip-path transition runs from empty.
       requestAnimationFrame(() => el.querySelector('.sc-reading')?.classList.add('go'));
     }
@@ -373,7 +316,11 @@ export function createScreen(): Screen {
 
   function confirm(): ScreenIntent {
     switch (current) {
-      case 'works': return soonShowing() ? { type: 'none' } : { type: 'project', id: worksList()[index[worksKey()]].id };
+      case 'works': {
+        if (reading) return { type: 'none' };
+        const row = worksList()[index[worksKey()]];
+        return isGhost(row) ? { type: 'page', page: 'archive' } : { type: 'project', id: row.id };
+      }
       case 'chronicle': return { type: 'event', id: events[index.chronicle].id };
       case 'about': return { type: 'about' };
       case 'contact':
@@ -406,7 +353,6 @@ export function createScreen(): Screen {
 
   render();
   COARSE.addEventListener('change', render);
-  motion.subscribe(() => soonShowing() && startInstall()); // the Motion switch: play the install, or hold it at 99 %
   // The clock changes in place on the minute, without a refresh flash.
   const tickClock = () => {
     const now = clockNow();
@@ -421,9 +367,11 @@ export function createScreen(): Screen {
       if (mode === current) return;
       current = mode;
       if (mode !== 'contact') contactState = 'prompt';
-      if (mode !== 'works' && worksPage !== 'web') {
-        worksPage = 'web';
-        pageCb('web');
+      if (mode !== 'works' && worksPage !== 'selected') {
+        stopReading();
+        worksPage = 'selected';
+        index.archive = 0;
+        pageCb('selected');
       }
       refresh();
       render();
@@ -482,9 +430,21 @@ export function createScreen(): Screen {
       toastTimer = window.setTimeout(() => toastEl.classList.remove('on'), 1100);
     },
     worksPage: () => worksPage,
-    setWorksPage(page) {
+    setWorksPage(page, instant = false) {
       if (page === worksPage) return;
+      stopReading();
       worksPage = page;
+      if (page === 'selected') index.archive = 0; // the next cartridge starts at its first row
+      else if (!instant && !motion.reduced()) {
+        reading = true;
+        readTimer = window.setTimeout(() => {
+          reading = false;
+          if (current === 'works' && worksPage === 'archive') {
+            refresh();
+            render();
+          }
+        }, READ_MS);
+      }
       if (current === 'works') {
         refresh();
         render();

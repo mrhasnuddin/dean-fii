@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run figure</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; background: #0f1014; }
+    main { width: min(var(--w, 700px), 100% - 32px); margin: 24px auto; }
+    nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    nav button { font: 500 12px/1 system-ui; padding: 8px 10px; border-radius: 999px; border: 1px solid #2a2c33; background: transparent; color: #d7d3ca; cursor: pointer; }
+    nav button.on { border-color: #e4cf9f; color: #e4cf9f; }
+  </style>
+</head>
+<body>
+  <main><nav id="nav"></nav><div id="fig"></div></main>
+  <script type="module" src="/src/lab/run.ts"></script>
+</body>
+</html>

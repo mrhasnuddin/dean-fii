@@ -2,6 +2,7 @@
   "projects": [
     {
       "id": "eni",
+      "rank": 6,
       "title": "ENI Network",
       "category": "Modular L1 Blockchain",
       "roles": [
@@ -21,8 +22,8 @@
         "viem"
       ],
       "tags": [
-        "L1 Network",
-        "Brand Site"
+        "Brand Site",
+        "L1 Network"
       ],
       "status": "Shipped + Live",
       "link": "https://eni.top/",
@@ -59,10 +60,36 @@
           "label": "Why this look",
           "text": "ENI is a Layer 1 blockchain built for commercial adoption, so the site has to feel like serious infrastructure while speaking the visual language Web3 audiences recognise: a dark ground, neon-lit wireframe landscapes and 3D renders of the sentinel node hardware. The pages I worked on follow that system and the client's requirements, so they sit comfortably beside the rest of the site."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#050505"
+          },
+          {
+            "name": "Ink",
+            "hex": "#e6e6e6"
+          },
+          {
+            "name": "Accent",
+            "hex": "#a52766"
+          },
+          {
+            "name": "Accent 2",
+            "hex": "#5bc0eb"
+          }
+        ],
+        "type": [
+          "Sora",
+          "Inter",
+          "Space Grotesk"
+        ]
+      }
     },
     {
       "id": "aseanlabs",
+      "rank": 5,
       "title": "ASEAN Labs",
       "category": "Web3 Execution Layer",
       "roles": [
@@ -82,8 +109,8 @@
         "WebGL"
       ],
       "tags": [
-        "Incubator",
-        "Narrative Site"
+        "Landing Page",
+        "Incubator"
       ],
       "status": "Shipped + Live",
       "link": "https://aseanlabs.io/",
@@ -105,6 +132,7 @@
       ],
       "eink": "/media/eink/aseanlabs.png",
       "motion": "/media/motion/aseanlabs",
+      "flagship": true,
       "story": [
         {
           "label": "The problem",
@@ -126,10 +154,32 @@
           "label": "The details",
           "text": "Some of the vectors are custom made by me in Figma, and the logos were made by our team. A design system set up in code keeps every page consistent, with motion and micro-interactions throughout."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#f4bf4b"
+          },
+          {
+            "name": "Ink",
+            "hex": "#171914"
+          },
+          {
+            "name": "Shade",
+            "hex": "#9c792e"
+          }
+        ],
+        "type": [
+          "Lexend",
+          "Space Grotesk",
+          "Roboto Mono"
+        ]
+      }
     },
     {
       "id": "kairma",
+      "rank": 1,
       "title": "Kairma",
       "category": "AI Workforce Platform",
       "roles": [
@@ -150,8 +200,8 @@
         "Lenis"
       ],
       "tags": [
-        "AI Platform",
-        "Landing Page"
+        "Landing Page",
+        "AI Platform"
       ],
       "status": "Shipped + Live",
       "link": "https://www.kairma.ai/",
@@ -192,10 +242,31 @@
           "label": "How it was built",
           "text": "Consultations and MVPs refined the UI/UX and technical decisions first. AI produced the animated illustrations, guided by specific skill.md files, and the footer image was edited with a dither effect using an open-source website. Once the client was satisfied with the MVP, I moved on to the build with minimal iteration."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#0b0a0c"
+          },
+          {
+            "name": "Ink",
+            "hex": "#edece8"
+          },
+          {
+            "name": "Accent",
+            "hex": "#c9402b"
+          }
+        ],
+        "type": [
+          "IBM Plex Sans",
+          "IBM Plex Mono"
+        ]
+      }
     },
     {
       "id": "stashcube",
+      "rank": 2,
       "title": "Stashcube",
       "category": "Curated Library",
       "roles": [
@@ -214,8 +285,8 @@
         "Tailwind CSS"
       ],
       "tags": [
-        "Library",
-        "Curated"
+        "Web App",
+        "Library"
       ],
       "status": "Shipped + Live",
       "link": "https://stashcube.vercel.app/",
@@ -253,10 +324,32 @@
           "label": "Why this look",
           "text": "A moodboard of references came first. Stashcube is a library, so the interface stays near-black and neutral and lets the content lead, with one lime accent to show what to click. I chose a partial-pixel theme for the character: a pixel texture that fades out toward the edge nods to builder culture without covering anything. A left sidebar grouped under Build, Create and Brand lets visitors move through the collection like a file explorer."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#0a0a0a"
+          },
+          {
+            "name": "Ink",
+            "hex": "#f5f5f5"
+          },
+          {
+            "name": "Accent",
+            "hex": "#95d914"
+          }
+        ],
+        "type": [
+          "Bricolage Grotesque",
+          "Figtree",
+          "Martian Mono"
+        ]
+      }
     },
     {
       "id": "flowfi",
+      "rank": 3,
       "title": "FlowFi",
       "category": "Treasury Protocol",
       "roles": [
@@ -274,8 +367,8 @@
         "GSAP"
       ],
       "tags": [
-        "DAO",
-        "Protocol Site"
+        "Landing Page",
+        "DAO"
       ],
       "status": "Shipped + Live",
       "link": "https://www.flowfidao.com/",
@@ -314,10 +407,31 @@
           "label": "The design",
           "text": "The isometric illustrations are custom made by me in Figma, and the sections follow a clear structure down the page, so the protocol, its tokenomics and its roadmap each have a place of their own."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#f8f9fb"
+          },
+          {
+            "name": "Ink",
+            "hex": "#2e2f33"
+          },
+          {
+            "name": "Accent",
+            "hex": "#6842f0"
+          }
+        ],
+        "type": [
+          "Clash Display",
+          "Public Sans"
+        ]
+      }
     },
     {
       "id": "paygo",
+      "rank": 8,
       "title": "PayGo",
       "category": "Machine-Native Payments",
       "roles": [
@@ -338,8 +452,8 @@
         "Framer Motion"
       ],
       "tags": [
-        "Payments",
-        "Developer Site"
+        "Landing Page",
+        "Payments"
       ],
       "status": "Shipped + Live",
       "link": "https://www.paygo.ac/",
@@ -377,10 +491,35 @@
           "label": "How it was built",
           "text": "I consulted on and refined the UI/UX and technical decisions with the client. Once we agreed on the result, I handed the site over to the client's in-house team to run."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#090820"
+          },
+          {
+            "name": "Ink",
+            "hex": "#ffffff"
+          },
+          {
+            "name": "Accent",
+            "hex": "#7030ef"
+          },
+          {
+            "name": "Accent 2",
+            "hex": "#db1fff"
+          }
+        ],
+        "type": [
+          "Inter",
+          "JetBrains Mono"
+        ]
+      }
     },
     {
       "id": "opencrew",
+      "rank": 7,
       "title": "OpenCrew",
       "category": "Global Web3 & AI Team",
       "roles": [
@@ -402,8 +541,8 @@
         "WebGL"
       ],
       "tags": [
-        "Growth Partner",
-        "Corporate Site"
+        "Marketplace Site",
+        "Growth Partner"
       ],
       "status": "Shipped",
       "link": "https://open-crew.vercel.app/",
@@ -438,10 +577,30 @@
           "label": "The proof",
           "text": "The site shows real experience and on-site activity, with photos taken at my own offline events and client stories from projects we incubated. It also presents a talent pool with professional experiences, for clarity."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#000000"
+          },
+          {
+            "name": "Ink",
+            "hex": "#ffffff"
+          },
+          {
+            "name": "Accent",
+            "hex": "#d1ad7b"
+          }
+        ],
+        "type": [
+          "Instrument Sans"
+        ]
+      }
     },
     {
       "id": "fortuna",
+      "rank": 10,
       "title": "Fortuna HK",
       "category": "Professional Services",
       "roles": [
@@ -463,8 +622,8 @@
         "Lenis"
       ],
       "tags": [
-        "Corporate",
-        "Multilingual"
+        "Corporate Site",
+        "Corporate"
       ],
       "status": "Shipped + Live",
       "link": "https://www.fortunahkholding.com/",
@@ -502,10 +661,31 @@
           "label": "The details",
           "text": "The site is multilingual. The world clock in the footer was made at the client's request, and the imagery is AI-assisted."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#111111"
+          },
+          {
+            "name": "Ink",
+            "hex": "#eaeaea"
+          },
+          {
+            "name": "Accent",
+            "hex": "#c89774"
+          }
+        ],
+        "type": [
+          "Outfit",
+          "DM Sans"
+        ]
+      }
     },
     {
       "id": "nikola",
+      "rank": 11,
       "title": "Nikola",
       "category": "AI Coordination Layer",
       "roles": [
@@ -526,8 +706,8 @@
         "Framer Motion"
       ],
       "tags": [
-        "Web4",
-        "Hero Site"
+        "Landing Page",
+        "Web4"
       ],
       "status": "Shipped + Live",
       "link": "https://www.nikola.network/",
@@ -563,10 +743,34 @@
           "label": "How it was built",
           "text": "The client's guidelines and documentation made the build straightforward, so the work moved from the agreed direction straight to the build."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#0a0118"
+          },
+          {
+            "name": "Ink",
+            "hex": "#ffffff"
+          },
+          {
+            "name": "Accent",
+            "hex": "#f1c770"
+          },
+          {
+            "name": "Accent 2",
+            "hex": "#a855f7"
+          }
+        ],
+        "type": [
+          "Plus Jakarta Sans"
+        ]
+      }
     },
     {
       "id": "pusc",
+      "rank": 9,
       "title": "PUSC",
       "category": "Algorithmic Stablecoin",
       "roles": [
@@ -586,8 +790,8 @@
         "Framer Motion"
       ],
       "tags": [
-        "Stablecoin",
-        "Protocol Site"
+        "Microsite",
+        "Stablecoin"
       ],
       "status": "Shipped",
       "link": "https://pusc-liard.vercel.app/",
@@ -623,7 +827,30 @@
           "label": "How it was built",
           "text": "The shaders and assets are custom made for the site. After the build, I handed it over."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#090820"
+          },
+          {
+            "name": "Ink",
+            "hex": "#e5e7eb"
+          },
+          {
+            "name": "Accent",
+            "hex": "#7030ef"
+          },
+          {
+            "name": "Accent 2",
+            "hex": "#2e6bff"
+          }
+        ],
+        "type": [
+          "Inter"
+        ]
+      }
     }
   ],
   "events": [
@@ -634,6 +861,7 @@
       "place": "Kuala Lumpur",
       "country": "MY",
       "description": "I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026. While the programme centred on chips and infrastructure, my session addressed the human side: preparing everyday Malaysians for this shift. I presented the talent-building work of the MyDAC Malaysia and LEJIEND joint venture, which offers free community learning almost every week, online and in person at Outreach Coffee in Bukit Bintang.",
+      "conclusion": "Infrastructure only delivers value when people are ready to use it, so preparing everyday Malaysians through regular, free learning is as much a part of the AI and semiconductor story as the chips themselves.",
       "images": [
         "/media/chronicle/KL7.webp",
         "/media/chronicle/KL8.webp",
@@ -643,13 +871,16 @@
       "links": [
         {
           "title": "MyDAC Malaysia",
-          "link": "https://www.mydac.org.my/en"
+          "link": "https://www.mydac.org.my/en",
+          "logo": "/media/orgs/mydac.svg"
         },
         {
           "title": "LEJIEND",
-          "link": "https://lejiend.com/"
+          "link": "https://lejiend.com/",
+          "logo": "/lejiend.png"
         }
-      ]
+      ],
+      "linksLabel": "The joint venture"
     },
     {
       "id": "changsha",
@@ -657,7 +888,8 @@
       "role": "Speaker",
       "place": "Changsha",
       "country": "CN",
-      "description": "At the opening stop of the ENI DeFi Week World Tour, I introduced the ENI ecosystem and its vision for DeFi collaboration. Organised by ASEAN Labs, the Changsha event brought that conversation to a mainland Chinese audience, with my presentation delivered in Mandarin and English.",
+      "description": "I spoke at ENI DeFi Week in Changsha, representing ASEAN Labs as the official project incubator for ENI. Organised by ENI, the event introduced the network and its ecosystem to Mainland Chinese audiences, and my session took the room through what is being built on ENI. ASEAN Labs helps Web3 teams build on ENI across Southeast Asia, and Changsha gave us a first-hand look at the China market for DeFi and Web3. Thank you to the ENI team for hosting us.",
+      "conclusion": "Reaching the China market for DeFi and Web3 starts with a clear role in the ecosystem, and ASEAN Labs holds that role as the official project incubator for ENI.",
       "images": [
         "/media/chronicle/ChangSha1.webp",
         "/media/chronicle/ChangSha2.webp"
@@ -667,15 +899,24 @@
     {
       "id": "hangzhou",
       "title": "Web3 + RWA Global Infrastructure Summit",
-      "role": "Delegate",
+      "role": "Speaker",
       "place": "Hangzhou",
       "country": "CN",
-      "description": "I represented ENI at the Web3 and RWA Global Digital Infrastructure Summit in Hangzhou, connecting with builders and institutions working on real-world assets. The visit brought the ecosystem into conversations across the summit, from the signing wall to the main hall.",
+      "description": "I represented ASEAN Labs at the Web3 + RWA Global Infrastructure Summit in Hangzhou, organised by ENI. While the summit centred on Web3 and real-world assets, my session was about taking part: I introduced the MEX launchpad and the DAOaaS platform, where users can join as a community and farm for airdrops. It was a good place to show both to an audience following Web3 and real-world assets.",
+      "conclusion": "Alongside a summit focused on real-world assets and infrastructure, the MEX launchpad and DAOaaS brought the community side of Web3 into the conversation.",
       "images": [
         "/media/chronicle/HangZhou1.webp",
         "/media/chronicle/HangZhou2.webp"
       ],
-      "eink": "/media/eink/hangzhou.png"
+      "eink": "/media/eink/hangzhou.png",
+      "links": [
+        {
+          "title": "DAOaaS",
+          "link": "https://daoaas.io/",
+          "logo": "/media/orgs/daoaas.png",
+          "tile": "dark"
+        }
+      ]
     },
     {
       "id": "bali",
@@ -683,12 +924,27 @@
       "role": "Host & Keynote",
       "place": "Bali",
       "country": "ID",
-      "description": "I hosted the Monster GameFi soft launch under the Bali night sky, welcoming partners from HODL and Kripto 101. As host and keynote presenter, I introduced the play-to-earn vision to the community gathering for launch night.",
+      "description": "I hosted the Monster GameFi soft launch in Bali during Coinfest week, a community event run by ASEAN Labs in joint venture with HODL, Kripto101, Pionex and 9Bit. The launch introduced the partners’ new products to the community, and it was equally a chance to network with Bali’s Web3 communities. Four partners joined ASEAN Labs to make it happen, and it was a pleasure to host it.",
+      "conclusion": "The Monster GameFi soft launch put four partners behind one community event and gave their new products direct access to Bali’s Web3 communities during Coinfest week.",
       "images": [
         "/media/chronicle/Bali1.webp",
         "/media/chronicle/Bali2.webp"
       ],
-      "eink": "/media/eink/bali.png"
+      "eink": "/media/eink/bali.png",
+      "links": [
+        {
+          "title": "Pionex",
+          "link": "https://www.pionex.com/en",
+          "logo": "/media/orgs/pionex.png"
+        },
+        {
+          "title": "9Bit",
+          "link": "https://the9bit.com/",
+          "logo": "/media/orgs/9bit.svg",
+          "tile": "dark",
+          "mark": true
+        }
+      ]
     },
     {
       "id": "chain-of-trust",
@@ -696,12 +952,26 @@
       "role": "Presenter",
       "place": "Kuala Lumpur",
       "country": "MY",
-      "description": "At an evening hosted with CCACC and Fableration, I explored trust as a foundation for Web3. A live NOVA demonstration took the audience through contracts, mining mechanics and NFT minting, one step at a time.",
+      "description": "I presented ASEAN Labs at Chain of Trust, an event hosted by CCACC and Fableration for Malaysia’s Web3 and tech communities. ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia, and my talk introduced it together with the ecosystem of projects we have incubated. The programme also included lucky draws and giveaways in stablecoins and project tokens. Thanks to CCACC and Fableration for having us.",
+      "conclusion": "Chain of Trust brought the ASEAN Labs ecosystem to Malaysia’s Web3 and tech communities in person, a reminder that trust is built face to face and that giveaways only open the door.",
       "images": [
         "/media/chronicle/KL1.webp",
         "/media/chronicle/KL2.webp"
       ],
-      "eink": "/media/eink/chain-of-trust.png"
+      "eink": "/media/eink/chain-of-trust.png",
+      "links": [
+        {
+          "title": "CCACC",
+          "link": "https://www.ccacc.io/",
+          "logo": "/media/orgs/ccacc.png",
+          "tile": "dark"
+        },
+        {
+          "title": "Fableration",
+          "link": "https://fableration.com/",
+          "logo": "/media/orgs/fableration.svg"
+        }
+      ]
     },
     {
       "id": "gala",
@@ -709,12 +979,27 @@
       "role": "Panelist",
       "place": "Kuala Lumpur",
       "country": "MY",
-      "description": "A year-end conversation about meme markets, PayFi and Malaysia’s digital initiatives. I joined the Christmas Crypto Gala panel to discuss what could drive the next wave of crypto activity with a room full of local community members.",
+      "description": "I joined the panel at the Christmas Crypto Gala, co-hosted by ASEAN Labs and MySekolahKripto, on the future of Web3 in Malaysia. The gala combined a project introduction session with the panel, whose speakers came from fintech, GameFi and PayFi, together with a representative from MDEC who joined in a personal capacity. It made for a good session to brainstorm and share ideas about where Web3 in Malaysia goes next.",
+      "conclusion": "With fintech, GameFi, PayFi and MDEC voices on one panel, the Gala made clear that the future of Web3 in Malaysia is a conversation across sectors, and that open sessions for sharing ideas are where it moves forward.",
       "images": [
         "/media/chronicle/KL3.webp",
         "/media/chronicle/KL4.webp"
       ],
-      "eink": "/media/eink/gala.png"
+      "eink": "/media/eink/gala.png",
+      "links": [
+        {
+          "title": "MySekolahKripto",
+          "link": "https://www.linkedin.com/company/sekolahkripto/home/",
+          "logo": "/media/orgs/sekolahkripto.jpg",
+          "tile": "white",
+          "mark": true
+        },
+        {
+          "title": "MDEC",
+          "link": "https://www.mdec.my/",
+          "logo": "/media/orgs/mdec.svg"
+        }
+      ]
     },
     {
       "id": "paygo-meetup",
@@ -722,12 +1007,26 @@
       "role": "Presenter",
       "place": "Kuala Lumpur",
       "country": "MY",
-      "description": "An evening with the PayGo and ENI communities, introducing pay-as-you-go payments on ENI Mainnet to local builders. The session closed with a group photograph of the people bringing those ideas into practice.",
+      "description": "I presented ASEAN Labs at PayGo × ENI Community Night, hosted by PayGo and ASEAN Labs in joint venture with Finweek KL. The audience was diverse, with people from tech, fintech and Web3, and even college students. My session covered ASEAN Labs, what we offer and our portfolio, and we then discussed the Web3 industry in Malaysia, its challenges and the solutions. PayGo is an x402 payment gateway on ENI Mainnet, which made it a natural co-host for an ENI community night.",
+      "conclusion": "Bringing tech, fintech, Web3 and college students into one room pointed to one conclusion: Web3 in Malaysia moves forward when its challenges and solutions are discussed openly across industries, not only among insiders.",
       "images": [
         "/media/chronicle/KL5.webp",
         "/media/chronicle/KL6.webp"
       ],
-      "eink": "/media/eink/paygo-meetup.png"
+      "eink": "/media/eink/paygo-meetup.png",
+      "links": [
+        {
+          "title": "PayGo",
+          "link": "https://www.paygo.ac/",
+          "logo": "/media/orgs/paygo.png",
+          "mark": true
+        },
+        {
+          "title": "Finweek KL",
+          "link": "https://finweek.my/",
+          "logo": "/media/orgs/finweek.png"
+        }
+      ]
     },
     {
       "id": "nova-mexc",
@@ -735,12 +1034,28 @@
       "role": "Speaker",
       "place": "Selangor",
       "country": "MY",
-      "description": "I presented a walkthrough of offline activations and online campaigns, showing how repeated, consistent community work helps build a Web3 brand that people recognise and trust.",
+      "description": "I was invited, in a personal capacity, to share my experience in Web3 at a session hosted by MySekolahKripto in joint venture with MEXC. The audience was a mix of college students and working professionals, so I spoke about why Web3 is worth looking at as an industry, the skills it asks for, the job opportunities and more. Thank you to MySekolahKripto and MEXC for the invitation, and to everyone who came to listen.",
+      "conclusion": "Speaking from personal experience to students and working professionals, the session came down to the practical questions for anyone entering Web3: why the industry matters, which skills it needs and what jobs it offers.",
       "images": [
         "/media/chronicle/Selangor1.webp",
         "/media/chronicle/Selangor2.webp"
       ],
-      "eink": "/media/eink/nova-mexc.png"
+      "eink": "/media/eink/nova-mexc.png",
+      "links": [
+        {
+          "title": "MySekolahKripto",
+          "link": "https://www.linkedin.com/company/sekolahkripto/home/",
+          "logo": "/media/orgs/sekolahkripto.jpg",
+          "tile": "white",
+          "mark": true
+        },
+        {
+          "title": "MEXC",
+          "link": "https://www.mexc.com/",
+          "logo": "/media/orgs/mexc.svg",
+          "tile": "dark"
+        }
+      ]
     },
     {
       "id": "blockchain-evolution",
@@ -748,17 +1063,28 @@
       "role": "Speaker",
       "place": "Selangor",
       "country": "MY",
-      "description": "At PPAS Bangi, I spoke with builders and newcomers about crypto, PayFi and GameFi heading into 2025. The community session focused on practical routes to adoption and what those technologies could mean for the local Web3 scene.",
+      "description": "I represented GameSpace at Blockchain Evolution 2025, hosted by MySekolahKripto in joint venture with two GameFi projects, EUFT and GameSpace. I introduced the project and shared insights on GameFi with a public audience. To make GameFi something people could try, the session also ran mini games, giveaways and a mini tournament. Thank you to MySekolahKripto and EUFT for partnering with us.",
+      "conclusion": "For GameSpace, the session was a reminder that GameFi is best introduced through play, with the mini games, giveaways and tournament letting the public experience the project rather than only hear about it.",
       "images": [
         "/media/chronicle/Selangor3.webp",
         "/media/chronicle/Selangor4.webp"
       ],
-      "eink": "/media/eink/blockchain-evolution.png"
+      "eink": "/media/eink/blockchain-evolution.png",
+      "links": [
+        {
+          "title": "MySekolahKripto",
+          "link": "https://www.linkedin.com/company/sekolahkripto/home/",
+          "logo": "/media/orgs/sekolahkripto.jpg",
+          "tile": "white",
+          "mark": true
+        }
+      ]
     }
   ],
   "apps": [
     {
       "id": "naro",
+      "rank": 4,
       "title": "NARO",
       "category": "On-chain Asset Launchpad",
       "roles": [
@@ -784,8 +1110,8 @@
         "link": "https://naroradar.com/"
       },
       "tags": [
-        "Dapp",
-        "Launchpad"
+        "Dapp Redesign",
+        "Dapp"
       ],
       "status": "Testnet",
       "link": "https://naro-mu.vercel.app/",
@@ -823,7 +1149,26 @@
           "label": "How it was built",
           "text": "I mapped out the prototype flows, then used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build."
         }
-      ]
+      ],
+      "look": {
+        "palette": [
+          {
+            "name": "Ground",
+            "hex": "#080b0a"
+          },
+          {
+            "name": "Ink",
+            "hex": "#e8f0ec"
+          },
+          {
+            "name": "Accent",
+            "hex": "#7dffcb"
+          }
+        ],
+        "type": [
+          "Noto Sans SC"
+        ]
+      }
     }
   ]
 }

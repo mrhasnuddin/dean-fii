@@ -1,0 +1,134 @@
+/* Detail page layout (docs/device-design.md §54): the rail, the chapters, and the figures beside the text.
+
+   Widths. The content column is at most --dt-col (1400 px). The rail sits beside it (--dt-rail, then --dt-gap), so a page with a rail
+   is at most --dt-frame wide (about 1672 px) and the content keeps the width it has without one on any wide window. The rail is a column
+   from 1200 px up (the content is then about 850 px and grows); under that it is a sticky strip of the same keys under the header, and
+   the content takes the whole width. The layout inside the content follows the content's own width (container queries), so it is
+   right with or without the rail. The page itself never gets narrower than --dt-min (320 px). */
+.detail { --dt-rail: 208px; --dt-gap: clamp(32px, 4vw, 64px); --dt-frame: var(--dt-col); }
+.detail.has-rail { --dt-frame: calc(var(--dt-col) + var(--dt-rail) + var(--dt-gap)); }
+@media (max-width: 1199px) { .detail.has-rail { --dt-frame: var(--dt-col); } }
+
+.dt-page { display: grid; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1200px) { .dt-page:has(.dt-rail) { grid-template-columns: var(--dt-rail) minmax(0, 1fr); column-gap: var(--dt-gap); } }
+.dt-main-col { container: dt / inline-size; min-width: 0; }
+
+/* ---------- the rail: the device screen's e-ink list, in its dark (negative) form ----------
+   The same two tones as the screen (--paper and --ink, einkScreen.css), flipped: paper-coloured type on the page's own ground, and the row
+   in view is the solid bar (paper with ink type), as the selected row on the screen is. Mono type, dashed rules, no shadow or glow, and no
+   transition: a row just switches, because e-ink shows states, not tweens (a stepped fade passed through a half-grey frame). */
+.dt-rail {
+  --paper: #e3ded1; --ink: #1d1c1a; --rule: rgb(227 222 209 / 0.28);
+  position: sticky; top: 24px; align-self: start; display: grid;
+  border: 1px solid var(--line); border-radius: 11px; overflow: hidden; background: rgb(227 222 209 / 0.025);
+  font-family: var(--font-mono); color: var(--paper);
+}
+.dt-rail-t { margin: 0; padding: 11px 14px; border-bottom: 1px dashed var(--rule); font: 700 12px/1.2 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; }
+.dt-keys { list-style: none; margin: 0; padding: 0; display: grid; }
+.dt-key {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 40px; padding: 10px 14px;
+  border: 0; border-bottom: 1px dashed var(--rule); border-radius: 0; background: none; color: var(--paper);
+  font: 500 13px/1.3 var(--font-mono); text-align: left; cursor: pointer;
+}
+.dt-keys li:last-child .dt-key { border-bottom: 0; }
+.dt-key-n { flex: none; letter-spacing: 0.06em; opacity: 0.55; }
+.dt-key-l { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* the row for the section in view: the solid bar, ink on paper */
+.dt-key[aria-current='location'] { background: var(--paper); color: var(--ink); border-bottom-color: transparent; }
+.dt-key[aria-current='location'] .dt-key-n { opacity: 0.7; }
+.dt-key:active { background: var(--paper); color: var(--ink); }
+.dt-key:focus-visible { outline: 2px solid var(--champagne); outline-offset: -3px; }
+@media (hover: hover) and (pointer: fine) { .dt-key:not([aria-current='location']):hover { background: rgb(227 222 209 / 0.09); } }
+
+/* ---------- under 1200 px: the same list as a sticky strip under the header, the rows as cells ---------- */
+@media (max-width: 1199px) {
+  .detail.has-rail .dt-scroll { padding-top: 0; }
+  .dt-rail {
+    position: sticky; top: 0; z-index: 3; margin: 0 calc(-1 * var(--dt-side)); padding: 0 var(--dt-side);
+    border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: rgb(15 16 20 / 0.94); backdrop-filter: blur(10px);
+  }
+  .dt-rail-t { display: none; }
+  .dt-keys { display: flex; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .dt-keys::-webkit-scrollbar { display: none; }
+  .dt-keys li { flex: none; }
+  .dt-key { width: auto; border-bottom: 0; border-left: 1px dashed var(--rule); }
+  .dt-keys li:first-child .dt-key { border-left: 0; }
+  .dt-main-col { padding-top: 32px; }
+  .detail { --dt-sec-top: 84px; }
+}
+@media (pointer: coarse) { .dt-key { min-height: 44px; } }
+
+/* ---------- sections and chapters: room to breathe ---------- */
+.dt-sec { margin-top: clamp(72px, 9vw, 128px); scroll-margin-top: var(--dt-sec-top, 24px); outline: none; }
+.dt-main-col > .dt-sec:first-of-type { margin-top: 0; }
+.dt-ch-h { display: flex; align-items: baseline; gap: 14px; margin: 0 0 clamp(22px, 2.6vw, 36px); padding-top: 20px; border-top: 1px solid var(--line); }
+.dt-ch-t { margin: 0; font: var(--display-weight) calc(clamp(28px, 2.6vw, 40px) * var(--display-scale))/1.05 var(--font-display); letter-spacing: calc(var(--display-tracking) / 2); }
+/* a paragraph is a lead (its first sentence, larger) and detail (the rest, quieter) */
+.dt-lead { margin: 0 0 18px; font: 400 clamp(19px, 1.2vw + 8px, 28px)/1.4 var(--font-ui); color: var(--ink-light); text-wrap: pretty; }
+.dt-detail { margin: 0; max-width: 62ch; font: 400 clamp(15px, 0.5vw + 9px, 18px)/1.7 var(--font-ui); color: #aeaaa1; }
+.dt-ov, .dt-ch, .dt-abt { display: grid; gap: 32px; }
+.dt-ov > :first-child, .dt-ch > :first-child, .dt-abt > :last-child { min-width: 0; }
+.dt-sec .dt-flow { margin: 0; }
+
+/* the figures: the work's own pictures as plates, the palette and type as a specimen */
+.dt-plate { margin: 0; }
+.dt-plate img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); background: #1b1c21; }
+.dt-plate figcaption { margin-top: 10px; font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.dt-look { display: grid; gap: 14px; padding: clamp(18px, 2vw, 26px); border: 1px solid var(--line); border-radius: 16px; background: rgb(236 232 223 / 0.03); }
+.dt-look-h { margin: 0; font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.dt-look-h:not(:first-child) { margin-top: 10px; }
+.dt-swatches { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 16px; }
+.dt-swatches li { display: grid; gap: 6px; width: 76px; }
+.dt-swatches i { display: block; width: 76px; height: 76px; border-radius: 14px; border: 1px solid rgb(255 255 255 / 0.14); }
+.dt-swatches b { font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); }
+.dt-swatches code { font: 400 11px/1 var(--font-mono); letter-spacing: 0.04em; color: var(--muted); }
+.dt-faces { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.dt-faces li { font: 500 15px/1.2 var(--font-mono); color: var(--ink-light); padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
+.dt-faces li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+/* the facts, at a glance */
+.dt-glance { margin: 0; padding: 2px clamp(18px, 2vw, 26px); border: 1px solid var(--line); border-radius: 16px; background: rgb(236 232 223 / 0.03); }
+.dt-glance > div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 16px; padding: 16px 0; border-top: 1px solid var(--line); }
+.dt-glance > div:first-child { border-top: 0; }
+.dt-glance dt { padding-top: 6px; font: 500 11px/1.3 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.dt-glance dd { margin: 0; min-width: 0; color: var(--ink-light); font: 500 15px/1.5 var(--font-ui); }
+/* An event's organisations: only their official logos, each on a tile that links to its official site. Light by default (most logos are
+   dark); data-tile="dark" for white lettering, "white" for a logo with a white background (blended into the tile); data-mark for a square or
+   stacked logo (taller). */
+.dt-orgs { display: flex; flex-wrap: wrap; gap: 12px 14px; align-content: start; }
+.dt-org { position: relative; display: grid; place-items: center; width: 224px; max-width: 100%; height: 72px; border: 1px solid rgb(255 255 255 / 0.14); border-radius: 14px; background: #ece8df; text-decoration: none; transition: transform 160ms var(--ease-out), box-shadow 160ms ease; }
+.dt-org img { display: block; width: 168px; max-width: 80%; height: 30px; object-fit: contain; }
+.dt-org-go { position: absolute; top: 7px; right: 10px; font: 500 12px/1 var(--font-mono); color: #5b5b63; }
+.dt-org[data-tile='dark'] { background: #1b1c21; }
+.dt-org[data-tile='dark'] .dt-org-go { color: #8d8d96; }
+.dt-org[data-tile='white'] img { mix-blend-mode: multiply; } /* its white ground takes the tile's colour */
+.dt-org[data-mark] img { height: 54px; }
+@media (max-width: 560px) { .dt-orgs .dt-org { width: 100%; } } /* one to a row, so the tiles fill the column like the text */
+.dt-org:active { transform: scale(0.98); }
+.dt-org:focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .dt-org:hover { transform: translateY(-2px); box-shadow: 0 0 0 2px var(--champagne); } }
+@media (prefers-reduced-motion: reduce) { .dt-org { transition: box-shadow 160ms ease; } .dt-org:hover, .dt-org:active { transform: none; } }
+.dt-abt .dt-media { width: min(100%, 380px); margin: 0; }
+@media (max-width: 560px) { .dt-glance > div { grid-template-columns: minmax(0, 1fr); gap: 8px; } .dt-glance dt { padding-top: 0; } }
+
+/* Tools and Languages: short lists, so side by side with a hairline between them; stacked (the second under a rule) when narrow */
+.dt-duo { display: grid; gap: 28px; }
+.dt-duo-a { display: grid; gap: 28px; align-content: start; }
+.dt-grp { display: grid; gap: 12px; align-content: start; }
+.dt-duo-rule { display: none; }
+.dt-duo-b { padding-top: 28px; border-top: 1px solid var(--line); }
+
+/* An event's conclusion: one short paragraph closing the overview, behind a hairline. */
+.dt-concl { display: grid; gap: 14px; margin-top: clamp(32px, 4vw, 56px); padding-top: clamp(24px, 3vw, 36px); border-top: 1px solid var(--line); }
+.dt-concl .dt-detail { max-width: 70ch; }
+
+/* two columns once the content is wide enough (its own width, not the window's) */
+@container dt (min-width: 820px) {
+  .dt-ov:not(.solo) { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .dt-ch.has-fig { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .dt-abt { grid-template-columns: minmax(240px, 380px) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .dt-duo { grid-template-columns: minmax(0, 1.5fr) 1px minmax(0, 1fr); column-gap: clamp(32px, 4vw, 64px); }
+  .dt-duo-rule { display: block; background: var(--line); }
+  .dt-duo-b { padding-top: 0; border-top: 0; }
+  .dt-ov.solo .dt-detail { max-width: 70ch; }
+}

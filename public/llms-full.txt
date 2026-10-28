@@ -11,32 +11,6 @@ Site: https://www.dean-fi.my/
 
 ## Works
 
-### ENI Network (Web)
-- Category: Modular L1 Blockchain
-- Live: https://eni.top/
-- Roles: UI/UX Designer, Frontend Developer
-- Tools: figma, gemini
-- Tech stack: Next.js, React, Tailwind CSS, Framer Motion, TanStack Query, viem
-- Process: Ideation > Wireframes > MVPs > Iteration > Builds v1 to v3 > Iteration > Handover
-ENI is a modular Layer 1 blockchain built for mass commercial adoption, with a hub chain, app-chains and one-click chain launch. I was a UI/UX designer and frontend developer on the early team, and designed and built part of the site's pages, including the mobile versions of several of them.
-The team: I was part of the early team, working with designers, a PM and developers from the first ideas through to the third version of the build, before the project passed to another team.
-The decisions: We worked it out together through wireframes and MVPs. Every design decision answered to two things: the client's requirements and the conventions of Web3.
-Why this look: ENI is a Layer 1 blockchain built for commercial adoption, so the site has to feel like serious infrastructure while speaking the visual language Web3 audiences recognise: a dark ground, neon-lit wireframe landscapes and 3D renders of the sentinel node hardware. The pages I worked on follow that system and the client's requirements, so they sit comfortably beside the rest of the site.
-
-### ASEAN Labs (Web)
-- Category: Web3 Execution Layer
-- Live: https://aseanlabs.io/
-- Roles: UI/UX Designer, Frontend Developer, Creative Designer
-- Tools: claude, gemini, figma
-- Tech stack: Next.js, React, Tailwind CSS, WebGL
-- Process: Ideation > Moodboard > MVPs > Build > Iteration
-ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia. I designed and built the site on my own, with custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and motion and micro-interactions throughout.
-The problem: Our team lacked a professional landing page to stand out in marketing and on social media. The site also needed to set out what the team offers, how it works with projects, and which projects belong to the ENI ecosystem.
-The idea: This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem.
-Why this look: ASEAN Labs is an incubator whose promise is execution, so the site is built to look decisive: a solid yellow ground, black linework and flat vector illustrations, with no gradients or glow in the hero. Next to the dark neon pages many Web3 teams ship, it stands out in marketing and on social media, which was the gap the team had. Mono captions and a dot grid give it a builder's workshop feel, and agency-style sections keep it easy to scan.
-How it was built: Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well. MVPs settled the look before the build, and iteration tuned it after.
-The details: Some of the vectors are custom made by me in Figma, and the logos were made by our team. A design system set up in code keeps every page consistent, with motion and micro-interactions throughout.
-
 ### Kairma (Web)
 - Category: AI Workforce Platform
 - Live: https://www.kairma.ai/
@@ -79,6 +53,61 @@ The idea: I looked for inspiration that resonates with FlowFi. The on-scroll tri
 Why this look: On-chain finance often defaults to dark and neon. FlowFi manages institutional capital, so the look is pale and open instead, with one purple accent and a confident display face, a tone that reads as calm and accountable rather than speculative. The logo's layered ribbons already suggest capital in motion, which is why the flowing on-scroll animation feels native to the brand.
 The design: The isometric illustrations are custom made by me in Figma, and the sections follow a clear structure down the page, so the protocol, its tokenomics and its roadmap each have a place of their own.
 
+### NARO (Mobile app)
+- Category: On-chain Asset Launchpad
+- Live: https://naro-mu.vercel.app/
+- Redesigned from: https://naroradar.com/
+- Roles: UI/UX Designer, Frontend Developer
+- Tools: codex, figma
+- Tech stack: React, Vite, Three.js, ethers.js
+- Network: BSC Testnet
+- Process: Prototype > Build > Iteration > Handover
+- Flagship project
+NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version, built on BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.
+The starting point: The original NARO app is already live on BSC. I redesigned it mobile first, with breakpoints scaling up to a desktop version.
+The prototype: The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed.
+Why this look: The theme and brand assets came from the client's team: a near-black ground with one mint-green accent, the convention of trading products, where numbers need contrast and green reads as go. My part was carrying it into a layout built for the phone first, with Connect Wallet as the clear primary action and a visible BNB Testnet chip that marks the prototype as a prototype. On desktop the six destinations (Home, Swap, Mining, Data, Me and My Team) sit in a left rail.
+How it was built: I mapped out the prototype flows, then used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build.
+
+### ASEAN Labs (Web)
+- Category: Web3 Execution Layer
+- Live: https://aseanlabs.io/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, gemini, figma
+- Tech stack: Next.js, React, Tailwind CSS, WebGL
+- Process: Ideation > Moodboard > MVPs > Build > Iteration
+- Flagship project
+ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia. I designed and built the site on my own, with custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and motion and micro-interactions throughout.
+The problem: Our team lacked a professional landing page to stand out in marketing and on social media. The site also needed to set out what the team offers, how it works with projects, and which projects belong to the ENI ecosystem.
+The idea: This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem.
+Why this look: ASEAN Labs is an incubator whose promise is execution, so the site is built to look decisive: a solid yellow ground, black linework and flat vector illustrations, with no gradients or glow in the hero. Next to the dark neon pages many Web3 teams ship, it stands out in marketing and on social media, which was the gap the team had. Mono captions and a dot grid give it a builder's workshop feel, and agency-style sections keep it easy to scan.
+How it was built: Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well. MVPs settled the look before the build, and iteration tuned it after.
+The details: Some of the vectors are custom made by me in Figma, and the logos were made by our team. A design system set up in code keeps every page consistent, with motion and micro-interactions throughout.
+
+### ENI Network (Web)
+- Category: Modular L1 Blockchain
+- Live: https://eni.top/
+- Roles: UI/UX Designer, Frontend Developer
+- Tools: figma, gemini
+- Tech stack: Next.js, React, Tailwind CSS, Framer Motion, TanStack Query, viem
+- Process: Ideation > Wireframes > MVPs > Iteration > Builds v1 to v3 > Iteration > Handover
+ENI is a modular Layer 1 blockchain built for mass commercial adoption, with a hub chain, app-chains and one-click chain launch. I was a UI/UX designer and frontend developer on the early team, and designed and built part of the site's pages, including the mobile versions of several of them.
+The team: I was part of the early team, working with designers, a PM and developers from the first ideas through to the third version of the build, before the project passed to another team.
+The decisions: We worked it out together through wireframes and MVPs. Every design decision answered to two things: the client's requirements and the conventions of Web3.
+Why this look: ENI is a Layer 1 blockchain built for commercial adoption, so the site has to feel like serious infrastructure while speaking the visual language Web3 audiences recognise: a dark ground, neon-lit wireframe landscapes and 3D renders of the sentinel node hardware. The pages I worked on follow that system and the client's requirements, so they sit comfortably beside the rest of the site.
+
+### OpenCrew (Web)
+- Category: Global Web3 & AI Team
+- Live: https://open-crew.vercel.app/
+- Roles: UI/UX Designer, Frontend Developer, Creative Designer
+- Tools: claude, figma
+- Tech stack: Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL
+- Process: Ideation > Moodboard > MVPs > Build > Iteration > Maintenance
+OpenCrew is a talent marketplace and growth partner for Web3, AI and new finance projects. People can hire its global crew of executives, advisors, consultants, regional leaders and spokespersons, placed into real roles. Its client stories come from projects we incubated, its photos are real, taken at my own offline events, and its illustrations are custom SVGs drawn in Figma.
+The project: A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it. The site is still maintained after launch.
+Why this look: OpenCrew places senior operators into real roles, so the first impression has to say premium before anyone reads a word. I proposed black and gold for that: a pure black ground, white type in a firm sans, and gold as a warm glow and the Contact button, so it reads as a signal rather than decoration. The team agreed with the direction.
+The proof: The site shows real experience and on-site activity, with photos taken at my own offline events and client stories from projects we incubated. It also presents a talent pool with professional experiences, for clarity.
+
 ### PayGo (Web)
 - Category: Machine-Native Payments
 - Live: https://www.paygo.ac/
@@ -92,17 +121,18 @@ The walkthrough: The payment flow is an interactive protocol walkthrough in thre
 Why this look: PayGo's audience is developers, so the site speaks in their materials: a dark ground, Inter for clarity, and JetBrains Mono for the curl and HTTP 402 snippets that make the walkthrough credible. The headline sets its last word, Settlements, in an italic serif, a small change of voice that marks where a request ends up. A violet tint gives a technical product some warmth.
 How it was built: I consulted on and refined the UI/UX and technical decisions with the client. Once we agreed on the result, I handed the site over to the client's in-house team to run.
 
-### OpenCrew (Web)
-- Category: Global Web3 & AI Team
-- Live: https://open-crew.vercel.app/
+### PUSC (Web)
+- Category: Algorithmic Stablecoin
+- Live: https://pusc-liard.vercel.app/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
-- Tools: claude, figma
-- Tech stack: Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL
-- Process: Ideation > Moodboard > MVPs > Build > Iteration > Maintenance
-OpenCrew is a talent marketplace and growth partner for Web3, AI and new finance projects. People can hire its global crew of executives, advisors, consultants, regional leaders and spokespersons, placed into real roles. Its client stories come from projects we incubated, its photos are real, taken at my own offline events, and its illustrations are custom SVGs drawn in Figma.
-The project: A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it. The site is still maintained after launch.
-Why this look: OpenCrew places senior operators into real roles, so the first impression has to say premium before anyone reads a word. I proposed black and gold for that: a pure black ground, white type in a firm sans, and gold as a warm glow and the Contact button, so it reads as a signal rather than decoration. The team agreed with the direction.
-The proof: The site shows real experience and on-site activity, with photos taken at my own offline events and client stories from projects we incubated. It also presents a talent pool with professional experiences, for clarity.
+- Tools: gemini, figma, photoshop
+- Tech stack: React, Vite, Tailwind CSS, Framer Motion
+- Process: Ideation > Build > Handover
+PUSC is a DAO-governed, over-collateralised stablecoin protocol pegged 1:1 to USD. It is a microsite for PayGo. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets.
+The brief: PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build.
+What the page explains: The page walks through how the stablecoin works: a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout.
+Why this look: A stablecoin has to look like money before it looks like code, so the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family.
+How it was built: The shaders and assets are custom made for the site. After the build, I handed it over.
 
 ### Fortuna HK (Web)
 - Category: Professional Services
@@ -130,35 +160,6 @@ The direction: I helped the client choose a theme and mood that fit the business
 Why this look: Nikola is an AI coordination layer, an idea with nothing physical to show, so the hero is made of light: streaks of violet, gold and blue crossing a near-black field, like signals moving between nodes. A deep violet ground rather than flat black gives the dark theme a cooler, more technical tone, and Plus Jakarta Sans keeps the long architecture and governance sections easy to read.
 How it was built: The client's guidelines and documentation made the build straightforward, so the work moved from the agreed direction straight to the build.
 
-### PUSC (Web)
-- Category: Algorithmic Stablecoin
-- Live: https://pusc-liard.vercel.app/
-- Roles: UI/UX Designer, Frontend Developer, Creative Designer
-- Tools: gemini, figma, photoshop
-- Tech stack: React, Vite, Tailwind CSS, Framer Motion
-- Process: Ideation > Build > Handover
-PUSC is a DAO-governed, over-collateralised stablecoin protocol pegged 1:1 to USD. It is a microsite for PayGo. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets.
-The brief: PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build.
-What the page explains: The page walks through how the stablecoin works: a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout.
-Why this look: A stablecoin has to look like money before it looks like code, so the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family.
-How it was built: The shaders and assets are custom made for the site. After the build, I handed it over.
-
-### NARO (Mobile app)
-- Category: On-chain Asset Launchpad
-- Live: https://naro-mu.vercel.app/
-- Redesigned from: https://naroradar.com/
-- Roles: UI/UX Designer, Frontend Developer
-- Tools: codex, figma
-- Tech stack: React, Vite, Three.js, ethers.js
-- Network: BSC Testnet
-- Process: Prototype > Build > Iteration > Handover
-- Flagship project
-NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version, built on BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.
-The starting point: The original NARO app is already live on BSC. I redesigned it mobile first, with breakpoints scaling up to a desktop version.
-The prototype: The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed.
-Why this look: The theme and brand assets came from the client's team: a near-black ground with one mint-green accent, the convention of trading products, where numbers need contrast and green reads as go. My part was carrying it into a layout built for the phone first, with Connect Wallet as the clear primary action and a visible BNB Testnet chip that marks the prototype as a prototype. On desktop the six destinations (Home, Swap, Mining, Data, Me and My Team) sit in a left rail.
-How it was built: I mapped out the prototype flows, then used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build.
-
 ## Events
 
 ### Selangor AI & Semiconductor Summit 2026
@@ -170,39 +171,46 @@ I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026. While 
 ### ENI DeFi Week World Tour
 - Where: Changsha
 - Role: Speaker
-At the opening stop of the ENI DeFi Week World Tour, I introduced the ENI ecosystem and its vision for DeFi collaboration. Organised by ASEAN Labs, the Changsha event brought that conversation to a mainland Chinese audience, with my presentation delivered in Mandarin and English.
+I spoke at ENI DeFi Week in Changsha, representing ASEAN Labs as the official project incubator for ENI. Organised by ENI, the event introduced the network and its ecosystem to Mainland Chinese audiences, and my session took the room through what is being built on ENI. ASEAN Labs helps Web3 teams build on ENI across Southeast Asia, and Changsha gave us a first-hand look at the China market for DeFi and Web3. Thank you to the ENI team for hosting us.
 
 ### Web3 + RWA Global Infrastructure Summit
 - Where: Hangzhou
-- Role: Delegate
-I represented ENI at the Web3 and RWA Global Digital Infrastructure Summit in Hangzhou, connecting with builders and institutions working on real-world assets. The visit brought the ecosystem into conversations across the summit, from the signing wall to the main hall.
+- Role: Speaker
+- Links: DAOaaS https://daoaas.io/
+I represented ASEAN Labs at the Web3 + RWA Global Infrastructure Summit in Hangzhou, organised by ENI. While the summit centred on Web3 and real-world assets, my session was about taking part: I introduced the MEX launchpad and the DAOaaS platform, where users can join as a community and farm for airdrops. It was a good place to show both to an audience following Web3 and real-world assets.
 
 ### Monster GameFi Soft Launch
 - Where: Bali
 - Role: Host & Keynote
-I hosted the Monster GameFi soft launch under the Bali night sky, welcoming partners from HODL and Kripto 101. As host and keynote presenter, I introduced the play-to-earn vision to the community gathering for launch night.
+- Links: Pionex https://www.pionex.com/en, 9Bit https://the9bit.com/
+I hosted the Monster GameFi soft launch in Bali during Coinfest week, a community event run by ASEAN Labs in joint venture with HODL, Kripto101, Pionex and 9Bit. The launch introduced the partners’ new products to the community, and it was equally a chance to network with Bali’s Web3 communities. Four partners joined ASEAN Labs to make it happen, and it was a pleasure to host it.
 
 ### Chain of Trust
 - Where: Kuala Lumpur
 - Role: Presenter
-At an evening hosted with CCACC and Fableration, I explored trust as a foundation for Web3. A live NOVA demonstration took the audience through contracts, mining mechanics and NFT minting, one step at a time.
+- Links: CCACC https://www.ccacc.io/, Fableration https://fableration.com/
+I presented ASEAN Labs at Chain of Trust, an event hosted by CCACC and Fableration for Malaysia’s Web3 and tech communities. ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia, and my talk introduced it together with the ecosystem of projects we have incubated. The programme also included lucky draws and giveaways in stablecoins and project tokens. Thanks to CCACC and Fableration for having us.
 
 ### Christmas Crypto Gala
 - Where: Kuala Lumpur
 - Role: Panelist
-A year-end conversation about meme markets, PayFi and Malaysia’s digital initiatives. I joined the Christmas Crypto Gala panel to discuss what could drive the next wave of crypto activity with a room full of local community members.
+- Links: MySekolahKripto https://www.linkedin.com/company/sekolahkripto/home/, MDEC https://www.mdec.my/
+I joined the panel at the Christmas Crypto Gala, co-hosted by ASEAN Labs and MySekolahKripto, on the future of Web3 in Malaysia. The gala combined a project introduction session with the panel, whose speakers came from fintech, GameFi and PayFi, together with a representative from MDEC who joined in a personal capacity. It made for a good session to brainstorm and share ideas about where Web3 in Malaysia goes next.
 
 ### PayGo × ENI Community Night
 - Where: Kuala Lumpur
 - Role: Presenter
-An evening with the PayGo and ENI communities, introducing pay-as-you-go payments on ENI Mainnet to local builders. The session closed with a group photograph of the people bringing those ideas into practice.
+- Links: PayGo https://www.paygo.ac/, Finweek KL https://finweek.my/
+I presented ASEAN Labs at PayGo × ENI Community Night, hosted by PayGo and ASEAN Labs in joint venture with Finweek KL. The audience was diverse, with people from tech, fintech and Web3, and even college students. My session covered ASEAN Labs, what we offer and our portfolio, and we then discussed the Web3 industry in Malaysia, its challenges and the solutions. PayGo is an x402 payment gateway on ENI Mainnet, which made it a natural co-host for an ENI community night.
 
 ### NOVA × MEXC Builders Session
 - Where: Selangor
 - Role: Speaker
-I presented a walkthrough of offline activations and online campaigns, showing how repeated, consistent community work helps build a Web3 brand that people recognise and trust.
+- Links: MySekolahKripto https://www.linkedin.com/company/sekolahkripto/home/, MEXC https://www.mexc.com/
+I was invited, in a personal capacity, to share my experience in Web3 at a session hosted by MySekolahKripto in joint venture with MEXC. The audience was a mix of college students and working professionals, so I spoke about why Web3 is worth looking at as an industry, the skills it asks for, the job opportunities and more. Thank you to MySekolahKripto and MEXC for the invitation, and to everyone who came to listen.
 
 ### Blockchain Evolution 2025
 - Where: Selangor
 - Role: Speaker
-At PPAS Bangi, I spoke with builders and newcomers about crypto, PayFi and GameFi heading into 2025. The community session focused on practical routes to adoption and what those technologies could mean for the local Web3 scene.
+- Links: MySekolahKripto https://www.linkedin.com/company/sekolahkripto/home/
+I represented GameSpace at Blockchain Evolution 2025, hosted by MySekolahKripto in joint venture with two GameFi projects, EUFT and GameSpace. I introduced the project and shared insights on GameFi with a public audience. To make GameFi something people could try, the session also ran mini games, giveaways and a mini tournament. Thank you to MySekolahKripto and EUFT for partnering with us.

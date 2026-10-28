@@ -10,28 +10,24 @@ import './styles/site.css';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { createStage } from './scene/stage';
-import { createChoreography, TABS, type TabId } from './scene/choreography';
-import { createControls, type Controls } from './scene/controls';
-import { createContactSequence, type ContactSequence } from './scene/contactSequence';
-import { createMemorySequence } from './scene/memorySequence';
-import { createPower } from './scene/power';
-import { createTips } from './scene/tips';
-import { createVolumePill, usePill, type VolumePill } from './scene/volumePill';
+// The 3D engine (three.js, the scene, the device) is one lazy chunk, loaded by startDevice() when the device view is shown (§55).
+import type { TabId } from './scene/choreography';
+import type { Controls } from './scene/controls';
+import type { ContactSequence } from './scene/contactSequence';
+import type { VolumePill } from './scene/volumePill';
 import { createDetail, type DetailTarget } from './ui/detail';
 import type { ScreenIntent, WorksPage } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
-import { apps, events, profile, projects } from './content/portfolio';
+import { archiveWorks, events, isArchive, profile, selectedWorks, works } from './content/portfolio';
 import { contact, emailAddress, mailtoHref, whatsappHref } from './content/contact';
 import { copyText } from './ui/clipboard';
 import { motion } from './motion';
 import { sfx } from './audio/sfx';
 import { music } from './audio/music';
 import { volume } from './audio/volume';
-import { loadBakedEnvironment } from './device/studioEnvironment';
+import { fetchBakedEnvironment } from './device/envFile';
 import type { Sticker } from './device/stickers';
 
-const studioEnv = loadBakedEnvironment(); // fetched and decoded while the rest of the page sets up
 gsap.registerPlugin(ScrollTrigger);
 
 const hero = document.getElementById('hello')!;
@@ -52,7 +48,23 @@ const announce = (msg: string) => {
   lead.textContent = `${profile.bio[0]} `;
   document.querySelector('[data-bio]')!.append(lead, profile.bio.slice(1).join(' '));
 }
-document.querySelector('[data-list="works"]')!.innerHTML = [...projects, ...apps].map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
+document.querySelector('[data-list="works"]')!.innerHTML = works.map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
+{
+  // Works' copy follows the data: how many are selected, how many are on the archive cartridge.
+  const say = (page: string, text: string) => document.querySelectorAll<HTMLElement>(`.lede[data-kind-text="${page}"]`).forEach((el) => (el.textContent = text));
+  say('selected', `${selectedWorks.length} projects, told in full. ${archiveWorks.length} more are on the archive cartridge.`);
+  say('archive', `${archiveWorks.length} more projects, from the archive cartridge.`);
+  setMore('selected');
+}
+/** The Works button: the words on it and its accessible name (which contains them) follow the page. */
+function setMore(page: 'selected' | 'archive') {
+  const b = document.querySelector<HTMLButtonElement>('[data-more]');
+  if (!b) return;
+  const text = page === 'archive' ? 'Back to selected works' : `More projects (${archiveWorks.length})`;
+  b.textContent = text;
+  b.dataset.state = page;
+  b.setAttribute('aria-label', `${text}: ${page === 'archive' ? 'eject the archive cartridge' : 'insert the archive cartridge'}`);
+}
 document.querySelector('[data-list="chronicle"]')!.innerHTML = events.map((e) => `<li><a href="#/stage/${e.id}">${e.place}: ${e.title}</a></li>`).join('');
 
 // ---------------------------------------------------------------- smooth scroll + Hero ↔ Console snap
@@ -119,12 +131,12 @@ const LOADER_MIN_MS = 1350; // the mark has faded in (450 ms) and the sparkle ha
 // the screen's mono 500/700 were first used after the reveal, so its text swapped fonts in front of the visitor.
 const FACES = ['400 1em "JetBrains Mono Variable"', '500 1em "JetBrains Mono Variable"', '700 1em "JetBrains Mono Variable"', '500 1em "Bricolage Grotesque Variable"', '400 1em "Hanken Grotesk Variable"', '600 1em "Hanken Grotesk Variable"'];
 const fontsLoaded = Promise.all(FACES.map((f) => document.fonts.load(f))).then(() => document.fonts.ready);
-function liftLoader(ready: Promise<unknown>, then: () => void) {
+function liftLoader(ready: Promise<unknown>, then: () => void, cover: HTMLElement = loader) {
   const min = motion.reduced() ? 0 : Math.max(0, LOADER_MIN_MS - performance.now());
   const settled = Promise.race([Promise.all([ready, fontsLoaded]), new Promise((r) => setTimeout(r, 8000))]);
   Promise.all([settled, new Promise((r) => setTimeout(r, min))]).then(() => {
-    loader.classList.add('done');
-    setTimeout(() => loader.remove(), 500);
+    cover.classList.add('done');
+    setTimeout(() => cover.remove(), 500);
     then();
   });
 }
@@ -165,8 +177,8 @@ function showTab(tab: TabId) {
   }
   document.querySelectorAll<HTMLElement>('[data-panel]').forEach((el) => el.toggleAttribute('data-active', el.dataset.panel === tab));
 }
-// Chosen elsewhere until the stage exists (or without WebGL, where the tab bar still works).
-let selectTab: (tab: TabId) => void = (tab) => showTab(tab);
+// Chosen elsewhere once the stage exists (it replaces this); until then, and in the List view, the tab bar still works.
+let selectTab: (tab: TabId) => void = (tab) => (view === 'list' ? document.getElementById(`lv-${tab}`)?.scrollIntoView({ behavior: motion.reduced() ? 'auto' : 'smooth' }) : showTab(tab));
 tabButtons.forEach((b, i) => {
   b.addEventListener('click', () => selectTab(b.dataset.tab as TabId));
   // Mouse only, like the wallet's own keys: a tiny tick as the pointer arrives (never on touch).
@@ -188,15 +200,21 @@ let openedFromLoad = false;
 const hashFor = (t: DetailTarget) => (t.kind === 'project' ? `#/work/${t.id}` : t.kind === 'event' ? `#/stage/${t.id}` : '#/about');
 const TAB_FOR: Record<DetailTarget['kind'], TabId> = { project: 'works', event: 'chronicle', about: 'about' };
 let onDetailOpen: (t: DetailTarget) => void = () => {};
+/** A detail page opened or closed: the 3D scene behind it rests while it is open (set up with the stage). */
+let onPanel: (open: boolean) => void = () => {};
 function openDetail(t: DetailTarget, push = true) {
   sfx.play(detail.isOpen() ? 'detent' : 'press');
   lenis?.stop(); // the page behind the panel stays put; the panel scrolls natively (data-lenis-prevent)
   detail.open(t);
+  document.documentElement.classList.add('detail-open'); // site.css: the stage is hidden and the page's own loops stop
+  onPanel(true);
   onDetailOpen(t);
   if (push && location.hash !== hashFor(t)) history.pushState(null, '', hashFor(t));
 }
 const isDetailHash = () => /^#\/(work|stage)\/[\w-]+$|^#\/(about|tools)$/.test(location.hash);
 detail.onClose(() => {
+  document.documentElement.classList.remove('detail-open');
+  onPanel(false);
   sfx.play('press', { rate: 0.85 });
   lenis?.start();
   if (!isDetailHash()) return; // closed by navigation already
@@ -215,7 +233,7 @@ detail.onInvite(() => selectTab('contact'));
 function route() {
   const h = location.hash;
   let m: RegExpMatchArray | null;
-  if ((m = h.match(/^#\/work\/([\w-]+)$/)) && [...projects, ...apps].some((p) => p.id === m![1])) return openDetail({ kind: 'project', id: m[1] }, false);
+  if ((m = h.match(/^#\/work\/([\w-]+)$/)) && works.some((p) => p.id === m![1])) return openDetail({ kind: 'project', id: m[1] }, false);
   if ((m = h.match(/^#\/stage\/([\w-]+)$/)) && events.some((e) => e.id === m![1])) return openDetail({ kind: 'event', id: m[1] }, false);
   if (h === '#/about' || h === '#/tools') return openDetail({ kind: 'about' }, false);
   detail.close();
@@ -331,6 +349,7 @@ function setView(v: ViewMode, persist = true) {
   onViewChange(v);
   scrollToEl(0, undefined, true);
   ScrollTrigger.refresh();
+  if (!list) wakeDevice(); // a List start never fetched the engine: the first switch to the device does
 }
 viewBtn.addEventListener('click', () => {
   sfx.play('toggle');
@@ -352,15 +371,32 @@ function webglAvailable() {
   }
 }
 
-if (!webglAvailable()) {
-  // No 3D: the list view is the site.
-  document.documentElement.classList.add('no-webgl');
-  setView('list', false);
-  selectTab = (tab) => document.getElementById(`lv-${tab}`)?.scrollIntoView({ behavior: 'auto' });
-  hire.addEventListener('click', (e) => (e.preventDefault(), selectTab('contact')));
-  liftLoader(Promise.resolve(), () => {});
-} else {
-  const stage = createStage(document.getElementById('webgl') as HTMLCanvasElement, document.getElementById('css3d')!, await studioEnv);
+/** The Hero's "Work with Dean" in the List view (no device to turn to the contact card): scroll to the Contact section. */
+const hireList = (e: Event) => (e.preventDefault(), selectTab('contact'));
+const loaderCopy = loader.cloneNode(true) as HTMLElement; // the same mark, for a first switch to the device after a List start
+loaderCopy.removeAttribute('id');
+let device: Promise<void> | null = null; // the 3D engine's start-up, once begun
+
+/** List → Device for the first time (the engine was not fetched at load): the loader comes back while it is fetched and built. */
+function wakeDevice() {
+  if (device) return;
+  const cover = loaderCopy.cloneNode(true) as HTMLElement;
+  document.body.append(cover);
+  device = startDevice()
+    .then((d) => new Promise<void>((done) => liftLoader(d.ready, () => (d.arrive(), done()), cover)))
+    .catch(() => {
+      device = null; // the next switch tries again
+      cover.remove();
+      setView('list', false);
+      announce('The 3D view could not start. Showing the list.');
+    });
+}
+
+/** Fetches and builds the 3D engine and wires the device to the page. Resolves with the scene's first-frame promise and its entrance. */
+async function startDevice() {
+  const envBytes = fetchBakedEnvironment(); // requested now, while the engine's own chunk downloads
+  const { createStage, loadBakedEnvironment, createChoreography, TABS, createControls, createContactSequence, createMemorySequence, createPower, createTips, createVolumePill, usePill } = await import('./scene/engine');
+  const stage = createStage(document.getElementById('webgl') as HTMLCanvasElement, document.getElementById('css3d')!, await loadBakedEnvironment(envBytes));
   // A reload (pull-to-refresh) leaves the old page's GPU memory alive while the new one starts, which iOS Safari can't always afford.
   // `persisted` pages go to the back-forward cache and come back as they were, so only a real unload frees the context.
   addEventListener('pagehide', (e) => {
@@ -371,7 +407,7 @@ if (!webglAvailable()) {
   const chor = createChoreography(stage, hero, consoleEl);
   const contactSeq: ContactSequence = createContactSequence(stage, chor, announce);
   const { screen } = stage;
-  const memory = createMemorySequence(stage, announce);
+  const memory = createMemorySequence(stage);
   const power = createPower(stage);
   stage.onFrame((dt) => power.update(dt));
   power.onChange((plugged) => announce(plugged ? 'Charger plugged in. The device is charging.' : 'Charger unplugged. The device is on battery.'));
@@ -396,59 +432,70 @@ if (!webglAvailable()) {
     syncFocus();
   });
   syncFocus();
-  // Works' three pages (§31, §34, §42): WEB, the projects; APPS, mobile apps; MOTION, motion design (coming
-  // soon). Flipped by pressing 01 again (the wallet key, the softkey or key 1), ← →, the names on the screen,
-  // the switch beside the wallet, or the memory-card slot (MOTION); the Back key on a coming-soon page goes
-  // back to WEB. The switch and its text follow the screen, and the memory card is in the slot exactly while
-  // MOTION shows.
-  const PAGES: WorksPage[] = ['web', 'apps', 'motion'];
-  const PAGE_SAYS: Record<WorksPage, string> = { web: 'Web projects', apps: 'Mobile apps', motion: 'Motion reel: coming soon' };
-  const kindBtns = [...document.querySelectorAll<HTMLButtonElement>('.work-kind [data-kind]')];
-  function flipWorks(page?: WorksPage) {
-    const to = page ?? PAGES[(PAGES.indexOf(screen.worksPage()) + 1) % PAGES.length];
-    if (to === screen.worksPage()) return;
+  // Works' two pages (docs/works-cartridge-blueprint.md): SELECTED, the best five, and ARCHIVE, the rest. The archive
+  // arrives on a cartridge: every way in (the "More projects" button, the "View more…" row, the status strip, →, the
+  // bay in the bottom edge) docks it first, and the screen reads it and loads the rows once it has seated. A deep link
+  // just has it in. Back, ←, the button again, the bay, leaving Works and the pinhole all eject it.
+  const PAGE_SAYS: Record<WorksPage, string> = {
+    selected: `Archive cartridge ejected. ${selectedWorks.length} selected projects.`,
+    archive: `Archive cartridge inserted. ${archiveWorks.length} more projects.`,
+  };
+  const moreBtn = document.querySelector<HTMLButtonElement>('[data-more]')!;
+  let skipCard = false; // set while a deep link flips the page: the cartridge is simply in
+  function flipWorks(page: WorksPage, instant = false) {
+    if (page === screen.worksPage()) return;
+    if (page === 'archive' && !instant && memory.state() !== 'in') {
+      // The cartridge goes in first; the screen loads once it has seated (and is dropped if Works was left meanwhile).
+      if (chor.tab() !== 'works') selectTab('works');
+      return memory.insert(() => (chor.tab() === 'works' ? flipWorks('archive') : memory.eject()));
+    }
     sfx.play('press');
-    screen.setWorksPage(to);
+    skipCard = instant;
+    screen.setWorksPage(page, instant);
+    skipCard = false;
+  }
+  /** Back to the selected page and the cartridge out (also stops one still on its way in). */
+  function closeArchive() {
+    memory.eject();
+    flipWorks('selected');
   }
   screen.onPage((page) => {
-    kindBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === page)));
+    setMore(page);
     document.querySelectorAll<HTMLElement>('[data-kind-text]').forEach((el) => (el.hidden = el.dataset.kindText !== page));
-    if (page === 'motion') memory.insert();
+    if (page === 'archive') memory.insert(undefined, skipCard);
     else memory.eject();
     if (chor.tab() === 'works') announce(PAGE_SAYS[page]);
   });
-  kindBtns.forEach((b) => b.addEventListener('click', () => flipWorks(b.dataset.kind as WorksPage)));
-  /** A tab key or softkey: pressed again on Works, it flips Works' page; otherwise it chooses the section. */
-  function pressTab(tab: TabId) {
-    if (tab === 'works' && chor.tab() === 'works' && chor.place() === 'console' && view === 'device') return flipWorks();
-    selectTab(tab);
-  }
+  moreBtn.addEventListener('click', () => (screen.worksPage() === 'archive' ? closeArchive() : flipWorks('archive')));
+  /** A tab key or softkey chooses the section. */
+  const pressTab = (tab: TabId) => selectTab(tab);
   addEventListener('keydown', (e) => {
     if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
     if (view !== 'device' || detail.isOpen() || screen.mode() !== 'works' || chor.place() !== 'console') return;
     if ((e.target as HTMLElement).closest?.('input, textarea, select, dialog, [contenteditable], [role="tab"], a, button')) return;
     e.preventDefault();
-    const i = PAGES.indexOf(screen.worksPage()) + (e.key === 'ArrowRight' ? 1 : -1);
-    flipWorks(PAGES[Math.min(PAGES.length - 1, Math.max(0, i))]);
+    if (e.key === 'ArrowRight') flipWorks('archive');
+    else closeArchive();
   });
 
   // A deep link or ✓ opens a detail: the Console behind it shows the same section and item.
   onDetailOpen = (t) => {
     const tab = TAB_FOR[t.kind];
-    const isApp = t.kind === 'project' && apps.some((a) => a.id === t.id);
-    if (t.kind === 'project') flipWorks(isApp ? 'apps' : 'web');
+    const archived = t.kind === 'project' && isArchive(t.id);
+    if (t.kind === 'project') flipWorks(archived ? 'archive' : 'selected', true);
     if (chor.tab() !== tab) selectTab(tab);
     if (chor.place() !== 'console' && view === 'device') scrollToEl(consoleEl, undefined, true);
-    const list = t.kind === 'project' ? (isApp ? apps : projects) : t.kind === 'event' ? events : null;
+    const list = t.kind === 'project' ? (archived ? archiveWorks : selectedWorks) : t.kind === 'event' ? events : null;
     if (list && 'id' in t) {
       const i = list.findIndex((x) => x.id === t.id);
       if (i >= 0 && screen.mode() === tab) screen.select(i);
     }
   };
 
+  // The selected page's list ends with the "View more…" row, so it has one more row than there are projects.
   const listLength = () => {
     const m = screen.mode();
-    return m === 'works' ? (screen.worksPage() === 'web' ? projects.length : screen.worksPage() === 'apps' ? apps.length : 0) : m === 'chronicle' ? events.length : 0;
+    return m === 'works' ? (screen.worksPage() === 'archive' ? archiveWorks.length : selectedWorks.length + 1) : m === 'chronicle' ? events.length : 0;
   };
   // Copy Dean's email (the screen's Copy key, or C on the keyboard while Email is selected): the address
   // is only joined here, on request, like the mailto link.
@@ -532,7 +579,7 @@ if (!webglAvailable()) {
       else if (detail.isOpen()) detail.close();
       else if (chor.view.isOff()) chor.view.reset();
       else if (contactSeq.state() === 'ready') contactSeq.putAway();
-      else if (screen.mode() === 'works' && screen.worksPage() !== 'web') flipWorks('web');
+      else if (screen.mode() === 'works' && (screen.worksPage() !== 'selected' || memory.state() !== 'out')) closeArchive();
     },
     // The side switch: the knob visibly slides first, then the page changes view.
     toggleView: () => {
@@ -547,22 +594,17 @@ if (!webglAvailable()) {
       music.set(on);
       sfx.set(on);
     },
-    // The memory-card slot: on the Motion page it sends the card away (back to WEB); anywhere else the card
-    // flies in from below, and once it is home the page opens.
-    toggleMemory: () => {
-      if (screen.mode() === 'works' && screen.worksPage() === 'motion') return flipWorks('web');
-      selectTab('works');
-      memory.insert(() => (chor.tab() === 'works' ? flipWorks('motion') : memory.eject())); // chor.tab() is set at once; screen.mode() trails it
-    },
+    // The bay in the bottom edge: with the archive showing it sends the cartridge away; otherwise the cartridge
+    // flies in from below, and once it is home the archive opens.
+    toggleMemory: () => (screen.worksPage() === 'archive' ? closeArchive() : flipWorks('archive')),
     togglePlug: () => power.toggle(),
-    // The pinhole: reboot. The screen shows its boot mark, then the place it was; the card goes out, the cable
-    // goes back in, WEB comes back.
+    // The pinhole: reboot. The screen shows its boot mark, then the place it was; the cartridge goes out, the cable
+    // goes back in, the selected page comes back.
     reset: () => {
       sfx.play('power');
       chor.view.reset();
-      memory.eject();
+      closeArchive();
       power.plug();
-      flipWorks('web');
       const back = () => screen.setMode(chor.place() === 'console' ? chor.tab() : 'hello');
       screen.setMode('boot');
       setTimeout(back, motion.reduced() ? 0 : 1200);
@@ -623,13 +665,14 @@ if (!webglAvailable()) {
     chor.view.reset();
   });
   syncChips();
-  // A walkthrough clip playing in a panel: the 3D scene behind it rests (one heavy thing at a time on a phone).
-  // It waits for the scene's first frame and its entrance: a clip that starts on a deep link must not freeze an empty canvas.
-  let clipPlaying = false;
+  // A detail page open full screen: the 3D scene behind it rests, so the reader has the frames (and a phone has one heavy
+  // thing at a time). It waits for the scene's first frame and its entrance: a page that opens on a deep link must not
+  // freeze an empty canvas, or the loader (which waits for the second frame) would never lift.
+  let panelOpen = detail.isOpen();
   let sceneUp = false;
-  const restScene = () => stage.setActive(!(clipPlaying && sceneUp) && view === 'device');
+  const restScene = () => stage.setActive(!(panelOpen && sceneUp) && view === 'device');
   void stage.ready.then(() => setTimeout(() => ((sceneUp = true), restScene()), 2200));
-  detail.onMotion((playing) => ((clipPlaying = playing), restScene()));
+  onPanel = (open) => ((panelOpen = open), restScene());
   onViewChange = (v) => {
     stage.setActive(v === 'device');
     controls?.setViewSwitch(v === 'list');
@@ -656,6 +699,7 @@ if (!webglAvailable()) {
     chor.view.reset(true);
     scrollToEl(consoleEl, () => contactSeq.state() === 'idle' && contactSeq.run());
   };
+  hire.removeEventListener('click', hireList);
   hire.addEventListener('click', goContact);
   contactSeq.onState((s) => {
     cta.disabled = s === 'running';
@@ -666,12 +710,32 @@ if (!webglAvailable()) {
   // loader lifts it rises and turns in (expo out: most of the travel inside the loader's fade), then
   // the e-ink panel refreshes from its boot mark to the place's screen.
   if (!motion.reduced()) Object.assign(stage.intro, { y: -0.45, ry: 0.6, s: -0.1 });
-  const startView = storedView();
-  if (startView === 'list') setView('list', false);
-  liftLoader(startView === 'list' ? Promise.resolve() : stage.ready, () => {
-    gsap.to(stage.intro, { y: 0, ry: 0, s: 0, duration: 1.4, ease: 'expo.out' });
-    setTimeout(() => screen.setMode(chor.place() === 'console' ? chor.tab() : 'hello'), motion.reduced() ? 0 : 300);
-  });
+  onViewChange(view); // the view may have been switched back to the list while the engine was being built
+  return {
+    ready: stage.ready,
+    arrive: () => {
+      gsap.to(stage.intro, { y: 0, ry: 0, s: 0, duration: 1.4, ease: 'expo.out' });
+      setTimeout(() => screen.setMode(chor.place() === 'console' ? chor.tab() : 'hello'), motion.reduced() ? 0 : 300);
+    },
+  };
+}
+
+if (!webglAvailable()) {
+  // No 3D: the list view is the site.
+  document.documentElement.classList.add('no-webgl');
+  setView('list', false);
+  selectTab = (tab) => document.getElementById(`lv-${tab}`)?.scrollIntoView({ behavior: 'auto' });
+  hire.addEventListener('click', hireList);
+  liftLoader(Promise.resolve(), () => {});
+} else if (storedView() === 'list') {
+  // A List start: the page is the whole site, and the 3D engine is not even fetched until the visitor asks for the device.
+  setView('list', false);
+  hire.addEventListener('click', hireList);
+  liftLoader(Promise.resolve(), () => {});
+} else {
+  const d = await startDevice();
+  device = Promise.resolve();
+  liftLoader(d.ready, d.arrive);
 }
 
 openedFromLoad = isDetailHash();

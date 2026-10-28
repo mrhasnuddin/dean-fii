@@ -439,14 +439,19 @@ export function createStage(canvas: HTMLCanvasElement, cssHost: HTMLElement, stu
     })
     .catch(() => {});
   frameCbs.push((dt) => stickers.forEach((s) => s.update(dt)));
-  // The memory card's shaders compile in the same idle window, with the card parked far above the frame.
+  // The memory card's shaders compile in the same idle window, with the card parked far above the frame. A deep link
+  // to an archive project docks it before this runs: then it is already on screen, and is left where it is.
+  let parked = false;
   settled
     .then(async () => {
+      if (memoryCard.visible) return;
+      parked = true;
       memoryCard.position.y = 6;
       memoryCard.visible = true;
       await renderer.compileAsync(memoryCard, camera, scene).catch(() => {});
     })
     .finally(() => {
+      if (!parked || memoryCard.position.y !== 6) return; // docked while it was parked: leave it
       memoryCard.visible = false;
       memoryCard.position.y = 0;
     });

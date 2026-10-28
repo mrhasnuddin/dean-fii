@@ -1,8 +1,9 @@
-// The memory card (docs/device-design.md §34): it goes into a slot in the bottom edge when the Motion page
-// opens, and comes back out when it closes. The same family as the contact card (matte graphite, a printed
-// label), but a small SD-style card: notched corner, gold contacts on its leading end, a champagne label.
-// Units: W (device body width = 1). Card space: +Y is the leading (inserted) end, +Z the front.
+// The memory card (docs/device-design.md §34), now the archive cartridge: it goes into a slot in the bottom edge
+// when the archive page opens, and comes back out when it closes. The same family as the contact card (matte
+// graphite, a printed label), but a small SD-style card: notched corner, gold contacts on its leading end, a
+// champagne label. Units: W (device body width = 1). Card space: +Y is the leading (inserted) end, +Z the front.
 import * as THREE from 'three';
+import { archiveWorks } from '../content/portfolio';
 import { roundedRectShape } from './shapes';
 
 export const MEMORY = {
@@ -33,7 +34,7 @@ function cardShape(): THREE.Shape {
   return s;
 }
 
-/** The printed label: DEAN STUDIO small, MOTION large, a play mark; transparent around it. */
+/** The printed label: DEAN STUDIO small, ARCHIVE large, how many projects it holds; transparent around it. */
 function labelTexture(): THREE.CanvasTexture {
   const W = 512;
   const H = 384; // 0.17 × 0.126 W
@@ -52,22 +53,21 @@ function labelTexture(): THREE.CanvasTexture {
   ctx.fillText('DEAN STUDIO', 40, 70);
   ctx.font = '700 84px ui-monospace, Consolas, monospace';
   ctx.letterSpacing = '2px';
-  ctx.fillText('MOTION', 40, 190);
-  // a play mark in a ring
+  ctx.fillText('ARCHIVE', 40, 190);
+  // how many projects it holds, in a ring
   ctx.beginPath();
   ctx.arc(W - 100, H - 90, 46, 0, Math.PI * 2);
   ctx.lineWidth = 8;
   ctx.strokeStyle = '#1d1c1a';
   ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(W - 112, H - 114);
-  ctx.lineTo(W - 112, H - 66);
-  ctx.lineTo(W - 70, H - 90);
-  ctx.closePath();
-  ctx.fill();
+  ctx.textAlign = 'center';
+  ctx.font = '700 44px ui-monospace, Consolas, monospace';
+  ctx.letterSpacing = '0px';
+  ctx.fillText(`+${archiveWorks.length}`, W - 100, H - 88);
+  ctx.textAlign = 'left';
   ctx.font = '500 24px ui-monospace, Consolas, monospace';
   ctx.letterSpacing = '3px';
-  ctx.fillText('2026 · REEL', 40, H - 52);
+  ctx.fillText(`${archiveWorks.length} PROJECTS`, 40, H - 52);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;

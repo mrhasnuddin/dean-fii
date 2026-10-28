@@ -23,7 +23,7 @@
   --hero-sans-tracking: -0.04em;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --gutter: clamp(16px, 3.4vw, 56px);
-  --copy-bottom: max(84px, 9vh); /* clears the preferences row */
+  --copy-bottom: max(28px, var(--gutter)); /* level with the side gutter, so the title sits as far from the foot as from the left edge */
 }
 * { box-sizing: border-box; }
 html { background: var(--bg); scrollbar-gutter: stable; }
@@ -117,8 +117,7 @@ html.motion-off .vol-pill.open { transition: opacity 120ms ease, visibility 0s; 
    a caption) and, on phones and tablets, the tab bar (the thumb's control). */
 html.focus .hint,
 html.focus .panel[data-panel='works'] .lede,
-html.focus .panel[data-panel='chronicle'] .lede,
-html.focus .work-kind:not(:focus-within) { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+html.focus .panel[data-panel='chronicle'] .lede { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html.focus .panel-title { font-size: calc(clamp(34px, 3.4vw, 54px) * var(--display-scale)); }
 @media (min-width: 1081px) {
   html.focus .tabbar:not(:focus-within) { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -141,11 +140,12 @@ html.focus .panel-title { font-size: calc(clamp(34px, 3.4vw, 54px) * var(--displ
 @media (max-width: 1080px) {
   /* Stacked layout: the zoomed wallet's lower half (its keys, the coin, the plug and cable) runs down behind the copy,
      so the foot of the stage fades to the page colour under it. */
-  .stage::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 250px; z-index: 1; pointer-events: none; opacity: 0; background: linear-gradient(to top, var(--bg) 38%, rgb(15 16 20 / 0.7) 62%, transparent); transition: opacity 280ms var(--ease-out); }
+  .stage::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 224px; z-index: 1; pointer-events: none; opacity: 0; background: linear-gradient(to top, var(--bg) 38%, rgb(15 16 20 / 0.7) 62%, transparent); transition: opacity 280ms var(--ease-out); }
   html.focus .stage::after { opacity: 1; }
 }
 @media (max-width: 760px) {
   html.focus .panel-title { font-size: calc(clamp(34px, 9.5vw, 44px) * var(--display-scale)); }
+  .stage::after { height: 250px; } /* the copy is taller here (title, text, tab bar) and sits closer to the foot */
 }
 /* The eye's callouts (§36): a card on each of the device's three settings, a line to the part, placed by scene/tips.ts. */
 .tips { position: fixed; inset: 0; z-index: 9; pointer-events: none; }
@@ -246,12 +246,15 @@ main { position: relative; z-index: 2; pointer-events: none; }
 .panel-title[data-active], .panel[data-active] { opacity: 1; visibility: visible; transform: none; transition: opacity 240ms var(--ease-out) 60ms, transform 240ms var(--ease-out) 60ms, visibility 0s; }
 .panel-title { margin: 0; font: var(--display-weight) calc(clamp(48px, 6.2vw, 112px) * var(--display-scale))/var(--display-leading) var(--font-display); letter-spacing: var(--display-tracking); text-wrap: balance; }
 
-/* Works: Web / Mobile apps, a small switch above the text (main.ts keeps it in step with the screen's
-   WEB / APPS pages). The page showing is lit. */
-.work-kind { display: inline-flex; gap: 2px; margin: 0 0 12px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: rgb(236 232 223 / 0.04); backdrop-filter: blur(10px); }
-.work-kind button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--font-ui); color: var(--ink-light); cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
-.work-kind [aria-pressed='true'] { background: rgb(228 207 159 / 0.14); color: var(--champagne); }
-@media (hover: hover) and (pointer: fine) { .work-kind [aria-pressed='false']:hover { color: var(--champagne); } }
+/* Works: the "More projects" button above the text. It docks the archive cartridge (main.ts keeps it in step with the screen's
+   SELECTED / ARCHIVE pages) and stays lit while the archive shows. It is the one thing in Works the page copy says that the
+   screen does not, so it stays in the Console's focus mode too. */
+.work-kind { display: inline-flex; margin: 0 0 12px; padding: 3px; border: 1px solid rgb(228 207 159 / 0.38); border-radius: 999px; background: rgb(236 232 223 / 0.04); backdrop-filter: blur(10px); }
+.work-kind button { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 16px; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--font-ui); color: var(--champagne); cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
+.work-kind button::after { content: '+'; font-size: 16px; font-weight: 400; line-height: 1; }
+.work-kind [data-state='archive'] { background: rgb(228 207 159 / 0.14); }
+.work-kind [data-state='archive']::after { content: '×'; }
+@media (hover: hover) and (pointer: fine) { .work-kind button:hover { background: rgb(228 207 159 / 0.14); color: var(--champagne-light); } }
 .work-kind button:focus-visible { outline: 1.5px solid var(--champagne); outline-offset: 2px; }
 @media (pointer: coarse) { .work-kind button { padding-block: 11px; } } /* a thumb-sized target (~43 px with the ring) */
 
@@ -399,3 +402,12 @@ html.is-list .stage, html.is-list #hello, html.is-list #console { display: none;
   .qr-close:active { transform: none; }
 }
 html.motion-off .qr-pill { transform: none; transition: opacity 150ms ease; }
+
+/* A work (or event, or About) is open full screen: everything behind it rests, so a reader has the whole device's worth of
+   frames back. main.ts pauses the 3D scene's loop (stage.setActive); this takes the stage out of painting and stops
+   the page's own looping animations (the header's icons, the scroll cue). Nothing here touches the page itself. */
+html.detail-open .stage { visibility: hidden; }
+html.detail-open body > :not(dialog) *,
+html.detail-open body > :not(dialog) *::before,
+html.detail-open body > :not(dialog) *::after { animation-play-state: paused !important; } /* !important: the animations' own rules set the whole shorthand */
+html.detail-open { scrollbar-width: none; } /* the page's own scrollbar would sit beside the panel's */

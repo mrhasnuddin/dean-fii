@@ -1,6 +1,6 @@
 // Physical controls on the wallet + keyboard. Every control maps to one job (docs/device-design.md §2, §10, §34):
 // tabs 01–04 → sections · ✓ → open · Back → close · right switch → Device / List view · left slider → Motion
-// on/off · volume knob → the site's volume (drag, wheel, tap to mute) · memory-card slot → the Motion page ·
+// on/off · volume knob → the site's volume (drag, wheel, tap to mute) · memory-card slot (the archive cartridge's bay) → the archive page ·
 // the cable → plug / unplug (the battery shows it) · pinhole → reset. Two hand gestures: drag the wallet's body sideways to turn it over, and on the back,
 // drag a sticker to peel it (an easter egg, §11). Pull one all the way and let go: it stays rolled back
 // and the QR under it shows (§24); tap the QR to visit the site, tap the flap (or ✕, Esc, or turn the
@@ -28,7 +28,7 @@ export interface ControlHandlers {
   toggleMotion(): void;
   /** The left Sound slider: effects and music on or off together. */
   toggleSound(): void;
-  /** The memory-card slot (or the card sticking out of it): bring the Motion page in, or send it away. */
+  /** The bay (or the cartridge sticking out of it): dock the archive cartridge and open the archive, or send it away. */
   toggleMemory(): void;
   /** The cable (or its port): unplug, or plug back in. */
   togglePlug(): void;

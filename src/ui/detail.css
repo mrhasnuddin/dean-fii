@@ -1,18 +1,26 @@
-/* Detail panel: left-side sheet on desktop (the wallet stays visible on the right), bottom sheet on phones. */
+/* Detail page: a work, an event or About opens full screen, to be read. The device behind it is covered and rests: main.ts
+   pauses the 3D scene while a page is open, and html.detail-open (site.css) hides the stage and stops the page's own
+   loops. The text sits in one centred column (--dt-col); the header's buttons line up with it. */
 .detail {
   --dt-ease: cubic-bezier(0.32, 0.72, 0, 1); /* drawer curve */
+  --dt-pad: clamp(18px, 4vw, 56px);
+  --dt-col: 1400px; /* the widest the reading column gets */
+  --dt-min: 320px; /* the narrowest the page gets: below it the page scrolls sideways instead of squeezing */
+  --dt-side: max(var(--dt-pad), calc((100% - var(--dt-frame)) / 2)); /* --dt-frame: the column, plus the rail when there is one (detailPage.css) */
+  position: fixed;
+  inset: 0;
   margin: 0;
   padding: 0;
   border: 0;
+  width: 100%;
   max-width: none;
-  max-height: none;
-  /* Half the viewport, but never narrower than ~640 px (tablets, small laptops) and never wider than 1200 px. */
-  width: min(1200px, max(50vw, min(640px, 76vw)));
   height: 100dvh;
-  background: transparent;
+  max-height: none;
+  background: var(--bg);
   color: var(--ink-light);
+  overflow: auto hidden; /* x only scrolls when the window is under --dt-min; y is held (the panel scrolls itself) */
   opacity: 0;
-  transform: translateX(-28px);
+  transform: translateY(12px);
   /* Exit (base state) is the system response: 180 ms. Entry (below) takes 240 ms. */
   transition: opacity 180ms var(--dt-ease), transform 180ms var(--dt-ease), overlay 180ms allow-discrete, display 180ms allow-discrete;
 }
@@ -21,21 +29,18 @@
   transform: none;
   transition: opacity 240ms var(--dt-ease), transform 240ms var(--dt-ease), overlay 240ms allow-discrete, display 240ms allow-discrete;
 }
-@starting-style { .detail[open] { opacity: 0; transform: translateX(-28px); } }
-.detail::backdrop { background: rgb(8 8 10 / 0); transition: background 180ms ease, overlay 180ms allow-discrete, display 180ms allow-discrete; }
-.detail[open]::backdrop { background: rgb(8 8 10 / 0.35); }
-@starting-style { .detail[open]::backdrop { background: rgb(8 8 10 / 0); } }
+@starting-style { .detail[open] { opacity: 0; transform: translateY(12px); } }
+.detail::backdrop { background: var(--bg); }
 
 .dt-panel {
   height: 100%;
+  min-width: var(--dt-min);
   display: flex;
   flex-direction: column;
-  background: rgb(19 20 24 / 0.94);
-  backdrop-filter: blur(14px);
-  border-right: 1px solid var(--line);
+  background: var(--bg);
 }
-.dt-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px clamp(28px, 2.6vw, 48px); border-bottom: 1px solid var(--line); }
-.dt-scroll { overflow-y: auto; padding: 28px clamp(28px, 2.6vw, 48px) 40px; overscroll-behavior: contain; }
+.dt-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px var(--dt-side); border-bottom: 1px solid var(--line); }
+.dt-scroll { overflow-y: auto; padding: 40px var(--dt-side) 72px; overscroll-behavior: contain; }
 
 .dt-close, .dt-cta, .dt-pager button {
   font: 500 14px/1 var(--font-ui);
@@ -45,29 +50,83 @@
   transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out);
 }
 .dt-close { background: transparent; color: var(--ink-light); border: 1px solid var(--line); }
-.dt-cta { background: var(--champagne); color: #111; border: 0; text-decoration: none; display: inline-flex; gap: 6px; }
+.dt-cta { background: var(--champagne); color: #111; border: 1px solid var(--champagne); text-decoration: none; }
+/* The header's two buttons (Back, and the primary action) are one size: 40 px tall, like the site's icon buttons and the phone header's
+   controls, and 44 px on a touch screen. Both carry a 1 px border (the primary's is its own fill), so the outlined one is never the bigger. */
+.dt-close, .dt-cta { box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 18px; }
+@media (pointer: coarse) { .dt-close, .dt-cta { min-height: 44px; } }
 .dt-close:active, .dt-cta:active, .dt-pager button:active { transform: scale(0.97); }
 @media (hover: hover) and (pointer: fine) {
   .dt-close:hover { background: rgb(255 255 255 / 0.06); }
   .dt-cta:hover { background: var(--champagne-light); }
   .dt-pager button:hover { color: var(--champagne); }
 }
-:is(.dt-close, .dt-cta, .dt-pager button, .dt-thumb, .dt-pp, .dt-orig):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+:is(.dt-close, .dt-cta, .dt-pager button, .dt-pp, .dt-orig):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
 
 .dt-eyebrow { margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .dt-eyebrow strong { color: var(--ink-light); font-weight: 500; }
-.detail h2 { margin: 10px 0 6px; font: var(--display-weight) calc(clamp(36px, 4.4vw, 56px) * var(--display-scale))/1 var(--font-display); letter-spacing: calc(var(--display-tracking) / 2); }
+.detail h2 { margin: 10px 0 6px; font: var(--display-weight) calc(clamp(40px, 5vw, 72px) * var(--display-scale))/1 var(--font-display); letter-spacing: calc(var(--display-tracking) / 2); }
 .dt-roles { margin: 0 0 24px; color: var(--champagne); font: 500 14px/1.4 var(--font-ui); }
 
-.dt-media { display: grid; gap: 10px; margin-bottom: 26px; }
+/* The hero is 16:10 and as wide as the column, but never taller than the screen under the header (80 px), so the whole frame
+   can be seen at once: on a window that is tall enough it is the full column; on a shorter one it is a little narrower. */
+.dt-media { display: grid; gap: 10px; margin-bottom: 26px; width: min(100%, calc((100dvh - 80px) * 1.6)); }
 .dt-motion { position: relative; }
 .dt-pp { position: absolute; right: 12px; bottom: 12px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgb(15 16 20 / 0.72); backdrop-filter: blur(8px); color: var(--ink-light); font: 500 11px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+@media (pointer: coarse) { .dt-pp { min-height: 44px; padding-inline: 16px; } }
 .dt-main { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; }
 .dt-portrait { aspect-ratio: 4 / 5; max-width: clamp(320px, 26vw, 440px); }
-.dt-thumbs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, clamp(96px, 8vw, 150px)); gap: 8px; } /* up to 96–150 px each (with the panel), shrinking together so four fit a phone */
-.dt-thumb { padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; width: 100%; aspect-ratio: 16 / 10; background: none; cursor: pointer; opacity: 0.6; transition: opacity 160ms ease, border-color 160ms ease; }
-.dt-thumb[aria-pressed='true'] { opacity: 1; border-color: var(--champagne); }
-.dt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Image carousel (works without a walkthrough): one 16:10 picture at a time on a scroll-snap track, so a swipe, the arrows, the
+   dots and the arrow keys all move the same thing. It is a little smaller than the column (960 px at most) so a picture never fills the
+   screen; the dots and the count sit in a pill at the foot of the frame, and the arrows at its sides. detail.ts (bindCarousel) wires it. */
+.dt-carousel { position: relative; width: min(100%, 960px); margin-bottom: 26px; border-radius: 12px; overflow: hidden; background: #1b1c21; }
+.dt-track { display: flex; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.dt-track::-webkit-scrollbar { display: none; }
+.dt-track:focus-visible { outline: 2px solid var(--champagne); outline-offset: -3px; border-radius: 12px; }
+.dt-slide { flex: 0 0 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always; }
+.dt-slide img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.dt-nav { position: absolute; top: 50%; translate: 0 -50%; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: rgb(15 16 20 / 0.72); backdrop-filter: blur(8px); color: var(--ink-light); cursor: pointer; transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out); }
+.dt-nav[data-dir='prev'] { left: 14px; }
+.dt-nav[data-dir='next'] { right: 14px; }
+.dt-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.dt-nav:active { transform: scale(0.95); }
+.dt-pages { position: absolute; left: 50%; bottom: 14px; translate: -50% 0; display: flex; align-items: center; gap: 12px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgb(15 16 20 / 0.72); backdrop-filter: blur(8px); font: 500 11px/1 var(--font-mono); letter-spacing: 0.06em; color: var(--ink-light); }
+.dt-dots { display: flex; align-items: center; gap: 8px; }
+.dt-dot { position: relative; width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgb(236 232 223 / 0.35); cursor: pointer; transition: background-color 160ms ease, transform 160ms var(--ease-out); }
+.dt-dot::after { content: ''; position: absolute; inset: -8px -4px; } /* a larger target around a small dot */
+.dt-dot[aria-current='true'] { background: var(--champagne); transform: scale(1.25); }
+.dt-nav:focus-visible, .dt-dot:focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .dt-nav:hover { background: rgb(15 16 20 / 0.9); color: var(--champagne); } .dt-dot:not([aria-current='true']):hover { background: rgb(236 232 223 / 0.7); } }
+@media (max-width: 760px) { .dt-nav { width: 40px; height: 40px; } .dt-nav[data-dir='prev'] { left: 8px; } .dt-nav[data-dir='next'] { right: 8px; } .dt-pages { bottom: 10px; } }
+@media (prefers-reduced-motion: reduce) { .dt-nav, .dt-dot { transition: none; } .dt-nav:active { transform: none; } }
+
+/* Event marquee: the pictures at their own shapes in one strip as wide as the text, drifting left on a transform loop, with the ends faded
+   out. The track holds the set twice, so -50% is exactly one set and the loop has no seam. It waits for the pictures to decode (.is-ready,
+   so the pace is not re-set while they load), pauses on the button, under a fine pointer, and off screen. With motion reduced or switched
+   off nothing moves: the clones go, and the real pictures share the width as a still row. detail.ts (marquee, bindMarquee) builds and wires it. */
+.dt-marquee { position: relative; width: 100%; margin-bottom: 26px; }
+.dt-mq-view { overflow: hidden; border-radius: 12px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
+.dt-mq-track { display: flex; width: max-content; animation: dt-mq var(--dur, 60s) linear infinite; animation-play-state: paused; }
+.dt-marquee.is-ready:not(.is-paused, .is-off) .dt-mq-track { animation-play-state: running; }
+.dt-mq-item { flex: none; margin: 0 12px 0 0; height: clamp(200px, 24vw, 340px); }
+.dt-mq-item img { display: block; height: 100%; width: auto; border-radius: 10px; background: #1b1c21; }
+@keyframes dt-mq { to { transform: translate3d(-50%, 0, 0); } }
+@media (hover: hover) and (pointer: fine) { .dt-mq-view:hover .dt-mq-track { animation-play-state: paused !important; } }
+@media (max-width: 760px) { .dt-mq-item { height: clamp(180px, 52vw, 260px); margin-right: 8px; } .dt-mq-view { -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); } }
+@media (prefers-reduced-motion: reduce) {
+  .dt-mq-track { animation: none; width: 100%; }
+  .dt-mq-item[aria-hidden='true'] { display: none; }
+  .dt-mq-item { flex: 1 1 0; min-width: 0; }
+  .dt-mq-item img { width: 100%; object-fit: cover; object-position: 50% 35%; }
+  .dt-mq-view { -webkit-mask-image: none; mask-image: none; }
+  .dt-mq-pp { display: none; }
+}
+html.motion-off .dt-mq-track { animation: none; width: 100%; }
+html.motion-off .dt-mq-item[aria-hidden='true'] { display: none; }
+html.motion-off .dt-mq-item { flex: 1 1 0; min-width: 0; }
+html.motion-off .dt-mq-item img { width: 100%; object-fit: cover; object-position: 50% 35%; }
+html.motion-off .dt-mq-view { -webkit-mask-image: none; mask-image: none; }
+html.motion-off .dt-mq-pp { display: none; }
 
 .dt-desc { margin: 0 0 18px; font: 400 clamp(16px, 0.55vw + 9px, 18px)/1.6 var(--font-ui); color: #d7d3ca; max-width: 78ch; } /* grows with the panel */
 .dt-h3 { margin: 22px 0 10px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
@@ -75,12 +134,7 @@
 .dt-tool { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font: 500 14px/1 var(--font-ui); }
 .dt-tool img { object-fit: contain; }
 .dt-stack { font: 500 13px/1 var(--font-mono); color: var(--ink-light); }
-.dt-linkrow { display: flex; flex-wrap: wrap; gap: 8px 28px; }
 .dt-flag { display: inline-flex; align-items: center; gap: 6px; color: var(--champagne); }
-.dt-story dl { display: grid; grid-template-columns: minmax(7.5rem, 9.5rem) minmax(0, 1fr); gap: 16px 24px; margin: 0 0 8px; }
-.dt-story dt { padding-top: 4px; font: 500 11px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--champagne); }
-.dt-story dd { margin: 0; font: 400 clamp(15px, 0.5vw + 9px, 17px)/1.6 var(--font-ui); color: #d7d3ca; max-width: 70ch; }
-@media (max-width: 760px) { .dt-story dl { grid-template-columns: minmax(0, 1fr); gap: 4px; } .dt-story dd { margin-bottom: 14px; } }
 .dt-orig { display: inline-flex; align-items: center; gap: 6px; color: var(--champagne); font: 500 14px/1.2 var(--font-ui); text-decoration: underline; text-underline-offset: 3px; }
 
 .dt-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1 var(--font-mono); }
@@ -116,12 +170,7 @@
 .dt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 760px) {
-  .detail { width: 100vw; height: 88dvh; inset: auto 0 0 0; transform: translateY(32px); }
-  @starting-style { .detail[open] { opacity: 0; transform: translateY(32px); } }
-  .dt-panel { border-right: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; }
-  /* The sheet leaves the header showing above it: dim it further so it doesn't read as live. */
-  .detail[open]::backdrop { background: rgb(8 8 10 / 0.62); }
-  .dt-head, .dt-scroll { padding-left: 18px; padding-right: 18px; }
+  .dt-scroll { padding-top: 24px; }
   .dt-name { display: none; } /* "Previous" / "Next" only: the titles were too long for the width */
   .dt-pager button { padding: 12px 4px; font-size: 13px; }
 }
@@ -132,31 +181,60 @@
   :is(.dt-close, .dt-cta, .dt-pager button):active { transform: none; }
 }
 
-/* About › How I work: the workflow figure (src/figures/workflow), its steps, the step on show and the closing line. */
-.dt-wf-fig { margin: 6px 0 14px; }
-.dt-wf-fig:empty { aspect-ratio: 600 / 520; border: 1px solid var(--line); border-radius: 12px; background: #141519; } /* holds the space until the figure loads */
-/* the step on show sits on a soft card, so it reads apart from the panel without shouting */
-.dt-wf-text { display: grid; margin: 4px 0 30px; padding: clamp(16px, 1.4vw, 22px) clamp(18px, 1.6vw, 24px); border: 1px solid color-mix(in srgb, var(--champagne) 16%, var(--line)); border-radius: 14px; background: linear-gradient(180deg, rgb(236 232 223 / 0.045), rgb(236 232 223 / 0.015)); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04); }
-.dt-wf-now { grid-area: 1 / 1; visibility: hidden; opacity: 0; transition: opacity 180ms ease-out, visibility 0s linear 180ms; }
-.dt-wf-now.is-on { visibility: visible; opacity: 1; transition: opacity 220ms ease-out 40ms, visibility 0s; }
-.dt-wf-now .dt-desc { margin: 0; }
-.dt-wf-head { margin: 0 0 8px; font: 500 clamp(16px, 0.55vw + 9px, 18px)/1.3 var(--font-ui); color: var(--champagne); }
-.dt-wf-text .dt-desc { color: #e6e2d9; }
-.dt-wf-subs { list-style: none; margin: 18px 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.dt-wf-subs li { display: inline-flex; align-items: center; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font: 500 12.5px/1 var(--font-ui); color: #b9b5ac; transition: border-color 220ms ease-out, color 220ms ease-out; }
-.dt-wf-subs li.is-on { border-color: color-mix(in srgb, var(--champagne) 55%, var(--line)); color: var(--champagne); }
-.dt-wf-subtext { display: grid; }
-.dt-wf-subtext p { grid-area: 1 / 1; margin: 0; font-size: clamp(14px, 0.4vw + 9px, 16px); line-height: 1.55; color: #cfcac0; visibility: hidden; opacity: 0; transition: opacity 180ms ease-out, visibility 0s linear 180ms; }
-.dt-wf-subtext p.is-on { visibility: visible; opacity: 1; transition: opacity 220ms ease-out 40ms, visibility 0s; }
-.dt-wf-close { margin: 0 0 34px; font: var(--display-weight) calc(clamp(24px, 1.2vw + 10px, 30px) * var(--display-scale))/1.25 var(--font-display); color: var(--ink-light); text-indent: -0.4em; padding-left: 0.4em; } /* the opening quote hangs */
-@media (prefers-reduced-motion: reduce) { .dt-wf-now, .dt-wf-subtext p { transition: none; } }
-.dt-wf .dt-steps { margin-bottom: 22px; }
-/* The tour's timer: the pill on show fills from the left as its time runs out (and Framework's sub-step too). */
-.dt-wf .dt-chip, .dt-wf-subs li { position: relative; overflow: hidden; isolation: isolate; }
-.dt-wf .dt-chip::before, .dt-wf-subs li::before {
-  content: ''; position: absolute; inset: 0; z-index: -1;
-  background: color-mix(in srgb, var(--champagne) 24%, transparent);
-  /* revealed by a clip, not scaled: the leading edge stays straight and the pill's own corners round it */
-  clip-path: inset(0 calc((1 - var(--p, 0)) * 100%) 0 0); opacity: 0; transition: opacity 200ms ease-out;
+/* About › How I work (workflowSection.ts, src/figures/run): an accordion of the steps beside the instrument. The step open is
+   the one the instrument is playing; choosing a step plays it. The instrument stays in view while the steps scroll
+   (sticky); on a narrow page it sits above them, at most 44 % of the screen tall. */
+.wf-layout { display: grid; gap: 22px; --wf-top: var(--dt-sec-top, 24px); }
+.wf-side { min-width: 0; }
+.wf-fig { order: -1; position: sticky; top: var(--wf-top); z-index: 2; padding-block: 6px; background: var(--bg); min-width: 0; }
+.wf-fig:empty { aspect-ratio: 800 / 570; border: 1px solid var(--line); border-radius: 14px; background: #141519; } /* holds the space until the figure loads */
+.wf-fig .run-stage { max-width: min(100%, calc(44dvh * 1.404)); margin-inline: auto; }
+@container dt (min-width: 820px) {
+  .wf-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.28fr); gap: clamp(32px, 4vw, 64px); align-items: start; }
+  .wf-fig { order: 0; padding: 0; background: none; }
+  .wf-fig .run-stage { max-width: min(100%, calc((100dvh - var(--wf-top) - 28px) * 1.404)); margin-inline: 0; }
 }
-.dt-wf .dt-step.is-timing .dt-chip::before, .dt-wf-subs li.is-timing::before { opacity: 1; }
+.wf-intro { margin: 0 0 22px; max-width: 46ch; font: 400 clamp(15px, 0.5vw + 9px, 17px)/1.55 var(--font-ui); color: #aeaaa1; }
+.wf-acc { border-top: 1px solid var(--line); }
+.wf-item { position: relative; border-bottom: 1px solid var(--line); }
+/* the open step's timer: a line down the item's edge that fills as its time runs out */
+.wf-bar { position: absolute; left: 0; top: -1px; bottom: -1px; width: 2px; background: var(--champagne); transform-origin: top; transform: scaleY(0); opacity: 0; pointer-events: none; transition: opacity 200ms ease-out; }
+.wf-item.is-timing > .wf-bar, .wf-sub.is-timing > .wf-bar { opacity: 1; }
+.wf-h { margin: 0; }
+.wf-hd {
+  appearance: none; display: grid; grid-template-columns: 2.6em minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; margin: 0; padding: 17px 4px 17px 16px;
+  border: 0; background: none; color: #d7d3ca; text-align: left; cursor: pointer; transition: color 200ms ease-out;
+}
+.wf-hd:focus-visible, .wf-sh:focus-visible { outline: 2px solid var(--champagne); outline-offset: -2px; border-radius: 6px; }
+.wf-n { font: 500 12px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--muted); transition: color 200ms ease-out; }
+.wf-t { font: 500 clamp(17px, 0.6vw + 11px, 21px)/1.25 var(--font-ui); }
+/* a plus that becomes a minus */
+.wf-ind { position: relative; width: 14px; height: 14px; color: var(--muted); transition: color 200ms ease-out; }
+.wf-ind::before, .wf-ind::after { content: ''; position: absolute; left: 1px; right: 1px; top: 6.25px; height: 1.5px; border-radius: 1px; background: currentColor; transition: transform 240ms var(--ease-out); }
+.wf-ind::after { transform: rotate(90deg); }
+.wf-item.is-on > .wf-h .wf-hd { color: var(--champagne); }
+.wf-item.is-on > .wf-h .wf-n, .wf-item.is-on > .wf-h .wf-ind { color: var(--champagne); }
+.wf-item.is-on > .wf-h .wf-ind::after { transform: rotate(0deg); }
+@media (hover: hover) and (pointer: fine) { .wf-item:not(.is-on) .wf-hd:hover { color: var(--champagne-light); } }
+/* the panels open on a grid row, so their height animates without a measured number */
+.wf-pn, .wf-sp { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 200ms var(--ease-out); } /* closing snaps; opening (below) takes a beat longer */
+.wf-item.is-on > .wf-pn, .wf-sub.is-on > .wf-sp { grid-template-rows: 1fr; transition-duration: 280ms; }
+.wf-pn-in, .wf-sp-in { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s linear 200ms; }
+.wf-item.is-on > .wf-pn > .wf-pn-in, .wf-sub.is-on > .wf-sp > .wf-sp-in { visibility: visible; transition: visibility 0s; }
+.wf-pn-in { padding-left: calc(16px + 2.6em + 10px); }
+@media (max-width: 560px) { .wf-pn-in { padding-left: 16px; } .wf-hd { grid-template-columns: 2.2em minmax(0, 1fr) auto; } }
+.wf-tx { margin: 0 0 20px; max-width: 44ch; font: 400 clamp(15px, 0.4vw + 10px, 17px)/1.6 var(--font-ui); color: #cfcac0; }
+.wf-subs { list-style: none; margin: 0 0 20px; padding: 0; border-left: 1px solid var(--line); }
+.wf-sub { position: relative; padding-left: 14px; }
+.wf-sub > .wf-bar { top: 0; bottom: 0; left: -1px; }
+.wf-sh { appearance: none; display: flex; align-items: baseline; gap: 12px; width: 100%; margin: 0; padding: 9px 0; border: 0; background: none; color: #b9b5ac; font: 500 15px/1.3 var(--font-ui); text-align: left; cursor: pointer; transition: color 200ms ease-out; }
+.wf-sn { flex: none; font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; color: var(--muted); transition: color 200ms ease-out; }
+.wf-sub.is-on > .wf-sh, .wf-sub.is-on > .wf-sh .wf-sn { color: var(--champagne); }
+@media (hover: hover) and (pointer: fine) { .wf-sub:not(.is-on) .wf-sh:hover { color: var(--champagne-light); } }
+.wf-sp-in p { margin: 0 0 12px; max-width: 40ch; font: 400 15px/1.55 var(--font-ui); color: #cfcac0; }
+.wf-close { margin: 28px 0 0; font: var(--display-weight) calc(clamp(24px, 1.2vw + 10px, 30px) * var(--display-scale))/1.25 var(--font-display); color: var(--ink-light); text-indent: -0.4em; padding-left: 0.4em; } /* the opening quote hangs */
+@media (prefers-reduced-motion: reduce) {
+  .wf-pn, .wf-sp, .wf-ind::before, .wf-ind::after, .wf-hd, .wf-sh, .wf-n, .wf-sn, .wf-ind { transition: none; }
+  .wf-pn-in, .wf-sp-in { transition: none; }
+}
+html.motion-off :is(.wf-pn, .wf-sp, .wf-ind::before, .wf-ind::after, .wf-pn-in, .wf-sp-in) { transition: none; }

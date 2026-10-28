@@ -3,7 +3,7 @@
 // Same content and routes as the device: every item opens the same detail panel (#/work/:id …).
 import './listView.css';
 import { FLAG_SVG } from '../brand/logo';
-import { apps, countries, events, profile, projects, toolLogo, toolNames } from '../content/portfolio';
+import { archiveWorks, countries, events, isApp, profile, selectedWorks, toolLogo, toolNames, type Project } from '../content/portfolio';
 import { createContactCard } from './contactCard';
 import { mountHoverPeek } from './hoverPeek';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
@@ -27,6 +27,14 @@ export function storeView(v: ViewMode) {
   }
 }
 
+/** One work as a card: the selected five, and the archive's six inside "More projects". The line above the title is the kind of project
+    (tags[0], the same as on the device); the mobile app says so. */
+const card = (p: Project) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
+          <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
+          <span class="lv-meta">${esc(p.tags[0])}${isApp(p.id) ? ' · Mobile app' : ''}</span>
+          <strong>${esc(p.title)}</strong>
+          <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`;
+
 /** Fills the list view container once (images load lazily, only when the view is shown). */
 export function buildListView(root: HTMLElement): void {
   if (root.childElementCount) return;
@@ -42,22 +50,11 @@ export function buildListView(root: HTMLElement): void {
 
     <section class="lv-sec" id="lv-works" aria-labelledby="lv-works-h">
       <h2 id="lv-works-h">Selected works</h2>
-      <ul class="lv-grid">${projects
-        .map((p) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
-          <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
-          <span class="lv-meta">${esc(p.category)}</span>
-          <strong>${esc(p.title)}</strong>
-          <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`)
-        .join('')}</ul>
-      <h3 class="lv-h3">Mobile apps</h3>
-      <ul class="lv-grid">${apps
-        .map((p) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
-          <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
-          <span class="lv-meta">${esc(p.category)}</span>
-          <strong>${esc(p.title)}</strong>
-          <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`)
-        .join('')}</ul>
-      <p class="lv-soon"><strong>Motion</strong> <span>Coming soon</span> Motion design reels, made with AI agents.</p>
+      <ul class="lv-grid">${selectedWorks.map(card).join('')}</ul>
+      <details class="lv-more">
+        <summary><span>More projects</span><b>${archiveWorks.length}</b></summary>
+        <ul class="lv-grid">${archiveWorks.map(card).join('')}</ul>
+      </details>
     </section>
 
     <section class="lv-sec" id="lv-chronicle" aria-labelledby="lv-chronicle-h">
@@ -97,7 +94,7 @@ export function buildListView(root: HTMLElement): void {
 
     <section class="lv-sec lv-wf dt-wf" id="lv-how" aria-labelledby="lv-how-h">
       <h2 id="lv-how-h">How I work</h2>
-      <div class="lv-wf-body">${workflowBody()}</div>
+      ${workflowBody(3)}
     </section>`;
   root.querySelector('.lv-card')!.append(createContactCard('card'));
   // Events: a thumbnail of the event follows the pointer over its row (thumbnails in public/media/peek/<id>.webp).

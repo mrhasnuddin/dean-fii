@@ -8,7 +8,7 @@
 // (docs/device-design.md §23). `loadBakedEnvironment` decodes it in a few ms; `createStudioEnvironment`
 // stays as the generator for the labs, for the bake, and as the fallback.
 import * as THREE from 'three';
-import envUrl from './generated/studio-env.dat?url';
+import { fetchBakedEnvironment } from './envFile';
 
 function softbox(w: number, h: number, color: string, intensity: number, pos: [number, number, number], look: [number, number, number]) {
   const m = new THREE.Mesh(
@@ -94,13 +94,10 @@ function unpack(planes: Uint8Array): Uint16Array {
  * exponent), each delta-coded. Resolves null when the file or DecompressionStream is unavailable (the
  * caller then generates the environment) or with `?env=live`, which forces the generator for comparison.
  */
-export async function loadBakedEnvironment(): Promise<THREE.Texture | null> {
-  if (typeof DecompressionStream === 'undefined' || new URLSearchParams(location.search).get('env') === 'live') return null;
+export async function loadBakedEnvironment(raw: Promise<Uint8Array | null> = fetchBakedEnvironment()): Promise<THREE.Texture | null> {
+  const planes = await raw; // fetched by the caller (it can start before this module has loaded), or here
+  if (!planes || planes.length !== PIXELS * 4) return null;
   try {
-    const res = await fetch(envUrl);
-    if (!res.ok || !res.body) return null;
-    const planes = new Uint8Array(await new Response(res.body.pipeThrough(new DecompressionStream('deflate'))).arrayBuffer());
-    if (planes.length !== PIXELS * 4) return null;
     const half = unpack(planes);
     const tex = new THREE.DataTexture(half, ENV_W, ENV_H, THREE.RGBAFormat, THREE.HalfFloatType);
     tex.mapping = THREE.CubeUVReflectionMapping;

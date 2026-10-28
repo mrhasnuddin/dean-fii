@@ -1,7 +1,7 @@
-// The memory card (docs/device-design.md §34): the Motion page's card. It comes up from below the device,
-// lines up with the slot in the bottom edge, and is pushed home (the recoil is the latch); then the page
-// opens. It stays in while the Motion page is showing; leaving the page pushes it back out on the slot's
-// spring and it drops away. The card is a child of the slot, so it turns with the wallet.
+// The memory card (docs/device-design.md §34), now the archive cartridge (docs/works-cartridge-blueprint.md). It comes
+// up from below the device, lines up with the slot in the bottom edge, and is pushed home (the recoil is the latch);
+// then the archive page opens. It stays in while the archive is showing; leaving the page pushes it back out on the
+// slot's spring and it drops away. The card is a child of the slot, so it turns with the wallet.
 import gsap from 'gsap';
 import { MEMORY } from '../device/memoryCard';
 import type { Stage } from './stage';
@@ -12,8 +12,8 @@ export type MemoryState = 'out' | 'moving' | 'in';
 
 export interface MemorySequence {
   state(): MemoryState;
-  /** Brings the card in. `onSeat` runs the moment it is home (at once if it already is). */
-  insert(onSeat?: () => void): void;
+  /** Brings the card in. `onSeat` runs the moment it is home (at once if it already is). `instant`: it is simply in (a deep link). */
+  insert(onSeat?: () => void, instant?: boolean): void;
   eject(): void;
 }
 
@@ -23,7 +23,7 @@ const MOUTH = -MEMORY.h / 2 - 0.012;
 const HOME = MEMORY.inside - MEMORY.h / 2;
 const FAR = -MEMORY.h / 2 - 1.15;
 
-export function createMemorySequence(stage: Stage, announce: (msg: string) => void): MemorySequence {
+export function createMemorySequence(stage: Stage): MemorySequence {
   const { memoryCard: card, wallet } = stage;
   let state: MemoryState = 'out';
   let tl: gsap.core.Timeline | null = null;
@@ -35,15 +35,14 @@ export function createMemorySequence(stage: Stage, announce: (msg: string) => vo
     cbs.forEach((cb) => cb());
   };
 
-  function insert(onSeat?: () => void) {
+  function insert(onSeat?: () => void, instant = false) {
     if (state === 'in') return onSeat?.();
     if (onSeat) seatCbs.push(onSeat);
     if (state === 'moving' && tl && card.userData.dir === 'in') return; // already on its way
     tl?.kill();
     card.userData.dir = 'in';
     state = 'moving';
-    announce('Memory card inserted: the motion reel');
-    if (motion.reduced()) {
+    if (motion.reduced() || instant) {
       card.visible = true;
       card.position.set(0, HOME, 0);
       return seated();

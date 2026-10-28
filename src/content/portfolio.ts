@@ -4,7 +4,7 @@ import data from './portfolio.json';
 
 // The fields every project has come from the data; the optional ones are written out, because a type inferred from
 // entries that each carry a different few of them would refuse an entry with another few.
-export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship' | 'story'> & {
+export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship' | 'story' | 'look'> & {
   /** A recorded walkthrough of the live site (public/media/motion/<id>.mp4, -sm.mp4 and -poster.webp), shown in place of the thumbnails. */
   motion?: string;
   /** Web3 products: the network it runs on (shown as a tag with the network's own logo). */
@@ -15,16 +15,29 @@ export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship'
   flagship?: boolean;
   /** The story behind it, in the owner's words: a label and a paragraph each (the problem, the idea, how it was built). */
   story?: { label: string; text: string }[];
+  /** The palette and the typefaces the live site uses, as measured in the browser (shown beside "Why this look"; re-measure if the site is redesigned). */
+  look?: { palette: { name: string; hex: string }[]; type: string[] };
 };
-export type SpeakingEvent = (typeof data.events)[number] & {
-  /** Organisations behind the event or the talk: their official sites, shown as a tribute under the description. */
-  links?: { title: string; link: string }[];
+// The optional fields are written out, as for Project: the data types `tile` as a plain string, not the two tones.
+export type SpeakingEvent = Omit<(typeof data.events)[number], 'links' | 'linksLabel'> & {
+  /** Organisations behind the event or the talk: each is their official logo on a tile (a text link if there is no logo), linking to their official site, shown beside the description.
+      `tile` is for logos that do not suit the default light tile (white lettering: 'dark'; a white background, blended into the tile: 'white'); `mark` is for a square or stacked logo, shown taller. */
+  links?: { title: string; link: string; logo?: string; tile?: 'dark' | 'white'; mark?: boolean }[];
+  /** What the group of logos is called to a screen reader (default "Official sites"); nothing is shown. */
+  linksLabel?: string;
 };
 
 export const projects: Project[] = data.projects;
-/** Works › Mobile apps. */
+/** The mobile apps (NARO): listed with the other works and tagged "Mobile app". */
 export const apps: Project[] = data.apps;
-export const events: SpeakingEvent[] = data.events;
+/** Every work in `rank` order. The first SELECTED_COUNT are the selected works, told in full; the rest sit on the archive cartridge (docs/works-cartridge-blueprint.md). */
+export const works: Project[] = [...projects, ...apps].sort((a, b) => a.rank - b.rank);
+export const SELECTED_COUNT = 5;
+export const selectedWorks: Project[] = works.slice(0, SELECTED_COUNT);
+export const archiveWorks: Project[] = works.slice(SELECTED_COUNT);
+export const isArchive = (id: string) => archiveWorks.some((p) => p.id === id);
+export const isApp = (id: string) => apps.some((p) => p.id === id);
+export const events = data.events as SpeakingEvent[];
 
 export const countries: Record<string, string> = { CN: 'China', ID: 'Indonesia', MY: 'Malaysia' };
 
@@ -55,7 +68,7 @@ export const profile = {
     'An AI-native designer who also ships the frontend, so design goes straight into the build with no handoff in between. UI/UX and creative design for user interfaces, landing pages and frontend builds that are easy to understand.',
     'An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics.',
   ],
-  // Dean's AI-native workflow (2026-10-15, his steps, polished): drawn as the cube figure in About (§32).
+  // Dean's AI-native workflow (2026-10-15, his steps, polished): an accordion beside the instrument in About (§32).
   workflow: {
     intro: 'Six steps from a client’s brief to a shipped site, with AI agents doing the building.',
     steps: [

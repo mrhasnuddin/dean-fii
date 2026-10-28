@@ -61,7 +61,7 @@ export function glCamera(projection) {
 
 const VERTEX = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
 
-export function glLayer({ canvas, fragment, view, camera, uniforms = [], fixed = {}, extensions = [], maxRatio = 1.5, onError = (message) => console.error(message) }) {
+export function glLayer({ canvas, fragment, view, camera, uniforms = [], fixed = {}, extensions = [], maxRatio = 1.5, autoFit = true, onError = (message) => console.error(message) }) {
   const gl = canvas.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false, preserveDrawingBuffer: false });
   if (!gl) return null;
   const compile = (type, source) => {
@@ -130,12 +130,13 @@ export function glLayer({ canvas, fragment, view, camera, uniforms = [], fixed =
   for (const [name, value] of Object.entries(fixed)) set(name, value);
   return {
     gl,
+    fit,
     extensions: enabled,
     set(values = {}) {
       for (const [name, value] of Object.entries(values)) set(name, value);
     },
     draw(values = {}, time = 0) {
-      fit();
+      if (autoFit) fit();
       gl.viewport(0, 0, canvas.width, canvas.height);
       set("uCanvas", [canvas.width, canvas.height]);
       set("uView", view);

@@ -17,12 +17,17 @@
 .lv-grid a { position: relative; display: grid; gap: 8px; color: var(--ink-light); text-decoration: none; }
 .lv-flag { position: absolute; top: 10px; left: 10px; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px 6px 9px; border-radius: 999px; background: rgb(15 16 20 / 0.78); backdrop-filter: blur(8px); color: var(--champagne); font: 500 11px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .lv-grid img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; margin-bottom: 6px; }
-/* Mobile apps and Motion: a line each under the web projects until the first one ships. */
-.lv-h3 { margin: 40px 0 16px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-.lv-soon { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 32px 0 0; padding: 16px 18px; border: 1px dashed var(--line); border-radius: 12px; color: #b9b5ad; font-size: 15px; }
-.lv-soon + .lv-soon { margin-top: 12px; }
-.lv-soon strong { color: var(--ink-light); font-weight: 500; }
-.lv-soon span { font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--champagne); background: rgb(228 207 159 / 0.1); border-radius: 999px; padding: 5px 9px; }
+/* More projects: the archive's six, folded under the selected five. A native <details>: no script, no motion, and its
+   images are not fetched until it opens. */
+.lv-more { margin-top: 36px; }
+.lv-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; list-style: none; cursor: pointer; padding: 16px 18px; border: 1px dashed rgb(228 207 159 / 0.45); border-radius: 12px; color: var(--ink-light); font: 500 15px/1.3 var(--font-ui); transition: border-color 160ms ease; }
+.lv-more > summary::-webkit-details-marker { display: none; }
+.lv-more > summary span::after { content: ' +'; color: var(--champagne); }
+.lv-more[open] > summary span::after { content: ' ×'; }
+.lv-more > summary b { font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; color: var(--champagne); background: rgb(228 207 159 / 0.1); border-radius: 999px; padding: 5px 9px; }
+.lv-more > summary:focus-visible { outline: 2px solid var(--champagne); outline-offset: 4px; }
+.lv-more .lv-grid { margin-top: 28px; }
+@media (hover: hover) and (pointer: fine) { .lv-more > summary:hover { border-color: var(--champagne); } }
 .lv-grid strong { font: 500 19px/1.25 var(--font-ui); }
 
 .lv-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -70,11 +75,13 @@
   .lv-portrait { max-width: 280px; }
 }
 
-/* How I work (workflowSection.ts): the figure beside its steps on wide screens, stacked below 960 px. */
-.lv-wf-body { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(28px, 3vw, 48px); align-items: center; }
-.lv-wf .dt-wf-fig { margin: 0; }
-@media (max-width: 960px) { .lv-wf-body { grid-template-columns: 1fr; gap: 18px; } }
-
+/* How I work (workflowSection.ts): the accordion beside the instrument on wide screens, the instrument above it below 960 px. */
+.lv-wf .wf-layout { --wf-top: 88px; }
+@media (min-width: 961px) {
+  .lv-wf .wf-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: clamp(32px, 4vw, 64px); align-items: start; }
+  .lv-wf .wf-fig { order: 0; padding: 0; background: none; }
+  .lv-wf .wf-fig .run-stage { max-width: min(100%, calc((100dvh - var(--wf-top) - 28px) * 1.404)); margin-inline: 0; }
+}
 
 /* Events hover image (hoverPeek.ts): the frame is moved with transform; the card eases in on opacity and scale from the side nearest the pointer. */
 .lv-peek { position: fixed; left: 0; top: 0; z-index: 3; width: clamp(240px, 22vw, 340px); aspect-ratio: 16 / 10; pointer-events: none; visibility: hidden; transition: visibility 0s linear 120ms; }
