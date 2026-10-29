@@ -1,13 +1,13 @@
 // The sections of a detail page, and the rail that moves between them (docs/device-design.md §54).
 // A page is a list of sections (Media, Overview, one chapter per story entry, Design flow …). Each is drawn as a chapter
-// with a number and a title, and each is a "key" on the rail: a column of keycaps like the wallet's tab keys, the one in
-// view pressed in and lit, with a stepped meter under it like the e-ink bars. Scrolling presses the key; pressing a key
-// scrolls. Under 1200 px the rail is a sticky strip of the same keys. The first sentence of a paragraph is its lead,
-// larger; the rest is detail, quieter, so a page can be scanned.
+// with a title, and each is a row on the rail: the device screen's e-ink list in its dark form, the row in view a solid
+// bar. Scrolling lights the row; pressing a row scrolls. Under 1200 px the rail is a sticky strip of the same list. The first
+// sentence of a paragraph is its lead, larger; the rest is detail, quieter, so a page can be scanned.
 import './detailPage.css';
 import { isApp, toolLogo, toolNames, type Project, type SpeakingEvent, type ToolId, type profile as Profile } from '../content/portfolio';
 import { sfx } from '../audio/sfx';
 import { motion } from '../motion';
+import { copyText } from './clipboard';
 
 export interface Sec {
   id: string;
@@ -43,14 +43,59 @@ const leadHtml = (text: string, extra = '') => {
 const plate = (p: Project, k: number) =>
   `<figure class="dt-plate"><img src="${p.images[k % p.images.length]}" alt="${esc(p.title)}, screenshot ${(k % p.images.length) + 1}" loading="lazy" decoding="async"><figcaption>Fig ${pad(k + 1)} · ${esc(p.title)}</figcaption></figure>`;
 
-/** The palette and typefaces the live site uses (measured, not described). */
+/** Every project's story has the chapters of Kairma's page, in this order: The problem, The idea, Why this look, How it was built (a chapter
+    a project has no text for is left out). The problem and the idea get an animated diagram in place of a screenshot: a Rubik's cube that
+    ends on a question mark, and a laptop that lights up with a bulb on its screen (src/figures/story). detail.ts mounts them once the
+    panel is open and tears them down when it closes. */
+export type DiagramKind = 'problem' | 'idea';
+export function diagramOf(label: string): DiagramKind | null {
+  const l = label.replace(/^the\s+/i, '').toLowerCase();
+  return l === 'problem' ? 'problem' : l === 'idea' ? 'idea' : null;
+}
+/** The figures' box shapes (W / H in cube.mjs and laptop.mjs, which fit their box to their content), so the slot is the right height before the figure loads. */
+const DIAGRAM_SHAPE: Record<DiagramKind, string> = { problem: '520 / 443', idea: '520 / 405' };
+const diagram = (kind: DiagramKind, p: Project, n: number) =>
+  `<figure class="dt-plate dt-diagram"><div class="dt-diagram-stage" data-story="${kind}" style="aspect-ratio:${DIAGRAM_SHAPE[kind]}"></div><figcaption>Fig ${pad(n)} · ${esc(p.title)}</figcaption></figure>`;
+
+/** The palette and typefaces the live site uses (measured, not described). Each colour is a button: hover shows "Copy", a press copies its hex
+    (copySwatch); on touch the tag is always there. */
 function lookFigure(p: Project) {
   const l = p.look!;
-  return `<div class="dt-look" role="group" aria-label="Palette and type of ${esc(p.title)}">
+  const swatches = (list: { name: string; hex: string }[]) =>
+    `<ul class="dt-swatches${list.length > 4 ? ' dense' : ''}">${list.map((c) => `<li><button type="button" class="dt-sw" data-hex="${c.hex}" aria-label="Copy ${esc(c.name)}, ${c.hex}"><i style="background:${c.hex}"><em class="dt-sw-tag" aria-hidden="true">Copy</em></i><b>${esc(c.name)}</b><code>${c.hex}</code></button></li>`).join('')}</ul>`;
+  // A site with a light theme shows both, each under its own small label.
+  const palette = l.light ? `<p class="dt-look-sub">Dark theme</p>${swatches(l.palette)}<p class="dt-look-sub">Light theme</p>${swatches(l.light)}` : swatches(l.palette);
+  return `<div class="dt-look" role="group" aria-label="Palette and fonts of ${esc(p.title)}">
     <p class="dt-look-h">Palette</p>
-    <ul class="dt-swatches">${l.palette.map((c) => `<li><i style="background:${c.hex}"></i><b>${esc(c.name)}</b><code>${c.hex}</code></li>`).join('')}</ul>
-    <p class="dt-look-h">Type</p>
-    <ul class="dt-faces">${l.type.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></div>`;
+    ${palette}
+    <p class="dt-look-h">Font</p>
+    <ul class="dt-faces">${l.type.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+    <p class="dt-sr" role="status"></p></div>`;
+}
+
+/** Copies a swatch's hex: the same copy and the same detent as the contact card's Copy, the tag saying Copied for a moment and a
+    spoken line for a screen reader. Only one swatch shows its result at a time. */
+let swatchTimer = 0;
+export async function copySwatch(btn: HTMLElement) {
+  const root = btn.closest<HTMLElement>('.dt-look');
+  const hex = btn.dataset.hex;
+  if (!root || !hex) return;
+  const ok = await copyText(hex);
+  sfx.play(ok ? 'detent' : 'toggle', ok ? {} : { rate: 0.8 });
+  const status = root.querySelector<HTMLElement>('[role="status"]');
+  const reset = () => {
+    root.querySelectorAll<HTMLElement>('.dt-sw[data-state]').forEach((b) => {
+      delete b.dataset.state;
+      b.querySelector('.dt-sw-tag')!.textContent = 'Copy';
+    });
+    if (status) status.textContent = '';
+  };
+  reset();
+  btn.dataset.state = ok ? 'done' : 'fail';
+  btn.querySelector('.dt-sw-tag')!.textContent = ok ? 'Copied' : 'Failed';
+  if (status) status.textContent = ok ? `${hex} copied` : 'Couldn’t copy the colour.';
+  clearTimeout(swatchTimer);
+  swatchTimer = window.setTimeout(reset, 1800);
 }
 
 /** What it was built with: the tools, then the stack. */
@@ -61,11 +106,13 @@ const builtFigure = (p: Project) =>
 
 // ---- the sections of each kind of page ---------------------------------------------------------------------------------
 
-/** Role, category, network, tools, stack: the facts, for a glance. */
+/** Role, team, category, network, tools, stack: the facts, for a glance. Team is Solo unless the project has one; Dean's own role in it is highlighted. */
 function glance(p: Project) {
   const row = (k: string, v: string) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
+  const member = (m: { role: string; me?: boolean }) => `<li class="dt-tool${m.me ? ' dt-me' : ''}">${esc(m.role)}${m.me ? '<span class="dt-sr"> (my role)</span>' : ''}</li>`;
   return `<dl class="dt-glance" aria-label="At a glance">
     ${row('Role', esc(p.roles.join(' · ')))}
+    ${row('Team', `<ul class="dt-tools">${(p.team ?? [{ role: 'Solo' }]).map(member).join('')}</ul>`)}
     ${row('Category', `${esc(p.category)}${isApp(p.id) ? ' · Mobile app' : ''}`)}
     ${p.chain ? row('Network', `<ul class="dt-tools"><li class="dt-tool dt-stack"><img src="${p.chain.logo}" alt="" width="18" height="18"><span>${esc(p.chain.name)}</span></li></ul>`) : ''}
     ${row('Tools', `<ul class="dt-tools">${p.tools.map(tool).join('')}</ul>`)}
@@ -82,7 +129,8 @@ export function projectSections(p: Project, media: string, flow: string): Sec[] 
   for (const s of p.story ?? []) {
     const look = s.label === 'Why this look' && p.look;
     const built = /built/i.test(s.label);
-    const fig = look ? lookFigure(p) : built ? builtFigure(p) : plate(p, k++);
+    const kind = diagramOf(s.label);
+    const fig = look ? lookFigure(p) : built ? builtFigure(p) : kind ? diagram(kind, p, kind === 'problem' ? 1 : 2) : plate(p, k++);
     secs.push({ id: slug(s.label), label: cap(s.label.replace(/^the\s+/i, '')), html: `<div class="dt-ch has-fig"><div>${leadHtml(s.text)}</div><div class="dt-ch-fig">${fig}</div></div>` });
   }
   secs.push({ id: 'flow', label: 'Design flow', html: flow });

@@ -1,0 +1,53 @@
+/* The story figures (Problem, Idea; src/figures/story) in the site's palette: anatomy's dark
+   tokens, lifted a little so the machine reads on the panel (the same as the "How I work" instrument's), then each figure's own parts. */
+.dia {
+  --anatomy-card: #141519; --anatomy-paper: #141519; --anatomy-page: #0f1014;
+  --anatomy-text: #b9b5ac; --anatomy-strong: #ece8df; --anatomy-muted: #8b8d96;
+  --anatomy-face: #272830; --anatomy-top: #33343c;
+  --anatomy-shade-0: #191a1f; --anatomy-shade-1: #1e1f25; --anatomy-shade-2: #24252c; --anatomy-shade-3: #2a2b33;
+  --anatomy-lit-top: #2b2a27; --anatomy-lit-shade: #222120;
+  --anatomy-hi: #d8d4cb; --anatomy-mid: #6c6d75; --anatomy-lo: #3f4047; --anatomy-faint: #2a2b31; --anatomy-lit: #e4cf9f;
+  --anatomy-halo: #060607; --anatomy-dot: #d8d4cb;
+}
+.dia .iso-figure { margin: 0; }
+/* contain: a change inside the figure cannot make the page around it lay out or repaint */
+.dia-stage { position: relative; border: 1px solid #2a2c33; border-radius: 14px; background: #141519; overflow: hidden; contain: layout paint; }
+.dia-stage > svg { display: block; width: 100%; height: auto; }
+
+/* shared parts: dark glass and gold light, as on the instrument's screens */
+.dia .bz { fill: #0b0c0f; }
+.dia .lcd { fill: #14120d; }
+.dia .dk { fill: #09090b; }
+.dia .pnl { fill: #2a2b31; }
+.dia .gd { fill: #e4cf9f; }
+.dia .gd2 { fill: #e4cf9f; fill-opacity: 0.5; }
+.dia .gd3 { fill: #e4cf9f; fill-opacity: 0.16; }
+.dia .glass { fill: #fff; fill-opacity: 0.05; }
+.dia [data-glow] { fill-opacity: 0; }
+.dia [data-lamp] { fill-opacity: 0.25; }
+/* the laptop's screen when it is awake: a wash of gold under the lit shapes */
+.dia .lit-bg { fill: #e4cf9f; fill-opacity: 0.1; }
+
+/* the question mark painted on the cube's faces (a dark veil over the stickers, the mark in gold with a glow) and the bulb on the screen */
+.dia .q-veil { fill: #0a0b0e; fill-opacity: 0.84; }
+.dia .q-glow { fill: none; stroke: #e4cf9f; stroke-opacity: 0.22; stroke-width: 19; stroke-linecap: round; stroke-linejoin: round; }
+.dia circle.q-glow { fill: #e4cf9f; fill-opacity: 0.22; stroke: none; }
+.dia .q-s { fill: none; stroke: #e4cf9f; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+.dia .q-f { fill: #e4cf9f; }
+.dia .gl-s { fill: none; stroke: #e4cf9f; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.dia .gl-s2 { fill: none; stroke: #e4cf9f; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.dia .gl-ripple { fill: none; stroke: #e4cf9f; stroke-width: 1.2; opacity: 0; }
+
+/* the cube: near-black plastic, and only the site's two colours in its six stickers: three golds (champagne, lighter and deeper) and
+   three tints of the background (Dean's rule for these diagrams: the background and the primary colour, and their hues) */
+.dia .cubie { --anatomy-shade-0: #0c0d10; --anatomy-shade-1: #111216; --anatomy-shade-2: #16171c; --anatomy-shade-3: #1c1d23; --anatomy-top: #24252c; --anatomy-face: #101115; }
+.dia .stk0 { fill: #f2e8cb; }
+.dia .stk1 { fill: #e4cf9f; }
+.dia .stk2 { fill: #a98640; }
+.dia .stk3 { fill: #6f7180; }
+.dia .stk4 { fill: #464854; }
+.dia .stk5 { fill: #2c2d36; }
+.dia .stk-sh { fill: #000; }
+.dia .stk-hide { display: none; }
+
+@media (prefers-reduced-motion: reduce) { .dia * { transition: none !important; } }

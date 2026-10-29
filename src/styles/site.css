@@ -230,6 +230,8 @@ main { position: relative; z-index: 2; pointer-events: none; }
 .section h1 .h-sans { display: block; font: var(--hero-sans-weight) 0.86em/0.98 var(--font-ui); letter-spacing: var(--hero-sans-tracking); }
 .section h1 .h-serif { display: block; }
 .lede { margin: 0; color: #d8d3c9; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.45; }
+/* About: the bio is the About page's own text (aboutSections), so beside the device there is only the link to it; the phone's rule below keeps its second line. */
+#panel-about .lede { display: none; }
 .hint { margin: 14px 0 0; font: 400 13px/1.5 var(--font-mono); color: var(--muted); }
 .hint kbd { font: inherit; color: var(--ink-light); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
 .copy-side > .cta { margin-top: 20px; }

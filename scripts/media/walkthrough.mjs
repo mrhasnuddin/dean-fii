@@ -4,7 +4,10 @@
 // hover and pointer effects run, and comes back to the top so the loop is seamless. Frames are the browser's own screencast;
 // ffmpeg turns them into one MP4 (H.264, plays everywhere), a smaller -sm.mp4 (960 wide, for phones) and a WebP poster.
 //
-//   node scripts/media/walkthrough.mjs <url> <id> [--shot out.png] [--w 1280] [--h 800] [--fps 30] [--wait 3500] [--click "skip to os"] [--stops 7] [--scroll-to "the keep"] [--wheel 11 --hold 1500] [--crf 30]
+//   node scripts/media/walkthrough.mjs <url> <id> [--shot out.png] [--w 1280] [--h 800] [--fps 30] [--wait 3500] [--click "skip to os"] [--stops 7] [--scroll-to "the keep"] [--wheel 11 --hold 1500] [--tabs "#desktop-nav a"] [--crf 30]
+//
+// --tabs <selector> is for an app with page tabs (a dashboard): it clicks each matching link in turn, scrolls a little below the fold on
+// each page, scrolls back up, and ends on the first tab so the loop closes.
 //
 // Outputs (public/media/motion/): <id>.mp4, <id>-sm.mp4, <id>-poster.webp. With --shot it only saves one screenshot (--scroll-to first
 // scrolls to the first heading whose text matches).
@@ -19,7 +22,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const args = process.argv.slice(2);
 const [url, id] = args.filter((a, i) => !a.startsWith('--') && !(args[i - 1] || '').startsWith('--'));
 const opt = (k, d) => (args.includes(`--${k}`) ? args[args.indexOf(`--${k}`) + 1] : d);
-const WHEEL = +opt('wheel', 0), HOLD = +opt('hold', 1500), CRF = opt('crf', '30'), CLICK = opt('click', ''), STOPS = +opt('stops', 7), SCROLL_TO = opt('scroll-to', '');
+const WHEEL = +opt('wheel', 0), HOLD = +opt('hold', 1500), CRF = opt('crf', '30'), CLICK = opt('click', ''), STOPS = +opt('stops', 7), SCROLL_TO = opt('scroll-to', ''), TABS = opt('tabs', '');
 const W = +opt('w', 1280), H = +opt('h', 800), FPS = +opt('fps', 24), SETTLE = +opt('wait', 3500), SHOT = opt('shot', '');
 if (!url || !id) {
   console.error('usage: node scripts/media/walkthrough.mjs <url> <id> [--shot out.png]');
@@ -79,7 +82,22 @@ try {
     console.log('saved', SHOT, await evaluate('document.documentElement.scrollHeight'));
   } else {
     // The choreography runs inside the page on its own clock, so scrolling is as smooth as the page allows.
-    const script = `(async () => {
+    const tabsScript = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const max = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);
+      const to = (y, ms) => new Promise((done) => { const y0 = scrollY, t0 = performance.now(); (function f(now) { const k = Math.min(1, (now - t0) / ms); scrollTo(0, y0 + (y - y0) * ease(k)); k < 1 ? requestAnimationFrame(f) : done(); })(t0); });
+      const links = [...document.querySelectorAll(${JSON.stringify(TABS)})];
+      scrollTo(0, 0); await sleep(1400);
+      for (const [i, a] of links.entries()) {
+        if (i) { a.click(); await sleep(300); scrollTo(0, 0); await sleep(900); }
+        await to(Math.min(max(), innerHeight * 0.62), 1300); await sleep(900); // a little below the fold
+        await to(0, 800); await sleep(500);
+      }
+      links[0].click(); await sleep(300); scrollTo(0, 0); await sleep(1300); // back on the first tab: the loop closes
+      return links.length;
+    })()`;
+    const script = TABS ? tabsScript : `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
       const max = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);

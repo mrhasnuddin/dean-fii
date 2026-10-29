@@ -9,6 +9,24 @@
         "UI/UX Designer",
         "Frontend Developer"
       ],
+      "team": [
+        {
+          "role": "Project Manager"
+        },
+        {
+          "role": "Creative Designer"
+        },
+        {
+          "role": "Project Owner"
+        },
+        {
+          "role": "UI/UX Designer",
+          "me": true
+        },
+        {
+          "role": "Backend Developer"
+        }
+      ],
       "tools": [
         "figma",
         "gemini"
@@ -49,16 +67,16 @@
       "motion": "/media/motion/eni",
       "story": [
         {
-          "label": "The team",
-          "text": "I was part of the early team, working with designers, a PM and developers from the first ideas through to the third version of the build, before the project passed to another team."
-        },
-        {
-          "label": "The decisions",
-          "text": "We worked it out together through wireframes and MVPs. Every design decision answered to two things: the client's requirements and the conventions of Web3."
+          "label": "The idea",
+          "text": "Decisions made together. We worked it out together through wireframes and MVPs. Every design decision answered to two things: the client's requirements and the conventions of Web3."
         },
         {
           "label": "Why this look",
-          "text": "ENI is a Layer 1 blockchain built for commercial adoption, so the site has to feel like serious infrastructure while speaking the visual language Web3 audiences recognise: a dark ground, neon-lit wireframe landscapes and 3D renders of the sentinel node hardware. The pages I worked on follow that system and the client's requirements, so they sit comfortably beside the rest of the site."
+          "text": "Serious infrastructure, Web3 language. ENI is a Layer 1 blockchain built for commercial adoption, so the site has to feel like serious infrastructure. It also speaks the visual language Web3 audiences recognise: a dark ground, neon-lit wireframe landscapes and 3D renders of the sentinel node hardware. The pages I worked on follow that system and the client's requirements, so they sit comfortably beside the rest of the site."
+        },
+        {
+          "label": "How it was built",
+          "text": "Early team, first idea to version three. I was part of the early team, working with designers, a PM and developers. We worked together from the first ideas through to the third version of the build, before the project passed to another team."
         }
       ],
       "look": {
@@ -136,23 +154,19 @@
       "story": [
         {
           "label": "The problem",
-          "text": "Our team lacked a professional landing page to stand out in marketing and on social media. The site also needed to set out what the team offers, how it works with projects, and which projects belong to the ENI ecosystem."
+          "text": "No professional landing page. Our team lacked a professional landing page to stand out in marketing and on social media. The site also needed to set out what the team offers, how it works with projects, and which projects belong to the ENI ecosystem."
         },
         {
           "label": "The idea",
-          "text": "This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem."
+          "text": "Simple, agency-style structure. This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem."
         },
         {
           "label": "Why this look",
-          "text": "ASEAN Labs is an incubator whose promise is execution, so the site is built to look decisive: a solid yellow ground, black linework and flat vector illustrations, with no gradients or glow in the hero. Next to the dark neon pages many Web3 teams ship, it stands out in marketing and on social media, which was the gap the team had. Mono captions and a dot grid give it a builder's workshop feel, and agency-style sections keep it easy to scan."
+          "text": "A look that feels decisive. ASEAN Labs is an incubator whose promise is execution, so the site is built to look decisive. It has a solid yellow ground, black linework and flat vector illustrations, with no gradients or glow in the hero. Next to the dark neon pages many Web3 teams ship, it stands out in marketing and on social media, which was the gap the team had. Mono captions and a dot grid give it a builder's workshop feel, and agency-style sections keep it easy to scan."
         },
         {
           "label": "How it was built",
-          "text": "Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well. MVPs settled the look before the build, and iteration tuned it after."
-        },
-        {
-          "label": "The details",
-          "text": "Some of the vectors are custom made by me in Figma, and the logos were made by our team. A design system set up in code keeps every page consistent, with motion and micro-interactions throughout."
+          "text": "Built with AI and a design system. Once the team agreed with the design direction, I moved on to development with AI. With the right skill.md files and design instructions, the AI agent executed it well. MVPs settled the look before the build, and iteration tuned it after. Some of the vectors are custom made by me in Figma, and the logos were made by our team. A design system set up in code keeps every page consistent, with motion and micro-interactions throughout."
         }
       ],
       "look": {
@@ -205,7 +219,7 @@
       ],
       "status": "Shipped + Live",
       "link": "https://www.kairma.ai/",
-      "description": "Kairma deploys AI employees inside cross-border operations, keeping brand data local on a sealed, on-premise runtime. I designed and built the site on my own. Its model router section shows live AI model rankings from the OpenRouter API, each part of the platform is an isometric illustration, and the page uses smooth scrolling. I used AI-assisted tools for the imagery.",
+      "description": "Kairma deploys AI employees inside cross-border operations, keeping brand data local on a sealed, on-premise runtime. Kairma forward-deploys AI employees into the markets a brand enters and runs them to outcomes, so the business judges them by results instead of headcount. Each task is routed live across models such as Claude, GPT and Gemini, by task and cost, while the data stays inside a sealed runtime called the Keep. This was a solo project, so I designed the site and shipped it myself. Its model router section pulls the AI model rankings live from the OpenRouter API, ranked by daily usage.",
       "flow": {
         "steps": [
           "Ideation",
@@ -228,19 +242,19 @@
       "story": [
         {
           "label": "The problem",
-          "text": "The client wanted a unique landing page for their brand as an AI company, but was unsure how to convey the message about their business. The page had to explain what Kairma does: AI employees for cross-border operations, running on a sealed, on-premise runtime that keeps brand data local."
+          "text": "A client unsure how to convey its message. The client wanted a unique landing page for their brand as an AI company, but was unsure how to convey the message about their business. The page had to explain what Kairma does: AI employees for cross-border operations, running on a sealed, on-premise runtime that keeps brand data local."
         },
         {
           "label": "The idea",
-          "text": "The client loved the mythical gods in the footer image, so I explored ideas within it and took a myth-inspired direction for the animated illustrations. They are isometric, one for each part of the platform, and the page is structured so that every section uses its space with a clear purpose."
+          "text": "A myth-inspired direction. The client loved the mythical gods in the footer image, so I explored ideas within it and took a myth-inspired direction for the animated illustrations. I began by brainstorming with AI tools to play with the art and design style of the mythical gods the client preferred, gathering references from several sources, Pinterest among them. I then fed those references to AI agents for creative ideation, which kept the exploration loose until a direction was clear, and proceeded with isometric illustrations of tools and instruments inspired by the myth gods, one for each part of the platform. The page is structured so that every section uses its space with a clear purpose."
         },
         {
           "label": "Why this look",
-          "text": "Kairma sells a sealed, on-premise runtime, so the page is built around a vault. The hero is the Keep drawn in isometric, a stone building with a pediment and columns that nods to the myth theme the client liked, with a key to pull and a readout showing raw data out at 0 B. Near-black, IBM Plex and one red accent, used on the Request a pilot button and on small details of the drawing, give it the sober tone an operations buyer expects from infrastructure."
+          "text": "Built around a vault. Kairma sells a sealed, on-premise runtime, so the page is built around a vault. The hero is the Keep drawn in isometric, a stone building with a pediment and columns that nods to the myth theme the client liked, with a key to pull and a readout showing raw data out at 0 B. Near-black, IBM Plex and one red accent, used on the Request a pilot button and on small details of the drawing, give it the sober tone an operations buyer expects from infrastructure. A light paper theme keeps the same layout and swaps the red for a deep green."
         },
         {
           "label": "How it was built",
-          "text": "Consultations and MVPs refined the UI/UX and technical decisions first. AI produced the animated illustrations, guided by specific skill.md files, and the footer image was edited with a dither effect using an open-source website. Once the client was satisfied with the MVP, I moved on to the build with minimal iteration."
+          "text": "System first, then the build. Before I build anything, I set up the system: the selected skills.md files and the design system. Then I lay out the user journey and the information architecture, and only after that move on to the content structure and development. For Kairma, specific skill.md files guided the AI that produced the animated illustrations, and the footer image was edited with a dither effect using an open-source website. Consultations and MVPs refined the UI/UX and technical decisions first, and once the client was satisfied with the MVP I moved on to the build with minimal iteration."
         }
       ],
       "look": {
@@ -250,12 +264,50 @@
             "hex": "#0b0a0c"
           },
           {
+            "name": "Surface",
+            "hex": "#141316"
+          },
+          {
             "name": "Ink",
             "hex": "#edece8"
           },
           {
+            "name": "Muted",
+            "hex": "#8d8c87"
+          },
+          {
+            "name": "Line",
+            "hex": "#34332f"
+          },
+          {
             "name": "Accent",
             "hex": "#c9402b"
+          }
+        ],
+        "light": [
+          {
+            "name": "Ground",
+            "hex": "#f2f2f0"
+          },
+          {
+            "name": "Surface",
+            "hex": "#ffffff"
+          },
+          {
+            "name": "Ink",
+            "hex": "#282828"
+          },
+          {
+            "name": "Muted",
+            "hex": "#696966"
+          },
+          {
+            "name": "Line",
+            "hex": "#b4b4b0"
+          },
+          {
+            "name": "Accent",
+            "hex": "#00492e"
           }
         ],
         "type": [
@@ -290,7 +342,7 @@
       ],
       "status": "Shipped + Live",
       "link": "https://stashcube.vercel.app/",
-      "description": "Stashcube is a curated library for AI-native designers and builders: UI libraries, 3D tools, icons, fonts, inspiration and AI skills, in one searchable place. I conceived, designed and built it end to end.",
+      "description": "Stashcube is a curated library for AI-native designers and builders, in one searchable place. It gathers UI libraries, 3D tools, icons, fonts, inspiration and AI skills. I conceived, designed and built it end to end.",
       "flow": {
         "steps": [
           "Ideation",
@@ -310,19 +362,15 @@
       "story": [
         {
           "label": "The problem",
-          "text": "AI-native designers and builders depend on a kit of libraries and templates. I began by keeping mine in Notion, but as the collection grew it needed a better way to sort and categorise it."
+          "text": "A growing collection to sort. AI-native designers and builders depend on a kit of libraries and templates. I began by keeping mine in Notion, but as the collection grew it needed a better way to sort and categorise it."
         },
         {
           "label": "The idea",
-          "text": "Stashcube started as a library of curated libraries for my own use. Most of them are open source, so I decided to share it with the community and the public. It now gathers over 200 links across 15 categories, from UI libraries and 3D tools to icons, fonts, inspiration and AI skills."
-        },
-        {
-          "label": "The structure",
-          "text": "Everything is sorted into categories, with a Recently added section for new finds and a My go-to stack section for my own picks."
+          "text": "A library shared with the community. Stashcube started as a library of curated libraries for my own use. Most of them are open source, so I decided to share it with the community and the public. It now gathers over 200 links across 15 categories, from UI libraries and 3D tools to icons, fonts, inspiration and AI skills. Everything is sorted into categories, with a Recently added section for new finds and a My go-to stack section for my own picks."
         },
         {
           "label": "Why this look",
-          "text": "A moodboard of references came first. Stashcube is a library, so the interface stays near-black and neutral and lets the content lead, with one lime accent to show what to click. I chose a partial-pixel theme for the character: a pixel texture that fades out toward the edge nods to builder culture without covering anything. A left sidebar grouped under Build, Create and Brand lets visitors move through the collection like a file explorer."
+          "text": "Near-black, content first. A moodboard of references came first. Stashcube is a library, so the interface stays near-black and neutral and lets the content lead, with one lime accent to show what to click. I chose a partial-pixel theme for the character: a pixel texture that fades out toward the edge nods to builder culture without covering anything. A left sidebar grouped under Build, Create and Brand lets visitors move through the collection like a file explorer."
         }
       ],
       "look": {
@@ -393,19 +441,19 @@
       "story": [
         {
           "label": "The problem",
-          "text": "The client needed a landing page that explains what FlowFi is, along with its tokenomics and roadmap. There is a lot to set out: two treasuries, and a fair-launch token distribution through the Black Hole Launch."
+          "text": "A lot to explain on one page. The client needed a landing page that explains what FlowFi is, along with its tokenomics and roadmap. There is a lot to set out: two treasuries, and a fair-launch token distribution through the Black Hole Launch."
         },
         {
           "label": "The idea",
-          "text": "I looked for inspiration that resonates with FlowFi. The on-scroll trigger animation fit best, because its flowing motion blends naturally with the name. I proposed that direction first, then polished it and adjusted it to the client's requests."
+          "text": "Showing the flow. FlowFi needed to show its flow, so I looked for inspiration that resonates with the brand. I wanted to portray the smoothness of the project and its tokenomics, and the on-scroll trigger animation fit best: its flowing motion blends naturally with the name and carries the business flow from end to end. I proposed that direction first, then polished it and adjusted it to the client's requests. The timeline was the challenge for me, so I found a reference component for it that suits FlowFi's branding too."
         },
         {
           "label": "Why this look",
-          "text": "On-chain finance often defaults to dark and neon. FlowFi manages institutional capital, so the look is pale and open instead, with one purple accent and a confident display face, a tone that reads as calm and accountable rather than speculative. The logo's layered ribbons already suggest capital in motion, which is why the flowing on-scroll animation feels native to the brand."
+          "text": "Pale and open, not dark and neon. On-chain finance often defaults to dark and neon. FlowFi manages institutional capital, so the look is pale and open instead, with one purple accent and a confident display face, a tone that reads as calm and accountable rather than speculative. The logo's layered ribbons already suggest capital in motion, which is why the flowing on-scroll animation feels native to the brand."
         },
         {
-          "label": "The design",
-          "text": "The isometric illustrations are custom made by me in Figma, and the sections follow a clear structure down the page, so the protocol, its tokenomics and its roadmap each have a place of their own."
+          "label": "How it was built",
+          "text": "Custom illustrations that resonate with the brand. After discussing it with the client, we agreed on a clean isometric set of assets. Using Pinterest references, I made the isometric SVGs in Figma, customised with FlowFi's branding and logos. The sections follow a clear structure down the page, so the protocol, its tokenomics and its roadmap each have a place of their own."
         }
       ],
       "look": {
@@ -476,20 +524,20 @@
       "eink": "/media/eink/paygo.png",
       "story": [
         {
-          "label": "The brief",
-          "text": "The client came with the idea and the direction. The site makes the case for machine-native payments: AI agents cannot solve CAPTCHAs or manage 2FA, and subscriptions do not suit sporadic, high-speed tasks, so an agent needs to pay exactly for what it uses."
+          "label": "The problem",
+          "text": "Payments built for machines. The site makes the case for machine-native payments. AI agents cannot solve CAPTCHAs or manage 2FA, and subscriptions do not suit sporadic, high-speed tasks, so an agent needs to pay exactly for what it uses."
         },
         {
-          "label": "The walkthrough",
-          "text": "The payment flow is an interactive protocol walkthrough in three steps: the client sends a request, the server answers 402 Payment Required with a price, and the client pays and receives the resource."
+          "label": "The idea",
+          "text": "An interactive protocol walkthrough. The client came with the idea and the direction. The payment flow is an interactive protocol walkthrough in three steps: the client sends a request, the server answers 402 Payment Required with a price, and the client pays and receives the resource."
         },
         {
           "label": "Why this look",
-          "text": "PayGo's audience is developers, so the site speaks in their materials: a dark ground, Inter for clarity, and JetBrains Mono for the curl and HTTP 402 snippets that make the walkthrough credible. The headline sets its last word, Settlements, in an italic serif, a small change of voice that marks where a request ends up. A violet tint gives a technical product some warmth."
+          "text": "Speaking in developer materials. PayGo's audience is developers, so the site speaks in their materials. It has a dark ground, Inter for clarity, and JetBrains Mono for the curl and HTTP 402 snippets that make the walkthrough credible. The headline sets its last word, Settlements, in an italic serif, a small change of voice that marks where a request ends up. A violet tint gives a technical product some warmth."
         },
         {
           "label": "How it was built",
-          "text": "I consulted on and refined the UI/UX and technical decisions with the client. Once we agreed on the result, I handed the site over to the client's in-house team to run."
+          "text": "Refined with the client, then handed over. I consulted on and refined the UI/UX and technical decisions with the client. Once we agreed on the result, I handed the site over to the client's in-house team to run."
         }
       ],
       "look": {
@@ -566,16 +614,12 @@
       "eink": "/media/eink/opencrew.png",
       "story": [
         {
-          "label": "The project",
-          "text": "A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it. The site is still maintained after launch."
+          "label": "The idea",
+          "text": "Talent recruiting, marketplace style. A side project for talent recruiting in the Web3 space. I built a marketplace-style site where people can hire our services, browse the crew, or join it. The site is still maintained after launch. The site shows real experience and on-site activity, with photos taken at my own offline events and client stories from projects we incubated. It also presents a talent pool with professional experiences, for clarity."
         },
         {
           "label": "Why this look",
-          "text": "OpenCrew places senior operators into real roles, so the first impression has to say premium before anyone reads a word. I proposed black and gold for that: a pure black ground, white type in a firm sans, and gold as a warm glow and the Contact button, so it reads as a signal rather than decoration. The team agreed with the direction."
-        },
-        {
-          "label": "The proof",
-          "text": "The site shows real experience and on-site activity, with photos taken at my own offline events and client stories from projects we incubated. It also presents a talent pool with professional experiences, for clarity."
+          "text": "Black and gold, premium first. OpenCrew places senior operators into real roles, so the first impression has to say premium before anyone reads a word. I proposed black and gold for that: a pure black ground, white type in a firm sans, and gold as a warm glow and the Contact button, so it reads as a signal rather than decoration. The team agreed with the direction."
         }
       ],
       "look": {
@@ -646,20 +690,20 @@
       "eink": "/media/eink/fortuna.png",
       "story": [
         {
-          "label": "The business",
-          "text": "Fortuna HK serves individuals and companies, so the site separates personal services (education and residency planning in Hong Kong, wealth and property, healthcare) from corporate services (company registration, government subsidies, capital operations)."
+          "label": "The problem",
+          "text": "Two audiences, two sets of services. Fortuna HK serves individuals and companies, so the site separates personal services from corporate services. Personal services cover education and residency planning in Hong Kong, wealth and property, and healthcare. Corporate services cover company registration, government subsidies and capital operations."
         },
         {
-          "label": "The direction",
-          "text": "The client set the design direction. I started by helping them choose a theme and mood that suit the business, then suggested and refined what the site needed, based on their requirements and the nature of the business."
+          "label": "The idea",
+          "text": "A direction set by the client. The client set the design direction. I started by helping them choose a theme and mood that suit the business, then suggested and refined what the site needed, based on their requirements and the nature of the business."
         },
         {
           "label": "Why this look",
-          "text": "Fortuna advises on wealth, education and corporate structure, where trust comes from restraint. The theme is a charcoal ground, thin light type and one warm bronze accent, with a single sculpted object at the centre of the hero in place of stock photography. It signals premium and discretion, and gives the site one image visitors remember."
+          "text": "Restraint that builds trust. Fortuna advises on wealth, education and corporate structure, where trust comes from restraint. The theme is a charcoal ground, thin light type and one warm bronze accent, with a single sculpted object at the centre of the hero in place of stock photography. It signals premium and discretion, and gives the site one image visitors remember."
         },
         {
-          "label": "The details",
-          "text": "The site is multilingual. The world clock in the footer was made at the client's request, and the imagery is AI-assisted."
+          "label": "How it was built",
+          "text": "Multilingual, with a world clock. The site is multilingual. The world clock in the footer was made at the client's request, and the imagery is AI-assisted."
         }
       ],
       "look": {
@@ -728,20 +772,20 @@
       "eink": "/media/eink/nikola.png",
       "story": [
         {
-          "label": "The product",
-          "text": "Nikola is built in three layers: an incubator, an AI governance agent and an on-chain DeFi protocol. Its product stack marks what is live and what is still in development, and the site is organised around infrastructure, products, ecosystem, governance and roadmap."
+          "label": "The problem",
+          "text": "Three layers, one site. Nikola is built in three layers: an incubator, an AI governance agent and an on-chain DeFi protocol. Its product stack marks what is live and what is still in development, and the site is organised around infrastructure, products, ecosystem, governance and roadmap."
         },
         {
-          "label": "The direction",
-          "text": "I helped the client choose a theme and mood that fit the business, then set the design direction, and the client agreed to it."
+          "label": "The idea",
+          "text": "A direction the client agreed to. I helped the client choose a theme and mood that fit the business. I then set the design direction, and the client agreed to it."
         },
         {
           "label": "Why this look",
-          "text": "Nikola is an AI coordination layer, an idea with nothing physical to show, so the hero is made of light: streaks of violet, gold and blue crossing a near-black field, like signals moving between nodes. A deep violet ground rather than flat black gives the dark theme a cooler, more technical tone, and Plus Jakarta Sans keeps the long architecture and governance sections easy to read."
+          "text": "A hero made of light. Nikola is an AI coordination layer, an idea with nothing physical to show, so the hero is made of light. Streaks of violet, gold and blue cross a near-black field, like signals moving between nodes. A deep violet ground rather than flat black gives the dark theme a cooler, more technical tone, and Plus Jakarta Sans keeps the long architecture and governance sections easy to read."
         },
         {
           "label": "How it was built",
-          "text": "The client's guidelines and documentation made the build straightforward, so the work moved from the agreed direction straight to the build."
+          "text": "Straight from direction to build. The client's guidelines and documentation made the build straightforward. The work moved from the agreed direction straight to the build."
         }
       ],
       "look": {
@@ -812,20 +856,20 @@
       "eink": "/media/eink/pusc.png",
       "story": [
         {
-          "label": "The brief",
-          "text": "PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build."
+          "label": "The problem",
+          "text": "Shared mood, its own variation. PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build."
         },
         {
-          "label": "What the page explains",
-          "text": "The page walks through how the stablecoin works: a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout."
+          "label": "The idea",
+          "text": "Explaining the stablecoin. The page walks through how the stablecoin works. It covers a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout."
         },
         {
           "label": "Why this look",
-          "text": "A stablecoin has to look like money before it looks like code, so the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family."
+          "text": "Money first, code second. A stablecoin has to look like money before it looks like code. So the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family."
         },
         {
           "label": "How it was built",
-          "text": "The shaders and assets are custom made for the site. After the build, I handed it over."
+          "text": "Custom shaders and assets. The shaders and assets are custom made for the site. After the build, I handed it over."
         }
       ],
       "look": {
@@ -1131,23 +1175,24 @@
         "/media/projects/naro-4.webp"
       ],
       "eink": "/media/eink/naro.png",
+      "motion": "/media/motion/naro",
       "flagship": true,
       "story": [
         {
-          "label": "The starting point",
-          "text": "The original NARO app is already live on BSC. I redesigned it mobile first, with breakpoints scaling up to a desktop version."
+          "label": "The problem",
+          "text": "An app already live, redesigned. The original NARO app is already live on BSC. I redesigned it mobile first, with breakpoints scaling up to a desktop version."
         },
         {
-          "label": "The prototype",
-          "text": "The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed."
+          "label": "The idea",
+          "text": "A prototype on BNB Testnet. The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed."
         },
         {
           "label": "Why this look",
-          "text": "The theme and brand assets came from the client's team: a near-black ground with one mint-green accent, the convention of trading products, where numbers need contrast and green reads as go. My part was carrying it into a layout built for the phone first, with Connect Wallet as the clear primary action and a visible BNB Testnet chip that marks the prototype as a prototype. On desktop the six destinations (Home, Swap, Mining, Data, Me and My Team) sit in a left rail."
+          "text": "Near-black with one mint accent. The theme and brand assets came from the client's team: a near-black ground with one mint-green accent, the convention of trading products, where numbers need contrast and green reads as go. My part was carrying it into a layout built for the phone first, with Connect Wallet as the clear primary action and a visible BNB Testnet chip that marks the prototype as a prototype. On desktop the six destinations (Home, Swap, Mining, Data, Me and My Team) sit in a left rail."
         },
         {
           "label": "How it was built",
-          "text": "I mapped out the prototype flows, then used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build."
+          "text": "Flows mapped, then built with AI. I mapped out the prototype flows, then used AI to execute the code and the BNB Testnet integration. After iterating on the interactions and test states, I handed over the build."
         }
       ],
       "look": {

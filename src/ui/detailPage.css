@@ -74,14 +74,34 @@
 .dt-plate { margin: 0; }
 .dt-plate img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); background: #1b1c21; }
 .dt-plate figcaption { margin-top: 10px; font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+/* the story diagrams (src/figures/story): the slot keeps the figure's shape before it loads, so the page does not jump */
+.dt-diagram-stage { border-radius: 14px; background: #141519; } /* its aspect-ratio is set inline, per figure (detailSections.ts) */
 .dt-look { display: grid; gap: 14px; padding: clamp(18px, 2vw, 26px); border: 1px solid var(--line); border-radius: 16px; background: rgb(236 232 223 / 0.03); }
 .dt-look-h { margin: 0; font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .dt-look-h:not(:first-child) { margin-top: 10px; }
 .dt-swatches { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 16px; }
+.dt-look-sub { margin: 0; font: 500 12px/1 var(--font-mono); letter-spacing: 0.04em; color: var(--ink-light); }
 .dt-swatches li { display: grid; gap: 6px; width: 76px; }
-.dt-swatches i { display: block; width: 76px; height: 76px; border-radius: 14px; border: 1px solid rgb(255 255 255 / 0.14); }
+/* a palette of five or more (a design system's tokens): three across in two rows of wide chips, so six never wraps five and one */
+.dt-swatches.dense { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 12px; }
+.dt-swatches.dense li { width: auto; min-width: 0; }
+.dt-swatches.dense i { width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 10px; }
+.dt-swatches i { position: relative; display: block; width: 76px; height: 76px; border-radius: 14px; border: 1px solid rgb(255 255 255 / 0.14); transition: transform 160ms var(--ease-out); }
 .dt-swatches b { font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); }
 .dt-swatches code { font: 400 11px/1 var(--font-mono); letter-spacing: 0.04em; color: var(--muted); }
+/* Each colour is a button that copies its hex (copySwatch in detailSections.ts). Hover rings the chip, as the logo tiles do, and shows a "Copy"
+   tag; a press makes it "Copied" for a moment. On touch there is no hover, so the tag is always there. The ring is instant, the tag fades. */
+.dt-sw { display: grid; gap: 6px; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.dt-sw-tag { position: absolute; right: 6px; bottom: 6px; padding: 4px 8px; border-radius: 999px; background: rgb(15 16 20 / 0.8); backdrop-filter: blur(6px); color: var(--ink-light); font: 500 10px/1 var(--font-mono); font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0; transform: translateY(3px); transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out); pointer-events: none; }
+@media (hover: hover) and (pointer: fine) { .dt-sw:hover i { box-shadow: 0 0 0 2px var(--champagne); } .dt-sw:hover .dt-sw-tag { opacity: 1; transform: none; } }
+@media (hover: none) { .dt-sw-tag { opacity: 1; transform: none; } }
+.dt-sw:focus-visible { outline: none; }
+.dt-sw:focus-visible i, .dt-sw[data-state='done'] i { box-shadow: 0 0 0 2px var(--champagne); }
+.dt-sw:focus-visible .dt-sw-tag, .dt-sw[data-state] .dt-sw-tag { opacity: 1; transform: none; }
+.dt-sw[data-state='done'] .dt-sw-tag { color: var(--champagne); }
+.dt-sw[data-state='fail'] .dt-sw-tag { color: #f0a090; }
+.dt-sw:active i { transform: scale(0.97); }
+@media (prefers-reduced-motion: reduce) { .dt-swatches i, .dt-sw-tag { transition: none; } .dt-sw:active i { transform: none; } }
 .dt-faces { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .dt-faces li { font: 500 15px/1.2 var(--font-mono); color: var(--ink-light); padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
 .dt-faces li:last-child { border-bottom: 0; padding-bottom: 0; }

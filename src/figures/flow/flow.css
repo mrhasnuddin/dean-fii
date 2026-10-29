@@ -1,0 +1,17 @@
+/* The Design flow keypad (src/figures/flow): its own parts in the site's palette (the shared dark tokens are in ../story/story.css).
+   Only the page's background tints and its champagne. */
+.dia .nt { fill: #4a4b53; }
+.dia .key-n { font: 700 13px var(--font-mono, ui-monospace, monospace); fill: #e4cf9f; fill-opacity: 0.6; pointer-events: none; }
+.dia .knob-ln { fill: none; stroke: #e4cf9f; stroke-width: 1.8; stroke-linecap: round; }
+.dia .scr-t { font: 700 20px var(--font-display, system-ui, sans-serif); fill: #e4cf9f; letter-spacing: 0.01em; pointer-events: none; }
+.dia .scr-flash { fill: #e4cf9f; }
+.dia .hit { fill: transparent; stroke: none; }
+/* what answers the pointer */
+/* the focus ring is the part's own edge in champagne (a box round a key would be the wrong shape) */
+.flow-fig [data-key], .flow-fig [data-knob] { outline: none; }
+.flow-fig [data-key]:focus-visible .iso-edge, .flow-fig [data-knob]:focus-visible .iso-edge { stroke: #e4cf9f; stroke-opacity: 1; }
+.flow-fig svg { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.flow-fig [data-key], .flow-fig [data-knob], .flow-fig [data-slider] { cursor: pointer; }
+.flow-fig [data-knob] { cursor: grab; }
+.flow-fig [data-knob].is-grab { cursor: grabbing; }
+.flow-fig [data-slider] { cursor: ew-resize; }

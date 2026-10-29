@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Story figures</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; background: #0f1014; }
+    main { width: min(var(--w, 560px), 100% - 32px); margin: 24px auto; pointer-events: auto !important; } /* the site sets none on main (for its 3D stage) and loads after this */
+    nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    nav a { font: 500 12px/1 system-ui; padding: 8px 10px; border-radius: 999px; border: 1px solid #2a2c33; color: #d7d3ca; text-decoration: none; }
+    nav a.on { border-color: #e4cf9f; color: #e4cf9f; }
+  </style>
+</head>
+<body>
+  <main><nav id="nav"></nav><div id="fig"></div></main>
+  <script type="module" src="/src/lab/story.ts"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@ import data from './portfolio.json';
 
 // The fields every project has come from the data; the optional ones are written out, because a type inferred from
 // entries that each carry a different few of them would refuse an entry with another few.
-export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship' | 'story' | 'look'> & {
+export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship' | 'story' | 'look' | 'team'> & {
   /** A recorded walkthrough of the live site (public/media/motion/<id>.mp4, -sm.mp4 and -poster.webp), shown in place of the thumbnails. */
   motion?: string;
   /** Web3 products: the network it runs on (shown as a tag with the network's own logo). */
@@ -15,8 +15,10 @@ export type Project = Omit<(typeof data.projects)[number], 'motion' | 'flagship'
   flagship?: boolean;
   /** The story behind it, in the owner's words: a label and a paragraph each (the problem, the idea, how it was built). */
   story?: { label: string; text: string }[];
+  /** A project built by a team: its roles, with Dean's own marked `me` (highlighted, not labelled). No `team` means Dean worked on it solo. */
+  team?: { role: string; me?: boolean }[];
   /** The palette and the typefaces the live site uses, as measured in the browser (shown beside "Why this look"; re-measure if the site is redesigned). */
-  look?: { palette: { name: string; hex: string }[]; type: string[] };
+  look?: { palette: { name: string; hex: string }[]; light?: { name: string; hex: string }[]; type: string[] }; // `light`: the light theme's palette, for a site that has both (then `palette` is the dark one)
 };
 // The optional fields are written out, as for Project: the data types `tile` as a plain string, not the two tones.
 export type SpeakingEvent = Omit<(typeof data.events)[number], 'links' | 'linksLabel'> & {

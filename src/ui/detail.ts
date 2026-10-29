@@ -4,9 +4,7 @@ import './detail.css';
 import { FLAG_SVG } from '../brand/logo';
 import { archiveWorks, countries, events, isApp, isArchive, profile, selectedWorks, works } from '../content/portfolio';
 import { motion } from '../motion';
-import { aboutSections, bindRail, esc, eventSections, hasRail, pageHtml, projectSections, type Sec } from './detailSections';
-import { mountFlow, type Flow } from './flowFigure';
-import { ARROW, bindSteps, watchWraps } from './stepChips';
+import { aboutSections, bindRail, copySwatch, esc, eventSections, hasRail, pageHtml, projectSections, type Sec } from './detailSections';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
 
 export type DetailTarget = { kind: 'project'; id: string } | { kind: 'event'; id: string } | { kind: 'about' };
@@ -20,26 +18,13 @@ export interface Detail {
   onInvite(cb: () => void): void;
 }
 
-/** Design flow: the chain figure (blocks = stages, drawn by flowFigure.ts) and the stages in order. The story says why; this only shows the shape. */
-function flowSection(flow: Flow) {
-  const n = flow.steps.length;
-  // Each stage after the first carries the arrow into it, so a wrapped row starts with its own arrow.
-  const steps = flow.steps
-    .map((s, i) => `<li class="dt-step${i === n - 1 ? ' is-on' : ''}" data-i="${i}">${i ? ARROW : ''}<button type="button" class="dt-chip">${esc(s)}</button></li>`)
-    .join('');
-  return `<div class="dt-flow">
-    <figure class="dt-fig">
-      <div class="dt-fig-stage" role="img" aria-label="The design flow as a chain of blocks, one block per stage: ${esc(flow.steps.join(', '))}."></div>
-      <figcaption class="dt-fig-read" aria-hidden="true"></figcaption>
-    </figure>
-    <ol class="dt-steps" aria-label="Stages, in order">${steps}</ol>
-  </div>`;
-}
+/** Design flow: the keypad figure (a key per stage, a knob and a slider, drawn by src/figures/flow). The story says why; this only shows the shape. */
+const flowSection = () => `<div class="dt-flow"><figure class="dt-fig"><div class="dt-fig-stage"></div></figure></div>`;
 
 /** A project with a recorded walkthrough (public/media/motion/<id>.mp4 + -poster.webp) shows it in place of the thumbnails. */
 function walkthrough(src: string, alt: string) {
   return `<div class="dt-media dt-motion">
-    <video class="dt-main" data-src="${src}" poster="${src}-poster.webp" muted loop playsinline preload="none" aria-label="${esc(alt)}, a walkthrough of the landing page"></video>
+    <video class="dt-main" data-src="${src}" poster="${src}-poster.webp" muted loop playsinline preload="none" aria-label="${esc(alt)}, a walkthrough of the site"></video>
     <button type="button" class="dt-pp" aria-label="Pause the walkthrough">Pause</button></div>`;
 }
 
@@ -168,6 +153,23 @@ export function createDetail(): Detail {
     stopLive();
     stopLive = () => {};
   }
+  /** The animated diagrams of a project's first chapters (the cube, the laptop): loaded on demand, each stops itself off screen. */
+  function mountStories(token: number) {
+    const live: { destroy(): void }[] = [];
+    let off = false;
+    dlg.querySelectorAll<HTMLElement>('[data-story]').forEach((host) => {
+      const idea = host.dataset.story === 'idea';
+      (async () => {
+        const mount = idea ? (await import('../figures/story/idea')).mountIdea : (await import('../figures/story/problem')).mountProblem;
+        if (off || token !== liveToken || !host.isConnected) return;
+        live.push(mount(host));
+      })().catch(() => host.closest('.dt-diagram')?.remove()); // no figure: the text still says it
+    });
+    return () => {
+      off = true;
+      live.forEach((h) => h.destroy());
+    };
+  }
   function startFlow(t: DetailTarget) {
     stopFlow();
     if (t.kind === 'about') {
@@ -176,28 +178,23 @@ export function createDetail(): Detail {
       return;
     }
     if (t.kind !== 'project') return;
-    const stage = dlg.querySelector<HTMLElement>('.dt-fig-stage');
-    const readEl = dlg.querySelector<HTMLElement>('.dt-fig-read');
-    const p = works.find((x) => x.id === t.id);
-    if (!stage || !readEl || !p) return;
-    const list = dlg.querySelector<HTMLElement>('.dt-steps');
-    const stopWraps = list ? watchWraps(list) : () => {};
     const token = liveToken;
-    let mark = (_a: number) => {};
-    let teardown = () => stopWraps();
-    stopLive = () => teardown();
-    mountFlow(stage, readEl, p.flow, 'chain', { auto: true, onPick: (a) => mark(a) })
+    const offStories = mountStories(token);
+    let teardown = () => {};
+    stopLive = () => {
+      offStories();
+      teardown();
+    };
+    const stage = dlg.querySelector<HTMLElement>('.dt-fig-stage');
+    const p = works.find((x) => x.id === t.id);
+    if (!stage || !p) return;
+    import('../figures/flow/live')
+      .then((m) => m.mountKeypad(stage, null, p.flow))
       .then((h) => {
         if (token !== liveToken) return h.destroy();
-        const chips = list ? bindSteps(list, h) : null;
-        if (chips) mark = chips.mark;
-        teardown = () => {
-          stopWraps();
-          chips?.dispose();
-          h.destroy();
-        };
+        teardown = () => h.destroy();
       })
-      .catch(() => stage.closest('.dt-fig')?.remove()); // no figure: the stages and the text still say it
+      .catch(() => stage.closest('.dt-fig')?.remove()); // no figure: the story still says it
   }
 
   function render(t: DetailTarget) {
@@ -212,7 +209,7 @@ export function createDetail(): Detail {
       const p = group[i];
       head = `<p class="dt-eyebrow">${p.flagship ? `<span class="dt-flag">${FLAG_SVG}Flagship</span> · ` : ''}${esc(p.category)} · ${isApp(t.id) ? 'Mobile app' : 'Project'} ${String(i + 1).padStart(2, '0')}/${String(group.length).padStart(2, '0')}</p>
         <h2 id="detail-title">${esc(p.title)}</h2><p class="dt-roles">${p.roles.map(esc).join(' · ')}</p>`;
-      secs = projectSections(p, gallery(p.images, p.title, p.motion), flowSection(p.flow));
+      secs = projectSections(p, gallery(p.images, p.title, p.motion), flowSection());
       actions = `<a class="dt-cta" href="${p.link}" target="_blank" rel="noopener noreferrer">Visit site <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`;
       pager = group.length > 1 ? pagerHtml(group, i, 'project') : '';
     } else if (t.kind === 'event') {
@@ -253,6 +250,8 @@ export function createDetail(): Detail {
       dlg.close();
       return inviteCb();
     }
+    const sw = el.closest<HTMLElement>('.dt-sw');
+    if (sw) return void copySwatch(sw);
     const go = el.closest<HTMLButtonElement>('[data-go]');
     if (go) navCb({ kind: go.dataset.kind as 'project' | 'event', id: go.dataset.go! });
   });
