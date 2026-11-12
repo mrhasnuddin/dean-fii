@@ -115,7 +115,7 @@ function glance(p: Project) {
     ${row('Team', `<ul class="dt-tools">${(p.team ?? [{ role: 'Solo' }]).map(member).join('')}</ul>`)}
     ${row('Category', `${esc(p.category)}${isApp(p.id) ? ' · Mobile app' : ''}`)}
     ${p.chain ? row('Network', `<ul class="dt-tools"><li class="dt-tool dt-stack"><img src="${p.chain.logo}" alt="" width="18" height="18"><span>${esc(p.chain.name)}</span></li></ul>`) : ''}
-    ${row('Tools', `<ul class="dt-tools">${p.tools.map(tool).join('')}</ul>`)}
+    ${p.tools.length ? row('Tools', `<ul class="dt-tools">${p.tools.map(tool).join('')}</ul>`) : ''}
     ${row('Stack', `<ul class="dt-tools">${p.stack.map(stackChip).join('')}</ul>`)}
     ${p.original ? row('Production app', `<a class="dt-orig" href="${p.original.link}" target="_blank" rel="noopener noreferrer">${esc(p.original.title)} ${newTab}</a>`) : ''}</dl>`;
 }

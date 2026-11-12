@@ -48,41 +48,6 @@ function gallery(images: string[], alt: string, motionSrc?: string) {
     <p class="dt-sr" role="status">Image 1 of ${n}</p></section>`;
 }
 
-/** An event's pictures: one strip as wide as the text, at the pictures' own shapes (nothing cropped), drifting slowly with its
-    ends faded out. The set is shown twice so the loop has no seam; the repeats and the second set are hidden from a screen reader. */
-function marquee(images: string[], alt: string) {
-  const n = images.length;
-  const reps = Math.ceil(6 / n); // one set is at least six pictures wide, so it is wider than the column
-  const items = (clone: boolean) =>
-    Array.from({ length: n * reps }, (_, i) => {
-      const real = !clone && i < n;
-      return `<figure class="dt-mq-item"${real ? '' : ' aria-hidden="true"'}><img src="${images[i % n]}" alt="${real ? `${esc(alt)}, image ${i + 1} of ${n}` : ''}" decoding="async"></figure>`;
-    }).join('');
-  return `<section class="dt-marquee" aria-label="${esc(alt)}, ${n} pictures">
-    <div class="dt-mq-view"><div class="dt-mq-track">${items(false)}${items(true)}</div></div>
-    <button type="button" class="dt-pp dt-mq-pp" aria-label="Pause the pictures">Pause</button></section>`;
-}
-
-/** Sets the marquee's pace (a steady speed, whatever the width), pauses it off screen and on the button. */
-function bindMarquee(root: HTMLElement) {
-  const track = root.querySelector<HTMLElement>('.dt-mq-track')!;
-  const btn = root.querySelector<HTMLButtonElement>('.dt-mq-pp')!;
-  const SPEED = 36; // px a second
-  // The loop is one set, half the track, at SPEED; a resize changes the width, so the pace follows it. It starts once the pictures are
-  // decoded, so the pace is not re-set (and the strip does not jump) while they load.
-  new ResizeObserver(() => {
-    const set = track.getBoundingClientRect().width / 2;
-    if (set > 0) track.style.setProperty('--dur', `${(set / SPEED).toFixed(1)}s`);
-  }).observe(track);
-  void Promise.allSettled([...root.querySelectorAll('img')].map((i) => i.decode())).then(() => root.classList.add('is-ready'));
-  new IntersectionObserver(([e]) => root.classList.toggle('is-off', !e.isIntersecting)).observe(root);
-  btn.addEventListener('click', () => {
-    const paused = root.classList.toggle('is-paused');
-    btn.textContent = paused ? 'Play' : 'Pause';
-    btn.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} the pictures`);
-  });
-}
-
 /** Wires one carousel: the arrows (which wrap round), the dots, the arrow keys and a swipe all move the same scroll-snap track;
     the dots, the count and the spoken status follow wherever it comes to rest. */
 function bindCarousel(root: HTMLElement) {
@@ -217,7 +182,7 @@ export function createDetail(): Detail {
       const e = events[i];
       head = `<p class="dt-eyebrow">${esc(e.place)} · <strong>${esc(countries[e.country])}</strong></p>
         <h2 id="detail-title">${esc(e.title)}</h2><p class="dt-roles">${esc(e.role)}</p>`;
-      secs = eventSections(e, marquee(e.images, e.title));
+      secs = eventSections(e, gallery(e.images, e.title));
       actions = `<button type="button" class="dt-cta" data-invite>Invite Dean</button>`;
       pager = pagerHtml(events, i, 'event');
     } else {
@@ -290,7 +255,6 @@ export function createDetail(): Detail {
       stopRail();
       render(t);
       dlg.querySelectorAll<HTMLElement>('.dt-carousel[role="region"]').forEach(bindCarousel);
-      dlg.querySelectorAll<HTMLElement>('.dt-marquee').forEach(bindMarquee);
       startMotion();
       startFlow(t);
       if (!dlg.open) dlg.showModal();

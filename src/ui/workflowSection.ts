@@ -32,10 +32,32 @@ export function workflowBody(level = 4) {
     <div class="wf-side">
       <p class="wf-intro">${esc(wf.intro)}</p>
       <div class="wf-acc">${wf.steps.map(item).join('')}</div>
-      <p class="wf-close">“${esc(wf.closing)}”</p>
     </div>
     <div class="wf-fig" role="img" aria-label="An instrument that plays the step that is open."></div>
-  </div>`;
+  </div>
+  <p class="wf-close"><span>${wf.closing.split(/(?<=\.) /).map((x, i, all) => `<span class="wf-l">${i === 0 ? '“' : ''}${esc(x)}${i === all.length - 1 ? '”' : ''}</span>`).join(' ')}</span></p>`;
+}
+
+/** Sizes the closing line to the width it has: one line if that gives a type size worth reading, else a line per sentence; the size is
+    set so the line is exactly as wide as its box, and follows a resize and the display font arriving. */
+function fitClose(p: HTMLElement): () => void {
+  const text = p.firstElementChild as HTMLElement;
+  const fit = () => {
+    const w = p.clientWidth;
+    if (!w) return;
+    text.style.fontSize = '100px';
+    p.classList.remove('is-split');
+    let size = (100 * w) / text.getBoundingClientRect().width;
+    if (size < 30) {
+      p.classList.add('is-split');
+      size = (100 * w) / text.getBoundingClientRect().width;
+    }
+    text.style.fontSize = `${Math.floor(size * 10) / 10}px`;
+  };
+  const ro = new ResizeObserver(fit);
+  ro.observe(p);
+  void document.fonts?.ready.then(fit);
+  return () => ro.disconnect();
 }
 
 const LET_GO = 14000; // ms a tapped step is held before the tour comes back (a tap has no pointer to leave)
@@ -45,6 +67,8 @@ export function mountWorkflowSection(section: HTMLElement): () => void {
   const host = section.querySelector<HTMLElement>('.wf-fig');
   const acc = section.querySelector<HTMLElement>('.wf-acc');
   if (!host || !acc) return () => {};
+  const close = section.querySelector<HTMLElement>('.wf-close');
+  const unfit = close ? fitClose(close) : () => {};
   const items = [...acc.querySelectorAll<HTMLElement>('.wf-item')];
   const subs = [...acc.querySelectorAll<HTMLElement>('.wf-sub')];
   let step = 0, sub = 0; // what is open
@@ -154,6 +178,7 @@ export function mountWorkflowSection(section: HTMLElement): () => void {
     gone = true;
     clearTimeout(letGo);
     off.abort();
+    unfit();
     ro.disconnect();
     handle?.destroy();
   };

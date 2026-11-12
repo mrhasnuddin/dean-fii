@@ -16,9 +16,9 @@ import type { Controls } from './scene/controls';
 import type { ContactSequence } from './scene/contactSequence';
 import type { VolumePill } from './scene/volumePill';
 import { createDetail, type DetailTarget } from './ui/detail';
-import type { ScreenIntent, WorksPage } from './ui/screen';
+import type { ScreenIntent } from './ui/screen';
 import { buildListView, storeView, storedView, type ViewMode } from './ui/listView';
-import { archiveWorks, events, isArchive, profile, selectedWorks, works } from './content/portfolio';
+import { archiveWorks, events, profile, selectedWorks, works } from './content/portfolio';
 import { contact, emailAddress, mailtoHref, whatsappHref } from './content/contact';
 import { copyText } from './ui/clipboard';
 import { motion } from './motion';
@@ -50,20 +50,9 @@ const announce = (msg: string) => {
 }
 document.querySelector('[data-list="works"]')!.innerHTML = works.map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
 {
-  // Works' copy follows the data: how many are selected, how many are on the archive cartridge.
-  const say = (page: string, text: string) => document.querySelectorAll<HTMLElement>(`.lede[data-kind-text="${page}"]`).forEach((el) => (el.textContent = text));
-  say('selected', `${selectedWorks.length} projects, told in full. ${archiveWorks.length} more are on the archive cartridge.`);
-  say('archive', `${archiveWorks.length} more projects, from the archive cartridge.`);
-  setMore('selected');
-}
-/** The Works button: the words on it and its accessible name (which contains them) follow the page. */
-function setMore(page: 'selected' | 'archive') {
-  const b = document.querySelector<HTMLButtonElement>('[data-more]');
-  if (!b) return;
-  const text = page === 'archive' ? 'Back to selected works' : `More projects (${archiveWorks.length})`;
-  b.textContent = text;
-  b.dataset.state = page;
-  b.setAttribute('aria-label', `${text}: ${page === 'archive' ? 'eject the archive cartridge' : 'insert the archive cartridge'}`);
+  // Works' copy follows the data: how many works, how many are selected.
+  const lede = document.querySelector<HTMLElement>('[data-works-lede]');
+  if (lede) lede.textContent = `${works.length} projects: the ${selectedWorks.length} selected, then the archive.`;
 }
 document.querySelector('[data-list="chronicle"]')!.innerHTML = events.map((e) => `<li><a href="#/stage/${e.id}">${e.place}: ${e.title}</a></li>`).join('');
 
@@ -432,70 +421,37 @@ async function startDevice() {
     syncFocus();
   });
   syncFocus();
-  // Works' two pages (docs/works-cartridge-blueprint.md): SELECTED, the best five, and ARCHIVE, the rest. The archive
-  // arrives on a cartridge: every way in (the "More projects" button, the "View more…" row, the status strip, →, the
-  // bay in the bottom edge) docks it first, and the screen reads it and loads the rows once it has seated. A deep link
-  // just has it in. Back, ←, the button again, the bay, leaving Works and the pinhole all eject it.
-  const PAGE_SAYS: Record<WorksPage, string> = {
-    selected: `Archive cartridge ejected. ${selectedWorks.length} selected projects.`,
-    archive: `Archive cartridge inserted. ${archiveWorks.length} more projects.`,
-  };
-  const moreBtn = document.querySelector<HTMLButtonElement>('[data-more]')!;
-  let skipCard = false; // set while a deep link flips the page: the cartridge is simply in
-  function flipWorks(page: WorksPage, instant = false) {
-    if (page === screen.worksPage()) return;
-    if (page === 'archive' && !instant && memory.state() !== 'in') {
-      // The cartridge goes in first; the screen loads once it has seated (and is dropped if Works was left meanwhile).
-      if (chor.tab() !== 'works') selectTab('works');
-      return memory.insert(() => (chor.tab() === 'works' ? flipWorks('archive') : memory.eject()));
-    }
-    sfx.play('press');
-    skipCard = instant;
-    screen.setWorksPage(page, instant);
-    skipCard = false;
-  }
-  /** Back to the selected page and the cartridge out (also stops one still on its way in). */
-  function closeArchive() {
-    memory.eject();
-    flipWorks('selected');
-  }
-  screen.onPage((page) => {
-    setMore(page);
-    document.querySelectorAll<HTMLElement>('[data-kind-text]').forEach((el) => (el.hidden = el.dataset.kindText !== page));
-    if (page === 'archive') memory.insert(undefined, skipCard);
-    else memory.eject();
-    if (chor.tab() === 'works') announce(PAGE_SAYS[page]);
+  // Works is one list (docs/device-design.md §60). The archive cartridge follows the selection: it sits in the bay while an archived project
+  // is selected on Works and comes out otherwise (a deep link has it simply in). The bay is a shortcut: it jumps to the first archived
+  // project, or back to the top if the archive is already showing.
+  let instantCard = false;
+  const inArchive = () => screen.mode() === 'works' && screen.selectedIndex() >= selectedWorks.length;
+  const syncCartridge = () => (inArchive() ? memory.insert(undefined, instantCard) : memory.eject());
+  let wasArchive = false;
+  screen.onChange(() => {
+    syncCartridge();
+    if (screen.mode() === 'works' && inArchive() !== wasArchive) announce(inArchive() ? `Archive: ${archiveWorks.length} more projects.` : `${selectedWorks.length} selected projects.`);
+    wasArchive = inArchive();
   });
-  moreBtn.addEventListener('click', () => (screen.worksPage() === 'archive' ? closeArchive() : flipWorks('archive')));
   /** A tab key or softkey chooses the section. */
   const pressTab = (tab: TabId) => selectTab(tab);
-  addEventListener('keydown', (e) => {
-    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
-    if (view !== 'device' || detail.isOpen() || screen.mode() !== 'works' || chor.place() !== 'console') return;
-    if ((e.target as HTMLElement).closest?.('input, textarea, select, dialog, [contenteditable], [role="tab"], a, button')) return;
-    e.preventDefault();
-    if (e.key === 'ArrowRight') flipWorks('archive');
-    else closeArchive();
-  });
-
   // A deep link or ✓ opens a detail: the Console behind it shows the same section and item.
   onDetailOpen = (t) => {
     const tab = TAB_FOR[t.kind];
-    const archived = t.kind === 'project' && isArchive(t.id);
-    if (t.kind === 'project') flipWorks(archived ? 'archive' : 'selected', true);
     if (chor.tab() !== tab) selectTab(tab);
     if (chor.place() !== 'console' && view === 'device') scrollToEl(consoleEl, undefined, true);
-    const list = t.kind === 'project' ? (archived ? archiveWorks : selectedWorks) : t.kind === 'event' ? events : null;
+    const list = t.kind === 'project' ? works : t.kind === 'event' ? events : null;
     if (list && 'id' in t) {
       const i = list.findIndex((x) => x.id === t.id);
+      instantCard = true; // a deep link: the cartridge is simply in
       if (i >= 0 && screen.mode() === tab) screen.select(i);
+      instantCard = false;
     }
   };
 
-  // The selected page's list ends with the "View more…" row, so it has one more row than there are projects.
   const listLength = () => {
     const m = screen.mode();
-    return m === 'works' ? (screen.worksPage() === 'archive' ? archiveWorks.length : selectedWorks.length + 1) : m === 'chronicle' ? events.length : 0;
+    return m === 'works' ? works.length : m === 'chronicle' ? events.length : 0;
   };
   // Copy Dean's email (the screen's Copy key, or C on the keyboard while Email is selected): the address
   // is only joined here, on request, like the mailto link.
@@ -523,7 +479,6 @@ async function startDevice() {
         chor.view.reset(true);
         return contactSeq.run();
       case 'tab': return pressTab(i.tab);
-      case 'page': return flipWorks(i.page);
       case 'key':
         if (i.key === 'copy') return void copyEmail();
         return controls?.pressKey(i.key === 'back' ? 'key-back' : 'key-confirm');
@@ -535,7 +490,10 @@ async function startDevice() {
     }
   }
   screen.onIntent(handleIntent);
-  screen.onSelect(() => sfx.play('detent')); // the wheel, arrow keys or a row tap: one detent per step
+  screen.onSelect(() => {
+    sfx.play('detent'); // the wheel, arrow keys or a row tap: one detent per step
+    syncCartridge();
+  });
 
   // Easter egg (§24): a back sticker latched open shows its site as a link pill; it heals when the wallet
   // is turned back to the front by any route (tab, Back key, scroll).
@@ -579,7 +537,7 @@ async function startDevice() {
       else if (detail.isOpen()) detail.close();
       else if (chor.view.isOff()) chor.view.reset();
       else if (contactSeq.state() === 'ready') contactSeq.putAway();
-      else if (screen.mode() === 'works' && (screen.worksPage() !== 'selected' || memory.state() !== 'out')) closeArchive();
+      else if (inArchive()) screen.select(0); // Back from the archive: to the top of the list, the cartridge out
     },
     // The side switch: the knob visibly slides first, then the page changes view.
     toggleView: () => {
@@ -594,20 +552,26 @@ async function startDevice() {
       music.set(on);
       sfx.set(on);
     },
-    // The bay in the bottom edge: with the archive showing it sends the cartridge away; otherwise the cartridge
-    // flies in from below, and once it is home the archive opens.
-    toggleMemory: () => (screen.worksPage() === 'archive' ? closeArchive() : flipWorks('archive')),
+    // The bay in the bottom edge: to the first archived project (the cartridge flies in), or back to the top (it goes out).
+    toggleMemory: () => {
+      sfx.play('press');
+      if (screen.mode() !== 'works') selectTab('works');
+      screen.select(inArchive() ? 0 : selectedWorks.length);
+    },
     togglePlug: () => power.toggle(),
     // The pinhole: reboot. The screen shows its boot mark, then the place it was; the cartridge goes out, the cable
     // goes back in, the selected page comes back.
     reset: () => {
       sfx.play('power');
       chor.view.reset();
-      closeArchive();
+      memory.eject();
       power.plug();
       const back = () => screen.setMode(chor.place() === 'console' ? chor.tab() : 'hello');
       screen.setMode('boot');
-      setTimeout(back, motion.reduced() ? 0 : 1200);
+      setTimeout(() => {
+        back();
+        syncCartridge();
+      }, motion.reduced() ? 0 : 1200);
       announce('Device restarted');
     },
     view: chor.view,

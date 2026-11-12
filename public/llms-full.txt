@@ -18,25 +18,24 @@ Site: https://www.dean-fi.my/
 - Tools: claude, gemini
 - Tech stack: Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis
 - Process: Ideation > Moodboard > MVPs > Iteration > Build > Iteration
-- Flagship project
 Kairma deploys AI employees inside cross-border operations, keeping brand data local on a sealed, on-premise runtime. Kairma forward-deploys AI employees into the markets a brand enters and runs them to outcomes, so the business judges them by results instead of headcount. Each task is routed live across models such as Claude, GPT and Gemini, by task and cost, while the data stays inside a sealed runtime called the Keep. This was a solo project, so I designed the site and shipped it myself. Its model router section pulls the AI model rankings live from the OpenRouter API, ranked by daily usage.
 The problem: A client unsure how to convey its message. The client wanted a unique landing page for their brand as an AI company, but was unsure how to convey the message about their business. The page had to explain what Kairma does: AI employees for cross-border operations, running on a sealed, on-premise runtime that keeps brand data local.
 The idea: A myth-inspired direction. The client loved the mythical gods in the footer image, so I explored ideas within it and took a myth-inspired direction for the animated illustrations. I began by brainstorming with AI tools to play with the art and design style of the mythical gods the client preferred, gathering references from several sources, Pinterest among them. I then fed those references to AI agents for creative ideation, which kept the exploration loose until a direction was clear, and proceeded with isometric illustrations of tools and instruments inspired by the myth gods, one for each part of the platform. The page is structured so that every section uses its space with a clear purpose.
 Why this look: Built around a vault. Kairma sells a sealed, on-premise runtime, so the page is built around a vault. The hero is the Keep drawn in isometric, a stone building with a pediment and columns that nods to the myth theme the client liked, with a key to pull and a readout showing raw data out at 0 B. Near-black, IBM Plex and one red accent, used on the Request a pilot button and on small details of the drawing, give it the sober tone an operations buyer expects from infrastructure. A light paper theme keeps the same layout and swaps the red for a deep green.
 How it was built: System first, then the build. Before I build anything, I set up the system: the selected skills.md files and the design system. Then I lay out the user journey and the information architecture, and only after that move on to the content structure and development. For Kairma, specific skill.md files guided the AI that produced the animated illustrations, and the footer image was edited with a dither effect using an open-source website. Consultations and MVPs refined the UI/UX and technical decisions first, and once the client was satisfied with the MVP I moved on to the build with minimal iteration.
 
-### Stashcube (Web)
-- Category: Curated Library
-- Live: https://stashcube.vercel.app/
+### Peaceism (Web)
+- Category: Social Impact Token
+- Live: https://peaceism.vercel.app/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
-- Tools: claude, figma
-- Tech stack: Next.js, React, Turbopack, Tailwind CSS
-- Process: Ideation > Moodboard > Build
-- Flagship project
-Stashcube is a curated library for AI-native designers and builders, in one searchable place. It gathers UI libraries, 3D tools, icons, fonts, inspiration and AI skills. I conceived, designed and built it end to end.
-The problem: A growing collection to sort. AI-native designers and builders depend on a kit of libraries and templates. I began by keeping mine in Notion, but as the collection grew it needed a better way to sort and categorise it.
-The idea: A library shared with the community. Stashcube started as a library of curated libraries for my own use. Most of them are open source, so I decided to share it with the community and the public. It now gathers over 200 links across 15 categories, from UI libraries and 3D tools to icons, fonts, inspiration and AI skills. Everything is sorted into categories, with a Recently added section for new finds and a My go-to stack section for my own picks.
-Why this look: Near-black, content first. A moodboard of references came first. Stashcube is a library, so the interface stays near-black and neutral and lets the content lead, with one lime accent to show what to click. I chose a partial-pixel theme for the character: a pixel texture that fades out toward the edge nods to builder culture without covering anything. A left sidebar grouped under Build, Create and Brand lets visitors move through the collection like a file explorer.
+- Tools: 
+- Tech stack: Astro
+- Network: BNB Smart Chain
+- Process: Ideation > Build > Iteration
+Peaceism is a plan to help fund seven basic needs by sharing project earnings through an open ledger. The needs are jobs, food, healthcare, education, housing, justice and safety, and its PCSM token runs on BNB Smart Chain. The site explains how value moves through the network, what is built and what is still planned, the token, the timeline, the team and a series of online conferences.
+The problem: A Middle East project entering Southeast Asia. Peaceism is a project from the Middle East that wants to enter the Southeast Asian market. As part of a pilot agreement, it needed a website to support its marketing in the region. The site also had to explain a plan that is still partly in the future: seven basic needs, how value moves through the network, which tools exist and which are only planned, the PCSM token, a timeline and the team.
+The idea: Client direction, built on facts. The client provided the ideas, links and decks, along with the direction of the project. I built the site on the facts the client supplied, with some touch-ups from my own expertise. The page starts with the seven needs, then shows how value moves in three steps: real projects come on-chain, their earnings go on a public ledger and a share returns to holders. It goes on to the network today and what is planned, the PCSM token, the timeline, the team and the online conferences, with animated illustrations along the way.
+Why this look: A calm ground for a serious claim. Peaceism asks for trust before it asks for money, so the page is warm and open rather than neon: an off-white ground with a faint dot grid, deep navy type and one bronze accent. The hero is the PCSM coin in a ring, and the token section turns navy so the contract details read as the part to check. Funnel Display gives the headings a human voice, and IBM Plex Mono is used for the small technical labels.
 
 ### FlowFi (Web)
 - Category: Treasury Protocol
@@ -45,7 +44,6 @@ Why this look: Near-black, content first. A moodboard of references came first. 
 - Tools: claude, figma
 - Tech stack: Vite, Vanilla JS, GSAP
 - Process: Ideation > Moodboard > Build > Iteration
-- Flagship project
 FlowFi is decentralized infrastructure for the institutional management of on-chain capital, built on ENI. It runs two treasuries: a Governance Treasury that sets the rules and consensus, and an Investor Treasury that grows capital through deployment and incubation. Its FF token launches through the Black Hole Launch, a fair-launch distribution. I designed and built the landing page that sets out the protocol, its tokenomics and its roadmap.
 The problem: A lot to explain on one page. The client needed a landing page that explains what FlowFi is, along with its tokenomics and roadmap. There is a lot to set out: two treasuries, and a fair-launch token distribution through the Black Hole Launch.
 The idea: Showing the flow. FlowFi needed to show its flow, so I looked for inspiration that resonates with the brand. I wanted to portray the smoothness of the project and its tokenomics, and the on-scroll trigger animation fit best: its flowing motion blends naturally with the name and carries the business flow from end to end. I proposed that direction first, then polished it and adjusted it to the client's requests. The timeline was the challenge for me, so I found a reference component for it that suits FlowFi's branding too.
@@ -61,7 +59,6 @@ How it was built: Custom illustrations that resonate with the brand. After discu
 - Tech stack: React, Vite, Three.js, ethers.js
 - Network: BSC Testnet
 - Process: Prototype > Build > Iteration > Handover
-- Flagship project
 NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version, built on BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.
 The problem: An app already live, redesigned. The original NARO app is already live on BSC. I redesigned it mobile first, with breakpoints scaling up to a desktop version.
 The idea: A prototype on BNB Testnet. The first version is an MVP and prototype on BNB Testnet, with demo data and test transactions. It covers the primary views of the app: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and a test data mode lets every screen be previewed.
@@ -75,7 +72,6 @@ How it was built: Flows mapped, then built with AI. I mapped out the prototype f
 - Tools: claude, gemini, figma
 - Tech stack: Next.js, React, Tailwind CSS, WebGL
 - Process: Ideation > Moodboard > MVPs > Build > Iteration
-- Flagship project
 ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia. I designed and built the site on my own, with custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and motion and micro-interactions throughout.
 The problem: No professional landing page. Our team lacked a professional landing page to stand out in marketing and on social media. The site also needed to set out what the team offers, how it works with projects, and which projects belong to the ENI ecosystem.
 The idea: Simple, agency-style structure. This is the website for my team, a Web3 project incubator. I kept the direction simple: 2D animated vector illustrations in solid colours, with each section structured like an agency website. The sections follow what a visitor needs to know, from the capabilities and the process to the ecosystem.
@@ -118,18 +114,17 @@ The idea: An interactive protocol walkthrough. The client came with the idea and
 Why this look: Speaking in developer materials. PayGo's audience is developers, so the site speaks in their materials. It has a dark ground, Inter for clarity, and JetBrains Mono for the curl and HTTP 402 snippets that make the walkthrough credible. The headline sets its last word, Settlements, in an italic serif, a small change of voice that marks where a request ends up. A violet tint gives a technical product some warmth.
 How it was built: Refined with the client, then handed over. I consulted on and refined the UI/UX and technical decisions with the client. Once we agreed on the result, I handed the site over to the client's in-house team to run.
 
-### PUSC (Web)
-- Category: Algorithmic Stablecoin
-- Live: https://pusc-liard.vercel.app/
+### Stashcube (Web)
+- Category: Curated Library
+- Live: https://stashcube.vercel.app/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
-- Tools: gemini, figma, photoshop
-- Tech stack: React, Vite, Tailwind CSS, Framer Motion
-- Process: Ideation > Build > Handover
-PUSC is a DAO-governed, over-collateralised stablecoin protocol pegged 1:1 to USD. It is a microsite for PayGo. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets.
-The problem: Shared mood, its own variation. PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build.
-The idea: Explaining the stablecoin. The page walks through how the stablecoin works. It covers a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout.
-Why this look: Money first, code second. A stablecoin has to look like money before it looks like code. So the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family.
-How it was built: Custom shaders and assets. The shaders and assets are custom made for the site. After the build, I handed it over.
+- Tools: claude, figma
+- Tech stack: Next.js, React, Turbopack, Tailwind CSS
+- Process: Ideation > Moodboard > Build
+Stashcube is a curated library for AI-native designers and builders, in one searchable place. It gathers UI libraries, 3D tools, icons, fonts, inspiration and AI skills. I conceived, designed and built it end to end.
+The problem: A growing collection to sort. AI-native designers and builders depend on a kit of libraries and templates. I began by keeping mine in Notion, but as the collection grew it needed a better way to sort and categorise it.
+The idea: A library shared with the community. Stashcube started as a library of curated libraries for my own use. Most of them are open source, so I decided to share it with the community and the public. It now gathers over 200 links across 15 categories, from UI libraries and 3D tools to icons, fonts, inspiration and AI skills. Everything is sorted into categories, with a Recently added section for new finds and a My go-to stack section for my own picks.
+Why this look: Near-black, content first. A moodboard of references came first. Stashcube is a library, so the interface stays near-black and neutral and lets the content lead, with one lime accent to show what to click. I chose a partial-pixel theme for the character: a pixel texture that fades out toward the edge nods to builder culture without covering anything. A left sidebar grouped under Build, Create and Brand lets visitors move through the collection like a file explorer.
 
 ### Fortuna HK (Web)
 - Category: Professional Services

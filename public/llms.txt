@@ -5,17 +5,17 @@
 Dean Studio is the portfolio of Dean, an AI-native UI/UX designer and frontend developer. The site is an interactive 3D hardware-wallet-style device: its screen holds the works, events, about and contact; a plain List view shows the same content as a normal page. Site: https://www.dean-fi.my/
 
 ## Selected works
-- [Kairma](https://www.kairma.ai/): AI Workforce Platform. Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis. Flagship project.
-- [Stashcube](https://stashcube.vercel.app/): Curated Library. Next.js, React, Turbopack, Tailwind CSS. Flagship project.
-- [FlowFi](https://www.flowfidao.com/): Treasury Protocol. Vite, Vanilla JS, GSAP. Flagship project.
-- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. Flagship project. Mobile app, a redesign of https://naroradar.com/; runs on BSC Testnet.
-- [ASEAN Labs](https://aseanlabs.io/): Web3 Execution Layer. Next.js, React, Tailwind CSS, WebGL. Flagship project.
+- [Kairma](https://www.kairma.ai/): AI Workforce Platform. Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis.
+- [Peaceism](https://peaceism.vercel.app/): Social Impact Token. Astro.
+- [FlowFi](https://www.flowfidao.com/): Treasury Protocol. Vite, Vanilla JS, GSAP.
+- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. Mobile app, a redesign of https://naroradar.com/; runs on BSC Testnet.
+- [ASEAN Labs](https://aseanlabs.io/): Web3 Execution Layer. Next.js, React, Tailwind CSS, WebGL.
 
 ## More projects
 - [ENI Network](https://eni.top/): Modular L1 Blockchain. Next.js, React, Tailwind CSS, Framer Motion, TanStack Query, viem.
 - [OpenCrew](https://open-crew.vercel.app/): Global Web3 & AI Team. Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis, WebGL.
 - [PayGo](https://www.paygo.ac/): Machine-Native Payments. React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion.
-- [PUSC](https://pusc-liard.vercel.app/): Algorithmic Stablecoin. React, Vite, Tailwind CSS, Framer Motion.
+- [Stashcube](https://stashcube.vercel.app/): Curated Library. Next.js, React, Turbopack, Tailwind CSS.
 - [Fortuna HK](https://www.fortunahkholding.com/): Professional Services. Next.js, React, Turbopack, Tailwind CSS, Framer Motion, Lenis.
 - [Nikola](https://www.nikola.network/): AI Coordination Layer. React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion.
 

@@ -100,33 +100,6 @@
 @media (max-width: 760px) { .dt-nav { width: 40px; height: 40px; } .dt-nav[data-dir='prev'] { left: 8px; } .dt-nav[data-dir='next'] { right: 8px; } .dt-pages { bottom: 10px; } }
 @media (prefers-reduced-motion: reduce) { .dt-nav, .dt-dot { transition: none; } .dt-nav:active { transform: none; } }
 
-/* Event marquee: the pictures at their own shapes in one strip as wide as the text, drifting left on a transform loop, with the ends faded
-   out. The track holds the set twice, so -50% is exactly one set and the loop has no seam. It waits for the pictures to decode (.is-ready,
-   so the pace is not re-set while they load), pauses on the button, under a fine pointer, and off screen. With motion reduced or switched
-   off nothing moves: the clones go, and the real pictures share the width as a still row. detail.ts (marquee, bindMarquee) builds and wires it. */
-.dt-marquee { position: relative; width: 100%; margin-bottom: 26px; }
-.dt-mq-view { overflow: hidden; border-radius: 12px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
-.dt-mq-track { display: flex; width: max-content; animation: dt-mq var(--dur, 60s) linear infinite; animation-play-state: paused; }
-.dt-marquee.is-ready:not(.is-paused, .is-off) .dt-mq-track { animation-play-state: running; }
-.dt-mq-item { flex: none; margin: 0 12px 0 0; height: clamp(200px, 24vw, 340px); }
-.dt-mq-item img { display: block; height: 100%; width: auto; border-radius: 10px; background: #1b1c21; }
-@keyframes dt-mq { to { transform: translate3d(-50%, 0, 0); } }
-@media (hover: hover) and (pointer: fine) { .dt-mq-view:hover .dt-mq-track { animation-play-state: paused !important; } }
-@media (max-width: 760px) { .dt-mq-item { height: clamp(180px, 52vw, 260px); margin-right: 8px; } .dt-mq-view { -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); } }
-@media (prefers-reduced-motion: reduce) {
-  .dt-mq-track { animation: none; width: 100%; }
-  .dt-mq-item[aria-hidden='true'] { display: none; }
-  .dt-mq-item { flex: 1 1 0; min-width: 0; }
-  .dt-mq-item img { width: 100%; object-fit: cover; object-position: 50% 35%; }
-  .dt-mq-view { -webkit-mask-image: none; mask-image: none; }
-  .dt-mq-pp { display: none; }
-}
-html.motion-off .dt-mq-track { animation: none; width: 100%; }
-html.motion-off .dt-mq-item[aria-hidden='true'] { display: none; }
-html.motion-off .dt-mq-item { flex: 1 1 0; min-width: 0; }
-html.motion-off .dt-mq-item img { width: 100%; object-fit: cover; object-position: 50% 35%; }
-html.motion-off .dt-mq-view { -webkit-mask-image: none; mask-image: none; }
-html.motion-off .dt-mq-pp { display: none; }
 
 .dt-desc { margin: 0 0 18px; font: 400 clamp(16px, 0.55vw + 9px, 18px)/1.6 var(--font-ui); color: #d7d3ca; max-width: 78ch; } /* grows with the panel */
 .dt-h3 { margin: 22px 0 10px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
@@ -213,7 +186,11 @@ html.motion-off .dt-mq-pp { display: none; }
 .wf-sub.is-on > .wf-sh, .wf-sub.is-on > .wf-sh .wf-sn { color: var(--champagne); }
 @media (hover: hover) and (pointer: fine) { .wf-sub:not(.is-on) .wf-sh:hover { color: var(--champagne-light); } }
 .wf-sp-in p { margin: 0 0 12px; max-width: 40ch; font: 400 15px/1.55 var(--font-ui); color: #cfcac0; }
-.wf-close { margin: 28px 0 0; font: var(--display-weight) calc(clamp(24px, 1.2vw + 10px, 30px) * var(--display-scale))/1.25 var(--font-display); color: var(--ink-light); text-indent: -0.4em; padding-left: 0.4em; } /* the opening quote hangs */
+/* The closing line fills the width under both columns, its size set by workflowSection.ts (fitClose) so it is exactly as wide as the box; the
+   first size is a guess until that runs. One line, or a line per sentence (.is-split) when one line would be too small. */
+.wf-close { margin: 36px 0 0; font: var(--display-weight) calc(clamp(22px, 4.4vw, 48px) * var(--display-scale))/1.12 var(--font-display); color: var(--ink-light); white-space: nowrap; }
+.wf-close > span { display: inline-block; }
+.wf-close.is-split .wf-l { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .wf-pn, .wf-sp, .wf-ind::before, .wf-ind::after, .wf-hd, .wf-sh, .wf-n, .wf-sn, .wf-ind { transition: none; }
   .wf-pn-in, .wf-sp-in { transition: none; }

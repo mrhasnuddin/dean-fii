@@ -248,17 +248,6 @@ main { position: relative; z-index: 2; pointer-events: none; }
 .panel-title[data-active], .panel[data-active] { opacity: 1; visibility: visible; transform: none; transition: opacity 240ms var(--ease-out) 60ms, transform 240ms var(--ease-out) 60ms, visibility 0s; }
 .panel-title { margin: 0; font: var(--display-weight) calc(clamp(48px, 6.2vw, 112px) * var(--display-scale))/var(--display-leading) var(--font-display); letter-spacing: var(--display-tracking); text-wrap: balance; }
 
-/* Works: the "More projects" button above the text. It docks the archive cartridge (main.ts keeps it in step with the screen's
-   SELECTED / ARCHIVE pages) and stays lit while the archive shows. It is the one thing in Works the page copy says that the
-   screen does not, so it stays in the Console's focus mode too. */
-.work-kind { display: inline-flex; margin: 0 0 12px; padding: 3px; border: 1px solid rgb(228 207 159 / 0.38); border-radius: 999px; background: rgb(236 232 223 / 0.04); backdrop-filter: blur(10px); }
-.work-kind button { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 16px; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--font-ui); color: var(--champagne); cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
-.work-kind button::after { content: '+'; font-size: 16px; font-weight: 400; line-height: 1; }
-.work-kind [data-state='archive'] { background: rgb(228 207 159 / 0.14); }
-.work-kind [data-state='archive']::after { content: '×'; }
-@media (hover: hover) and (pointer: fine) { .work-kind button:hover { background: rgb(228 207 159 / 0.14); color: var(--champagne-light); } }
-.work-kind button:focus-visible { outline: 1.5px solid var(--champagne); outline-offset: 2px; }
-@media (pointer: coarse) { .work-kind button { padding-block: 11px; } } /* a thumb-sized target (~43 px with the ring) */
 
 /* Contact actions: the CTA, plus Share on phones (the header has no room for it there). */
 .panel-actions { display: flex; align-items: center; gap: 18px; margin-top: 20px; }

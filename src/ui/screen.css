@@ -60,23 +60,10 @@
 .screen .sc-reading.go .ek-bar i { clip-path: inset(0 0 0 0); }
 @media (prefers-reduced-motion: reduce) { .screen .sc-reading .ek-bar i { transition: none; } }
 
-/* Works' two pages in the status strip: WORKS, then WEB and APPS, the one showing inverted. Tappable. */
-.ek-pages { display: inline-flex; align-items: center; gap: 6px; }
-.ek-pages [data-page] { padding: 1px 6px; border: 1.5px solid var(--ink); cursor: pointer; letter-spacing: 0.08em; }
-.ek-pages [data-page].on { background: var(--ink); color: var(--paper); }
-@media (pointer: coarse) { .ek-pages [data-page] { position: relative; } .ek-pages [data-page]::after { content: ''; position: absolute; inset: -8px -4px; } }
-
-/* Works › the "View more…" row (screen.ts): the cartridge is drawn in the picture well, and the row is dashed all round so it
-   reads as a slot under the projects, not a sixth project. */
-.sc-well-cart { display: grid; place-items: center; }
-.sc-cart { width: 84px; height: 84px; }
-.sc-cart-body { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
-.sc-cart-ink { fill: var(--ink); }
-.sc-cart-paper { fill: none; stroke: var(--paper); stroke-width: 2.5; stroke-linecap: round; }
-@media (pointer: coarse) { .sc-cart { width: 66px; height: 66px; } }
-.screen .ek-list li.sc-ghost { border: 1.5px dashed var(--ink); }
-/* "Reading cartridge…": the same stepped bar as Contact's key reader, a little quicker. */
-.screen .sc-cartridge .ek-bar i { transition-duration: 420ms; }
+/* Works › the ARCHIVED separator (screen.ts): a small-caps label between the selected five and the rest, with a rule either side; it is
+   drawn in the list but never selected. */
+.screen .ek-list li.sc-sep { justify-content: center; gap: 8px; padding: 6px 8px 2px; border-bottom: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.screen .ek-list li.sc-sep::before, .screen .ek-list li.sc-sep::after { content: ''; flex: 1; border-top: 1.5px solid var(--ink); }
 
 /* A line over the screen's foot for a moment: the volume knob's level (screen.toast). */
 .sc-toast { position: absolute; left: 50%; bottom: 62px; transform: translate(-50%, 6px); margin: 0; padding: 6px 14px; background: var(--ink); color: var(--paper); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; white-space: nowrap; opacity: 0; pointer-events: none; z-index: 3; }

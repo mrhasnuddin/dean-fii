@@ -150,7 +150,6 @@
       ],
       "eink": "/media/eink/aseanlabs.png",
       "motion": "/media/motion/aseanlabs",
-      "flagship": true,
       "story": [
         {
           "label": "The problem",
@@ -238,7 +237,6 @@
       ],
       "eink": "/media/eink/kairma.png",
       "motion": "/media/motion/kairma",
-      "flagship": true,
       "story": [
         {
           "label": "The problem",
@@ -318,7 +316,7 @@
     },
     {
       "id": "stashcube",
-      "rank": 2,
+      "rank": 9,
       "title": "Stashcube",
       "category": "Curated Library",
       "roles": [
@@ -358,7 +356,6 @@
       ],
       "eink": "/media/eink/stashcube.png",
       "motion": "/media/motion/stashcube",
-      "flagship": true,
       "story": [
         {
           "label": "The problem",
@@ -437,7 +434,6 @@
       ],
       "eink": "/media/eink/flowfi.png",
       "motion": "/media/motion/flowfi",
-      "flagship": true,
       "story": [
         {
           "label": "The problem",
@@ -813,86 +809,77 @@
       }
     },
     {
-      "id": "pusc",
-      "rank": 9,
-      "title": "PUSC",
-      "category": "Algorithmic Stablecoin",
+      "id": "peaceism",
+      "rank": 2,
+      "title": "Peaceism",
+      "category": "Social Impact Token",
       "roles": [
         "UI/UX Designer",
         "Frontend Developer",
         "Creative Designer"
       ],
-      "tools": [
-        "gemini",
-        "figma",
-        "photoshop"
-      ],
+      "tools": [],
       "stack": [
-        "React",
-        "Vite",
-        "Tailwind CSS",
-        "Framer Motion"
+        "Astro"
       ],
+      "chain": {
+        "name": "BNB Smart Chain",
+        "logo": "/media/chain-logos/bsc.svg"
+      },
       "tags": [
-        "Microsite",
-        "Stablecoin"
+        "Landing Page",
+        "Token"
       ],
       "status": "Shipped",
-      "link": "https://pusc-liard.vercel.app/",
-      "description": "PUSC is a DAO-governed, over-collateralised stablecoin protocol pegged 1:1 to USD. It is a microsite for PayGo. The client chose the theme and mood, and I built the site to match, with custom shaders and custom assets.",
+      "link": "https://peaceism.vercel.app/",
+      "description": "Peaceism is a plan to help fund seven basic needs by sharing project earnings through an open ledger. The needs are jobs, food, healthcare, education, housing, justice and safety, and its PCSM token runs on BNB Smart Chain. The site explains how value moves through the network, what is built and what is still planned, the token, the timeline, the team and a series of online conferences.",
       "flow": {
         "steps": [
           "Ideation",
           "Build",
-          "Handover"
+          "Iteration"
         ]
       },
       "images": [
-        "/media/projects/pusc-1.webp",
-        "/media/projects/pusc-2.webp",
-        "/media/projects/pusc-3.webp",
-        "/media/projects/pusc-4.webp"
+        "/media/projects/peaceism-1.webp",
+        "/media/projects/peaceism-2.webp",
+        "/media/projects/peaceism-3.webp",
+        "/media/projects/peaceism-4.webp"
       ],
-      "eink": "/media/eink/pusc.png",
+      "eink": "/media/eink/peaceism.png",
       "story": [
         {
           "label": "The problem",
-          "text": "Shared mood, its own variation. PUSC is a microsite for PayGo, so it shares PayGo's mood and adds its own variation. The client chose the theme and mood, which left little to settle before the build."
+          "text": "A Middle East project entering Southeast Asia. Peaceism is a project from the Middle East that wants to enter the Southeast Asian market. As part of a pilot agreement, it needed a website to support its marketing in the region. The site also had to explain a plan that is still partly in the future: seven basic needs, how value moves through the network, which tools exist and which are only planned, the PCSM token, a timeline and the team."
         },
         {
           "label": "The idea",
-          "text": "Explaining the stablecoin. The page walks through how the stablecoin works. It covers a 1:1 USD peg, over-collateralised minting, DAO governance and a Blackhole burn that removes supply through transfer fees. Each principle is paired with a terminal-style readout."
+          "text": "Client direction, built on facts. The client provided the ideas, links and decks, along with the direction of the project. I built the site on the facts the client supplied, with some touch-ups from my own expertise. The page starts with the seven needs, then shows how value moves in three steps: real projects come on-chain, their earnings go on a public ledger and a share returns to holders. It goes on to the network today and what is planned, the PCSM token, the timeline, the team and the online conferences, with animated illustrations along the way."
         },
         {
           "label": "Why this look",
-          "text": "Money first, code second. A stablecoin has to look like money before it looks like code. So the hero is a minted coin with embossed lettering and a metallic finish in the page's own violet-blue. The code half is the terminal-style readouts beside each principle, which turn the algorithmic parts, the peg and the collateral ratio, into something a visitor can read at a glance. Sharing PayGo's dark violet mood makes the two sites feel like one family."
-        },
-        {
-          "label": "How it was built",
-          "text": "Custom shaders and assets. The shaders and assets are custom made for the site. After the build, I handed it over."
+          "text": "A calm ground for a serious claim. Peaceism asks for trust before it asks for money, so the page is warm and open rather than neon: an off-white ground with a faint dot grid, deep navy type and one bronze accent. The hero is the PCSM coin in a ring, and the token section turns navy so the contract details read as the part to check. Funnel Display gives the headings a human voice, and IBM Plex Mono is used for the small technical labels."
         }
       ],
       "look": {
         "palette": [
           {
             "name": "Ground",
-            "hex": "#090820"
+            "hex": "#faf9f5"
           },
           {
             "name": "Ink",
-            "hex": "#e5e7eb"
+            "hex": "#0e1f2c"
           },
           {
             "name": "Accent",
-            "hex": "#7030ef"
-          },
-          {
-            "name": "Accent 2",
-            "hex": "#2e6bff"
+            "hex": "#735222"
           }
         ],
         "type": [
-          "Inter"
+          "Funnel Display",
+          "Funnel Sans",
+          "IBM Plex Mono"
         ]
       }
     }
@@ -1176,7 +1163,6 @@
       ],
       "eink": "/media/eink/naro.png",
       "motion": "/media/motion/naro",
-      "flagship": true,
       "story": [
         {
           "label": "The problem",

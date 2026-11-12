@@ -17,17 +17,28 @@
 .lv-grid a { position: relative; display: grid; gap: 8px; color: var(--ink-light); text-decoration: none; }
 .lv-flag { position: absolute; top: 10px; left: 10px; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px 6px 9px; border-radius: 999px; background: rgb(15 16 20 / 0.78); backdrop-filter: blur(8px); color: var(--champagne); font: 500 11px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .lv-grid img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; margin-bottom: 6px; }
-/* More projects: the archive's six, folded under the selected five. A native <details>: no script, no motion, and its
-   images are not fetched until it opens. */
-.lv-more { margin-top: 36px; }
-.lv-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; list-style: none; cursor: pointer; padding: 16px 18px; border: 1px dashed rgb(228 207 159 / 0.45); border-radius: 12px; color: var(--ink-light); font: 500 15px/1.3 var(--font-ui); transition: border-color 160ms ease; }
-.lv-more > summary::-webkit-details-marker { display: none; }
-.lv-more > summary span::after { content: ' +'; color: var(--champagne); }
-.lv-more[open] > summary span::after { content: ' ×'; }
-.lv-more > summary b { font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; color: var(--champagne); background: rgb(228 207 159 / 0.1); border-radius: 999px; padding: 5px 9px; }
-.lv-more > summary:focus-visible { outline: 2px solid var(--champagne); outline-offset: 4px; }
-.lv-more .lv-grid { margin-top: 28px; }
-@media (hover: hover) and (pointer: fine) { .lv-more > summary:hover { border-color: var(--champagne); } }
+/* Works: a heading and a Grid / List toggle, then the projects grouped by kind (listView.ts). The List layout is the same markup as rows:
+   a small picture, the title and roles, and the kind on the right. */
+.lv-sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+.lv-sec-head h2 { margin: 0; }
+.lv-layout { display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
+.lv-layout button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 0; border-radius: 999px; background: none; color: #b9b5ad; font: 500 13px/1 var(--font-ui); cursor: pointer; transition: color 160ms ease, background-color 160ms ease; }
+.lv-layout svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.lv-layout button[data-layout='grid'] svg path { fill: currentColor; stroke: none; }
+.lv-layout button[aria-pressed='true'] { background: rgb(228 207 159 / 0.14); color: var(--champagne); }
+.lv-layout button:focus-visible { outline: 2px solid var(--champagne); outline-offset: 2px; }
+@media (pointer: coarse) { .lv-layout button { padding-block: 12px; } }
+.lv-cat { display: flex; align-items: center; gap: 10px; margin: 44px 0 20px; font: 500 12px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.lv-cat::after { content: ''; flex: 1; border-top: 1px solid var(--line); }
+.lv-cat b { order: 2; font-weight: 500; color: var(--champagne); background: rgb(228 207 159 / 0.1); border-radius: 999px; padding: 4px 8px; }
+.lv-works[data-layout='list'] .lv-grid { grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--line); }
+.lv-works[data-layout='list'] .lv-grid a { grid-template-columns: clamp(96px, 12vw, 140px) minmax(0, 1fr) auto; grid-template-areas: 'img title meta' 'img sub meta'; gap: 2px 20px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.lv-works[data-layout='list'] .lv-grid img { grid-area: img; margin: 0; border-radius: 8px; }
+.lv-works[data-layout='list'] .lv-grid strong { grid-area: title; align-self: end; }
+.lv-works[data-layout='list'] .lv-grid .lv-sub { grid-area: sub; align-self: start; }
+.lv-works[data-layout='list'] .lv-grid .lv-meta { grid-area: meta; justify-self: end; }
+.lv-works[data-layout='list'] .lv-flag { display: none; }
+@media (max-width: 640px) { .lv-works[data-layout='list'] .lv-grid a { grid-template-columns: 88px minmax(0, 1fr); grid-template-areas: 'img title' 'img meta' 'img sub'; } .lv-works[data-layout='list'] .lv-grid .lv-meta { justify-self: start; } }
 .lv-grid strong { font: 500 19px/1.25 var(--font-ui); }
 
 .lv-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }

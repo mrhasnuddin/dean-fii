@@ -3,7 +3,7 @@
 // Same content and routes as the device: every item opens the same detail panel (#/work/:id …).
 import './listView.css';
 import { FLAG_SVG } from '../brand/logo';
-import { archiveWorks, countries, events, isApp, profile, selectedWorks, toolLogo, toolNames, type Project } from '../content/portfolio';
+import { countries, events, isApp, profile, toolLogo, toolNames, works, type Project } from '../content/portfolio';
 import { createContactCard } from './contactCard';
 import { mountHoverPeek } from './hoverPeek';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
@@ -27,8 +27,26 @@ export function storeView(v: ViewMode) {
   }
 }
 
-/** One work as a card: the selected five, and the archive's six inside "More projects". The line above the title is the kind of project
-    (tags[0], the same as on the device); the mobile app says so. */
+/** The kinds of project the Works list is grouped by, in the order they are shown: each is a heading, and the `tags[0]` values that go under it. */
+const GROUPS: { title: string; tags: string[] }[] = [
+  { title: 'Landing pages', tags: ['Landing Page'] },
+  { title: 'Dapps', tags: ['Dapp Redesign', 'Dapp'] },
+  { title: 'Web apps', tags: ['Web App', 'Marketplace Site'] },
+  { title: 'Company sites', tags: ['Brand Site', 'Corporate Site'] },
+];
+const LAYOUT_KEY = 'dean-works-layout';
+type Layout = 'grid' | 'list';
+const storedLayout = (): Layout => {
+  try {
+    return localStorage.getItem(LAYOUT_KEY) === 'list' ? 'list' : 'grid';
+  } catch {
+    return 'grid';
+  }
+};
+const layoutIcon = { grid: 'M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z', list: 'M2 3h12M2 8h12M2 13h12' };
+
+/** One work as a card (or, in the List layout, a row). The line above the title is the kind of project (tags[0], the same as on the
+    device); the mobile app says so. */
 const card = (p: Project) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
           <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
           <span class="lv-meta">${esc(p.tags[0])}${isApp(p.id) ? ' · Mobile app' : ''}</span>
@@ -48,13 +66,17 @@ export function buildListView(root: HTMLElement): void {
       </nav>
     </header>
 
-    <section class="lv-sec" id="lv-works" aria-labelledby="lv-works-h">
-      <h2 id="lv-works-h">Selected works</h2>
-      <ul class="lv-grid">${selectedWorks.map(card).join('')}</ul>
-      <details class="lv-more">
-        <summary><span>More projects</span><b>${archiveWorks.length}</b></summary>
-        <ul class="lv-grid">${archiveWorks.map(card).join('')}</ul>
-      </details>
+    <section class="lv-sec lv-works" id="lv-works" aria-labelledby="lv-works-h" data-layout="${storedLayout()}">
+      <div class="lv-sec-head">
+        <h2 id="lv-works-h">Works</h2>
+        <div class="lv-layout" role="group" aria-label="Layout">${(['grid', 'list'] as const)
+          .map((l) => `<button type="button" data-layout="${l}" aria-pressed="${l === storedLayout()}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="${layoutIcon[l]}"/></svg>${l === 'grid' ? 'Grid' : 'List'}</button>`)
+          .join('')}</div>
+      </div>
+      ${GROUPS.map((g) => ({ g, items: works.filter((p) => g.tags.includes(p.tags[0])) }))
+        .filter(({ items }) => items.length)
+        .map(({ g, items }) => `<h3 class="lv-cat">${g.title}<b>${items.length}</b></h3><ul class="lv-grid">${items.map(card).join('')}</ul>`)
+        .join('')}
     </section>
 
     <section class="lv-sec" id="lv-chronicle" aria-labelledby="lv-chronicle-h">
@@ -100,5 +122,18 @@ export function buildListView(root: HTMLElement): void {
   // Events: a thumbnail of the event follows the pointer over its row (thumbnails in public/media/peek/<id>.webp).
   mountHoverPeek(root, root.querySelector<HTMLElement>('.lv-rows')!, (id) => `/media/peek/${id}.webp`);
   // The workflow figure stays mounted with the list; it sleeps whenever the list is hidden or scrolled away.
+  // Works: Grid or List, remembered for the next visit.
+  const works$ = root.querySelector<HTMLElement>('#lv-works')!;
+  works$.querySelector('.lv-layout')!.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-layout]');
+    if (!b) return;
+    works$.dataset.layout = b.dataset.layout;
+    works$.querySelectorAll('.lv-layout button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    try {
+      localStorage.setItem(LAYOUT_KEY, b.dataset.layout!);
+    } catch {
+      /* private mode: lasts for this visit */
+    }
+  });
   mountWorkflowSection(root.querySelector<HTMLElement>('.lv-wf')!);
 }
