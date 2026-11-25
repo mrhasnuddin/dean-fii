@@ -15,26 +15,26 @@ The site's tokens are the custom properties on `:root` in `src/styles/site.css`.
 
 ## Type
 
-Families (self-hosted variable fonts, imported in `src/main.ts`):
+Families (self-hosted fonts, imported in `src/main.ts`):
 
 | Token | Family | Role |
 | --- | --- | --- |
-| `--font-display` | Bricolage Grotesque | Titles, the hero's second line, the closing quote |
-| `--font-ui` | Hanken Grotesk | Body, buttons, pills, the tab bar, the hero's first line |
+| `--font-display` | Apfel Grotezk | Titles, the hero's second line, the closing quote |
+| `--font-ui` | Geist | Body, buttons, pills, the tab bar, the hero's first line |
 | `--font-mono` | JetBrains Mono | Labels, hints, callouts, the e-ink screen, the workflow figure |
 
 How the display lines and the hero lockup are set in them:
 
 | Token | Value | Meaning |
 | --- | --- | --- |
-| `--display-weight` | `500` | Weight of every display line |
-| `--display-scale` | `1.03` | Multiplier on every display size, so the face matches the size the layout was drawn for (set from its measured x-height and cap height) |
-| `--display-leading` | `0.95` | Line height of the large titles |
-| `--display-tracking` | `-0.04em` | Letter spacing of the large titles (the detail title uses half, the List view's section titles three quarters) |
+| `--display-weight` | `400` | Weight of every display line (Apfel Grotezk Regular; `700` Fett is loaded for the flow screen accent) |
+| `--display-scale` | `1` | Multiplier on every display size (`1:1` for Apfel Grotezk's generous x-height) |
+| `--display-leading` | `0.96` | Line height of the large titles |
+| `--display-tracking` | `-0.03em` | Letter spacing of the large titles (the detail title uses half, the List view's section titles three quarters) |
 | `--hero-sans-weight` | `600` | Weight of the hero's first line ("Dean") |
-| `--hero-sans-tracking` | `-0.04em` | Letter spacing of that line |
+| `--hero-sans-tracking` | `-0.035em` | Letter spacing of that line |
 
-The weights in use: display 500; UI 400, 500 and 600; mono 400, 500 and 700. Text drawn onto the 3D parts is on a canvas and uses the system monospace.
+The weights in use: display 400 and 700; UI 400, 500 and 600; mono 400, 500 and 700. Text drawn onto the 3D parts is on a canvas and uses the system monospace.
 
 ## Layout and motion
 

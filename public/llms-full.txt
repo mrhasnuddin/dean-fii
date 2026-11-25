@@ -2,17 +2,35 @@
 
 > AI-native designer who also ships the frontend, with no handoff between design and build. UI/UX and creative design that make Web3 products easy to understand.
 
-Dean: AI-native designer who also ships the frontend, with no handoff between design and build: UI/UX and creative design for user interfaces, landing pages and frontend builds that are easy to understand. Web3 and blockchain speaker, presenter and educator.
+Dean: An AI-native designer who also ships the frontend, so design goes straight into the build with no handoff in between. UI/UX and creative design for user interfaces, landing pages and frontend builds that are easy to understand. An experienced Web3 and blockchain speaker and presenter who also teaches Web3 topics.
 
-Services: UI/UX design, Frontend development, Creative design, Web3 product design.
-Knows about: AI-native design, UI/UX design, Frontend development, Creative design, Web3, Blockchain, Public speaking.
+Roles: AI Native UI/UX Designer, Frontend Developer, Creative Designer.
+Services: UI/UX design, Frontend development, Creative design, Design systems, Web3 product design, Landing pages, Dapp prototyping.
+Tools: Figma, Photoshop, Gemini, Claude, Codex.
+Languages: English, Mandarin, Bahasa Melayu.
+Knows about: AI-native design, UI/UX design, Frontend development, Creative design, Design systems, Web3, Blockchain, DeFi, Three.js, Next.js, Public speaking.
 Profile: https://www.linkedin.com/in/hasnuddin/
 Site: https://www.dean-fi.my/
+
+## How Dean works
+Six steps from a client's brief to a shipped site, with AI agents doing the building.
+- Brief: I start with the client: what the site is for, who it's for and the look they have in mind.
+- Ideation: I turn the brief into a direction, with references from Pinterest, open-source libraries and marketplaces, until a design and theme fit.
+- Framework: Before any code, I brief the AI agent (Claude, Codex or Antigravity) on the project.
+  - Skills: I install the skills.md files the build needs, before anything else.
+  - Design system: The agent sets up the design system and tokens first.
+  - Motion: I decide the motion, interactions and micro-interactions.
+  - Prompting: I prompt, review and refine, and repeat until it's right.
+- Prototype: A working build comes early, on localhost or deployed to free hosting such as Vercel, GitHub Pages or Netlify.
+- Iteration: Any change to ideas, design or direction happens here.
+- Ship: Once the design and functionality work as intended, it's complete and deployed for the client.
+Closing principle: "AI speeds up the work. A human still steers it."
 
 ## Works
 
 ### Kairma (Web)
 - Category: AI Workforce Platform
+- Status: Live
 - Live: https://www.kairma.ai/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: claude, gemini
@@ -24,21 +42,23 @@ The idea: A myth-inspired direction. The client loved the mythical gods in the f
 Why this look: Built around a vault. Kairma sells a sealed, on-premise runtime, so the page is built around a vault. The hero is the Keep drawn in isometric, a stone building with a pediment and columns that nods to the myth theme the client liked, with a key to pull and a readout showing raw data out at 0 B. Near-black, IBM Plex and one red accent, used on the Request a pilot button and on small details of the drawing, give it the sober tone an operations buyer expects from infrastructure. A light paper theme keeps the same layout and swaps the red for a deep green.
 How it was built: System first, then the build. Before I build anything, I set up the system: the selected skills.md files and the design system. Then I lay out the user journey and the information architecture, and only after that move on to the content structure and development. For Kairma, specific skill.md files guided the AI that produced the animated illustrations, and the footer image was edited with a dither effect using an open-source website. Consultations and MVPs refined the UI/UX and technical decisions first, and once the client was satisfied with the MVP I moved on to the build with minimal iteration.
 
-### Peaceism (Web)
-- Category: Social Impact Token
-- Live: https://peaceism.vercel.app/
+### Hevium (Web)
+- Category: Multi-Chain Trading Terminal
+- Status: Live
+- Live: https://hevium.xyz/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
-- Tools: 
-- Tech stack: Astro
-- Network: BNB Smart Chain
-- Process: Ideation > Build > Iteration
-Peaceism is a plan to help fund seven basic needs by sharing project earnings through an open ledger. The needs are jobs, food, healthcare, education, housing, justice and safety, and its PCSM token runs on BNB Smart Chain. The site explains how value moves through the network, what is built and what is still planned, the token, the timeline, the team and a series of online conferences.
-The problem: A Middle East project entering Southeast Asia. Peaceism is a project from the Middle East that wants to enter the Southeast Asian market. As part of a pilot agreement, it needed a website to support its marketing in the region. The site also had to explain a plan that is still partly in the future: seven basic needs, how value moves through the network, which tools exist and which are only planned, the PCSM token, a timeline and the team.
-The idea: Client direction, built on facts. The client provided the ideas, links and decks, along with the direction of the project. I built the site on the facts the client supplied, with some touch-ups from my own expertise. The page starts with the seven needs, then shows how value moves in three steps: real projects come on-chain, their earnings go on a public ledger and a share returns to holders. It goes on to the network today and what is planned, the PCSM token, the timeline, the team and the online conferences, with animated illustrations along the way.
-Why this look: A calm ground for a serious claim. Peaceism asks for trust before it asks for money, so the page is warm and open rather than neon: an off-white ground with a faint dot grid, deep navy type and one bronze accent. The hero is the PCSM coin in a ring, and the token section turns navy so the contract details read as the part to check. Funnel Display gives the headings a human voice, and IBM Plex Mono is used for the small technical labels.
+- Tools: claude, gemini
+- Tech stack: Next.js, React, Three.js, Rapier3D, GSAP
+- Process: Ideation > Moodboard > Build
+Hevium is a non-custodial trading terminal and fair-launch launchpad running across six chains, pairing tokens with stocks and digital dollars. It brings stock pairs, 15-second fair launches, 24/7 AI agent orderflow over MCP and on-chain referral fees into one terminal at app.hevium.xyz. This was a solo project: I designed the system, built the 3D hero and interactive sections, and shipped the landing page at hevium.xyz.
+The problem: A DEX that needed a front door for marketing and reach. Hevium already had its trading terminal at app.hevium.xyz, but it needed a dedicated landing page to promote the DEX, build exposure and guide visitors into the app. The page had to explain four engines, six chains and on-chain guarantees in a clear order without losing people before they clicked Launch app.
+The idea: Expanding a client logo into a star-pixel visual language. The client already had the Hevium logo prepared, so I built the rest of the brand outward from it, mixing a blockchain, Web3 and fintech feel with the pixel and ASCII aesthetic the client loved. I took the tilted four-point star from the Hevium mark and turned it into the page's core branding asset, texture and shader: it drives the hero floor, the interactive pixel canvases and the section visuals, shaped alongside references from across the web.
+Why this look: Obsidian dark, with one mint accent that carries meaning. The canvas stays Obsidian (#07080B) with Carbon surfaces (#0E1117) so visitors move from the landing page into the DEX without a jarring shift. Hevium Mint (#97FBE3) and Deep Teal (#1CD8B3) are held back for primary actions, one highlighted phrase per headline and active states, while hairline rules replace drop shadows. Plus Jakarta Sans handles headlines and prose, paired with JetBrains Mono for tickers, addresses and technical labels.
+How it was built: Twenty AI skills across nine stages in five days. I started by planning the page structure, user flow and 3D scene before writing code, researching reference sites and the live app in a real browser, and locking in a 60-30-10 Obsidian design system with fluid typography. From there I broke the work into a twelve-task build plan and shipped section by section with tests written before the code: extruded 3D logos with physics in the hero, custom star-pixel visuals and an animated trust bento for the sections, glass navigation and motion polish. A final audit cleared out machine-made UI habits, with plain wording and minimal code changes kept in check throughout.
 
 ### FlowFi (Web)
 - Category: Treasury Protocol
+- Status: Live
 - Live: https://www.flowfidao.com/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: claude, figma
@@ -52,8 +72,9 @@ How it was built: Custom illustrations that resonate with the brand. After discu
 
 ### NARO (Mobile app)
 - Category: On-chain Asset Launchpad
+- Status: Shipped
 - Live: https://naro-mu.vercel.app/
-- Redesigned from: https://naroradar.com/
+- Production app: https://naroradar.com/
 - Roles: UI/UX Designer, Frontend Developer
 - Tools: codex, figma
 - Tech stack: React, Vite, Three.js, ethers.js
@@ -67,6 +88,7 @@ How it was built: Flows mapped, then built with AI. I mapped out the prototype f
 
 ### ASEAN Labs (Web)
 - Category: Web3 Execution Layer
+- Status: Live
 - Live: https://aseanlabs.io/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: claude, gemini, figma
@@ -80,6 +102,7 @@ How it was built: Built with AI and a design system. Once the team agreed with t
 
 ### ENI Network (Web)
 - Category: Modular L1 Blockchain
+- Status: Live
 - Live: https://eni.top/
 - Roles: UI/UX Designer, Frontend Developer
 - Tools: figma, gemini
@@ -92,6 +115,7 @@ How it was built: Early team, first idea to version three. I was part of the ear
 
 ### OpenCrew (Web)
 - Category: Global Web3 & AI Team
+- Status: Shipped
 - Live: https://open-crew.vercel.app/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: claude, figma
@@ -103,6 +127,7 @@ Why this look: Black and gold, premium first. OpenCrew places senior operators i
 
 ### PayGo (Web)
 - Category: Machine-Native Payments
+- Status: Live
 - Live: https://www.paygo.ac/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: gemini
@@ -116,6 +141,7 @@ How it was built: Refined with the client, then handed over. I consulted on and 
 
 ### Stashcube (Web)
 - Category: Curated Library
+- Status: Shipped
 - Live: https://stashcube.vercel.app/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: claude, figma
@@ -128,6 +154,7 @@ Why this look: Near-black, content first. A moodboard of references came first. 
 
 ### Fortuna HK (Web)
 - Category: Professional Services
+- Status: Live
 - Live: https://www.fortunahkholding.com/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: figma, gemini, photoshop
@@ -141,6 +168,7 @@ How it was built: Multilingual, with a world clock. The site is multilingual. Th
 
 ### Nikola (Web)
 - Category: AI Coordination Layer
+- Status: Live
 - Live: https://www.nikola.network/
 - Roles: UI/UX Designer, Frontend Developer, Creative Designer
 - Tools: gemini
@@ -155,54 +183,80 @@ How it was built: Straight from direction to build. The client's guidelines and 
 ## Events
 
 ### Selangor AI & Semiconductor Summit 2026
-- Where: Kuala Lumpur
+- Where: Kuala Lumpur, Malaysia
 - Role: Speaker
 - Links: MyDAC Malaysia https://www.mydac.org.my/en, LEJIEND https://lejiend.com/
 I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026. While the programme centred on chips and infrastructure, my session addressed the human side: preparing everyday Malaysians for this shift. I presented the talent-building work of the MyDAC Malaysia and LEJIEND joint venture, which offers free community learning almost every week, online and in person at Outreach Coffee in Bukit Bintang.
+Conclusion: Infrastructure only delivers value when people are ready to use it, so preparing everyday Malaysians through regular, free learning is as much a part of the AI and semiconductor story as the chips themselves.
 
 ### ENI DeFi Week World Tour
-- Where: Changsha
+- Where: Changsha, China
 - Role: Speaker
 I spoke at ENI DeFi Week in Changsha, representing ASEAN Labs as the official project incubator for ENI. Organised by ENI, the event introduced the network and its ecosystem to Mainland Chinese audiences, and my session took the room through what is being built on ENI. ASEAN Labs helps Web3 teams build on ENI across Southeast Asia, and Changsha gave us a first-hand look at the China market for DeFi and Web3. Thank you to the ENI team for hosting us.
+Conclusion: Reaching the China market for DeFi and Web3 starts with a clear role in the ecosystem, and ASEAN Labs holds that role as the official project incubator for ENI.
 
 ### Web3 + RWA Global Infrastructure Summit
-- Where: Hangzhou
+- Where: Hangzhou, China
 - Role: Speaker
 - Links: DAOaaS https://daoaas.io/
 I represented ASEAN Labs at the Web3 + RWA Global Infrastructure Summit in Hangzhou, organised by ENI. While the summit centred on Web3 and real-world assets, my session was about taking part: I introduced the MEX launchpad and the DAOaaS platform, where users can join as a community and farm for airdrops. It was a good place to show both to an audience following Web3 and real-world assets.
+Conclusion: Alongside a summit focused on real-world assets and infrastructure, the MEX launchpad and DAOaaS brought the community side of Web3 into the conversation.
 
 ### Monster GameFi Soft Launch
-- Where: Bali
+- Where: Bali, Indonesia
 - Role: Host & Keynote
 - Links: Pionex https://www.pionex.com/en, 9Bit https://the9bit.com/
 I hosted the Monster GameFi soft launch in Bali during Coinfest week, a community event run by ASEAN Labs in joint venture with HODL, Kripto101, Pionex and 9Bit. The launch introduced the partners’ new products to the community, and it was equally a chance to network with Bali’s Web3 communities. Four partners joined ASEAN Labs to make it happen, and it was a pleasure to host it.
+Conclusion: The Monster GameFi soft launch put four partners behind one community event and gave their new products direct access to Bali’s Web3 communities during Coinfest week.
 
 ### Chain of Trust
-- Where: Kuala Lumpur
+- Where: Kuala Lumpur, Malaysia
 - Role: Presenter
 - Links: CCACC https://www.ccacc.io/, Fableration https://fableration.com/
 I presented ASEAN Labs at Chain of Trust, an event hosted by CCACC and Fableration for Malaysia’s Web3 and tech communities. ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia, and my talk introduced it together with the ecosystem of projects we have incubated. The programme also included lucky draws and giveaways in stablecoins and project tokens. Thanks to CCACC and Fableration for having us.
+Conclusion: Chain of Trust brought the ASEAN Labs ecosystem to Malaysia’s Web3 and tech communities in person, a reminder that trust is built face to face and that giveaways only open the door.
 
 ### Christmas Crypto Gala
-- Where: Kuala Lumpur
+- Where: Kuala Lumpur, Malaysia
 - Role: Panelist
 - Links: MySekolahKripto https://www.linkedin.com/company/sekolahkripto/home/, MDEC https://www.mdec.my/
 I joined the panel at the Christmas Crypto Gala, co-hosted by ASEAN Labs and MySekolahKripto, on the future of Web3 in Malaysia. The gala combined a project introduction session with the panel, whose speakers came from fintech, GameFi and PayFi, together with a representative from MDEC who joined in a personal capacity. It made for a good session to brainstorm and share ideas about where Web3 in Malaysia goes next.
+Conclusion: With fintech, GameFi, PayFi and MDEC voices on one panel, the Gala made clear that the future of Web3 in Malaysia is a conversation across sectors, and that open sessions for sharing ideas are where it moves forward.
 
 ### PayGo × ENI Community Night
-- Where: Kuala Lumpur
+- Where: Kuala Lumpur, Malaysia
 - Role: Presenter
 - Links: PayGo https://www.paygo.ac/, Finweek KL https://finweek.my/
 I presented ASEAN Labs at PayGo × ENI Community Night, hosted by PayGo and ASEAN Labs in joint venture with Finweek KL. The audience was diverse, with people from tech, fintech and Web3, and even college students. My session covered ASEAN Labs, what we offer and our portfolio, and we then discussed the Web3 industry in Malaysia, its challenges and the solutions. PayGo is an x402 payment gateway on ENI Mainnet, which made it a natural co-host for an ENI community night.
+Conclusion: Bringing tech, fintech, Web3 and college students into one room pointed to one conclusion: Web3 in Malaysia moves forward when its challenges and solutions are discussed openly across industries, not only among insiders.
 
 ### NOVA × MEXC Builders Session
-- Where: Selangor
+- Where: Selangor, Malaysia
 - Role: Speaker
 - Links: MySekolahKripto https://www.linkedin.com/company/sekolahkripto/home/, MEXC https://www.mexc.com/
 I was invited, in a personal capacity, to share my experience in Web3 at a session hosted by MySekolahKripto in joint venture with MEXC. The audience was a mix of college students and working professionals, so I spoke about why Web3 is worth looking at as an industry, the skills it asks for, the job opportunities and more. Thank you to MySekolahKripto and MEXC for the invitation, and to everyone who came to listen.
+Conclusion: Speaking from personal experience to students and working professionals, the session came down to the practical questions for anyone entering Web3: why the industry matters, which skills it needs and what jobs it offers.
 
 ### Blockchain Evolution 2025
-- Where: Selangor
+- Where: Selangor, Malaysia
 - Role: Speaker
 - Links: MySekolahKripto https://www.linkedin.com/company/sekolahkripto/home/
 I represented GameSpace at Blockchain Evolution 2025, hosted by MySekolahKripto in joint venture with two GameFi projects, EUFT and GameSpace. I introduced the project and shared insights on GameFi with a public audience. To make GameFi something people could try, the session also ran mini games, giveaways and a mini tournament. Thank you to MySekolahKripto and EUFT for partnering with us.
+Conclusion: For GameSpace, the session was a reminder that GameFi is best introduced through play, with the mini games, giveaways and tournament letting the public experience the project rather than only hear about it.
+
+## Quick answers (GEO)
+
+### Who is behind Dean Studio?
+Dean is an AI-native UI/UX designer, frontend developer and creative designer who ships design straight into production code without handoffs. He also speaks, presents and teaches on Web3 and blockchain topics.
+
+### What services does Dean Studio offer?
+UI/UX design, frontend development, creative design, design systems, Web3 product design, landing pages and dapp prototyping.
+
+### How does Dean use AI in design and frontend builds?
+Six steps from a client's brief to a shipped site, with AI agents doing the building. Steps: Brief > Ideation > Framework > Prototype > Iteration > Ship. Before writing code, Dean briefs AI agents (Claude, Codex or Antigravity) with skills.md files, sets up design tokens and systems first, directs motion and micro-interactions, and iterates through working prototypes. "AI speeds up the work. A human still steers it."
+
+### What Web3 and AI projects has Dean shipped?
+11 portfolio works across Web3, DeFi, AI and corporate sites, including Kairma (AI Workforce Platform), Hevium (Multi-Chain Trading Terminal), FlowFi (Treasury Protocol), NARO (On-chain Asset Launchpad), ASEAN Labs (Web3 Execution Layer), plus ENI Network, OpenCrew, PayGo, Stashcube, Fortuna HK, Nikola.
+
+### What languages does Dean speak and what speaking work has he done?
+Dean speaks English, Mandarin, Bahasa Melayu and has spoken, hosted or presented at 9 events across Malaysia, China and Indonesia, including the Selangor AI & Semiconductor Summit 2026, ENI DeFi Week World Tour (Changsha), Web3 + RWA Global Infrastructure Summit (Hangzhou) and Monster GameFi Soft Launch (Bali).

@@ -4,11 +4,18 @@
 
 Dean Studio is the portfolio of Dean, an AI-native UI/UX designer and frontend developer. The site is an interactive 3D hardware-wallet-style device: its screen holds the works, events, about and contact; a plain List view shows the same content as a normal page. Site: https://www.dean-fi.my/
 
+## Profile & capabilities
+- Roles: AI Native UI/UX Designer, Frontend Developer, Creative Designer
+- Services: UI/UX design, Frontend development, Creative design, Design systems, Web3 product design, Landing pages, Dapp prototyping
+- Tools: Figma, Photoshop, Gemini, Claude, Codex
+- Languages: English, Mandarin, Bahasa Melayu
+- Workflow: Brief > Ideation > Framework > Prototype > Iteration > Ship ("AI speeds up the work. A human still steers it.")
+
 ## Selected works
 - [Kairma](https://www.kairma.ai/): AI Workforce Platform. Next.js, React, Turbopack, Tailwind CSS, GSAP, Lenis.
-- [Peaceism](https://peaceism.vercel.app/): Social Impact Token. Astro.
+- [Hevium](https://hevium.xyz/): Multi-Chain Trading Terminal. Next.js, React, Three.js, Rapier3D, GSAP.
 - [FlowFi](https://www.flowfidao.com/): Treasury Protocol. Vite, Vanilla JS, GSAP.
-- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. Mobile app, a redesign of https://naroradar.com/; runs on BSC Testnet.
+- [NARO](https://naro-mu.vercel.app/): On-chain Asset Launchpad. React, Vite, Three.js, ethers.js. Mobile app prototype on BSC Testnet (production app: https://naroradar.com/).
 - [ASEAN Labs](https://aseanlabs.io/): Web3 Execution Layer. Next.js, React, Tailwind CSS, WebGL.
 
 ## More projects
@@ -20,17 +27,17 @@ Dean Studio is the portfolio of Dean, an AI-native UI/UX designer and frontend d
 - [Nikola](https://www.nikola.network/): AI Coordination Layer. React, Vite, Tailwind CSS, Three.js, React Three Fiber, GSAP, Framer Motion.
 
 ## Events
-- Selangor AI & Semiconductor Summit 2026 (Kuala Lumpur, Speaker): I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026.
-- ENI DeFi Week World Tour (Changsha, Speaker): I spoke at ENI DeFi Week in Changsha, representing ASEAN Labs as the official project incubator for ENI.
-- Web3 + RWA Global Infrastructure Summit (Hangzhou, Speaker): I represented ASEAN Labs at the Web3 + RWA Global Infrastructure Summit in Hangzhou, organised by ENI.
-- Monster GameFi Soft Launch (Bali, Host & Keynote): I hosted the Monster GameFi soft launch in Bali during Coinfest week, a community event run by ASEAN Labs in joint venture with HODL, Kripto101, Pionex and 9Bit.
-- Chain of Trust (Kuala Lumpur, Presenter): I presented ASEAN Labs at Chain of Trust, an event hosted by CCACC and Fableration for Malaysia’s Web3 and tech communities.
-- Christmas Crypto Gala (Kuala Lumpur, Panelist): I joined the panel at the Christmas Crypto Gala, co-hosted by ASEAN Labs and MySekolahKripto, on the future of Web3 in Malaysia.
-- PayGo × ENI Community Night (Kuala Lumpur, Presenter): I presented ASEAN Labs at PayGo × ENI Community Night, hosted by PayGo and ASEAN Labs in joint venture with Finweek KL.
-- NOVA × MEXC Builders Session (Selangor, Speaker): I was invited, in a personal capacity, to share my experience in Web3 at a session hosted by MySekolahKripto in joint venture with MEXC.
-- Blockchain Evolution 2025 (Selangor, Speaker): I represented GameSpace at Blockchain Evolution 2025, hosted by MySekolahKripto in joint venture with two GameFi projects, EUFT and GameSpace.
+- Selangor AI & Semiconductor Summit 2026 (Kuala Lumpur, Malaysia, Speaker): I spoke on the Fire Stage at the Selangor AI & Semiconductor Summit 2026.
+- ENI DeFi Week World Tour (Changsha, China, Speaker): I spoke at ENI DeFi Week in Changsha, representing ASEAN Labs as the official project incubator for ENI.
+- Web3 + RWA Global Infrastructure Summit (Hangzhou, China, Speaker): I represented ASEAN Labs at the Web3 + RWA Global Infrastructure Summit in Hangzhou, organised by ENI.
+- Monster GameFi Soft Launch (Bali, Indonesia, Host & Keynote): I hosted the Monster GameFi soft launch in Bali during Coinfest week, a community event run by ASEAN Labs in joint venture with HODL, Kripto101, Pionex and 9Bit.
+- Chain of Trust (Kuala Lumpur, Malaysia, Presenter): I presented ASEAN Labs at Chain of Trust, an event hosted by CCACC and Fableration for Malaysia’s Web3 and tech communities.
+- Christmas Crypto Gala (Kuala Lumpur, Malaysia, Panelist): I joined the panel at the Christmas Crypto Gala, co-hosted by ASEAN Labs and MySekolahKripto, on the future of Web3 in Malaysia.
+- PayGo × ENI Community Night (Kuala Lumpur, Malaysia, Presenter): I presented ASEAN Labs at PayGo × ENI Community Night, hosted by PayGo and ASEAN Labs in joint venture with Finweek KL.
+- NOVA × MEXC Builders Session (Selangor, Malaysia, Speaker): I was invited, in a personal capacity, to share my experience in Web3 at a session hosted by MySekolahKripto in joint venture with MEXC.
+- Blockchain Evolution 2025 (Selangor, Malaysia, Speaker): I represented GameSpace at Blockchain Evolution 2025, hosted by MySekolahKripto in joint venture with two GameFi projects, EUFT and GameSpace.
 
 ## More
-- [Full detail of every work and event](https://www.dean-fi.my/llms-full.txt)
+- [Full detail of every work, workflow and event](https://www.dean-fi.my/llms-full.txt)
 - [LinkedIn](https://www.linkedin.com/in/hasnuddin/)
 - Contact: through the Get in touch section of https://www.dean-fi.my/

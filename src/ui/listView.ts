@@ -45,11 +45,13 @@ const storedLayout = (): Layout => {
 };
 const layoutIcon = { grid: 'M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z', list: 'M2 3h12M2 8h12M2 13h12' };
 
+const statusPill = (s: string) => `<span class="lv-status" data-status="${/^live$/i.test(s) ? 'live' : 'shipped'}"><i aria-hidden="true"></i>${esc(s)}</span>`;
+
 /** One work as a card (or, in the List layout, a row). The line above the title is the kind of project (tags[0], the same as on the
     device); the mobile app says so. */
 const card = (p: Project) => `<li><a href="#/work/${p.id}">${p.flagship ? `<span class="lv-flag">${FLAG_SVG}Flagship</span>` : ''}
           <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="640" height="400">
-          <span class="lv-meta">${esc(p.tags[0])}${isApp(p.id) ? ' · Mobile app' : ''}</span>
+          <span class="lv-meta">${esc(p.tags[0])}${isApp(p.id) ? ' · Mobile app' : ''}${statusPill(p.status)}</span>
           <strong>${esc(p.title)}</strong>
           <span class="lv-sub">${esc(p.roles.join(' · '))}</span></a></li>`;
 

@@ -25,6 +25,10 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(
 export const tool = (t: string) =>
   `<li class="dt-tool"><img src="${toolLogo(t)}" alt="" width="20" height="20"><span>${toolNames[t as ToolId] ?? t}</span></li>`;
 const stackChip = (t: string) => `<li class="dt-tool dt-stack">${esc(t)}</li>`;
+export const statusBadge = (status: string) => {
+  const live = /^live$/i.test(status);
+  return `<span class="dt-status" data-status="${live ? 'live' : 'shipped'}"><i aria-hidden="true"></i>${esc(status)}</span>`;
+};
 const newTab = '<span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span>';
 
 /** The first sentence, and the rest. */
@@ -114,6 +118,7 @@ function glance(p: Project) {
     ${row('Role', esc(p.roles.join(' · ')))}
     ${row('Team', `<ul class="dt-tools">${(p.team ?? [{ role: 'Solo' }]).map(member).join('')}</ul>`)}
     ${row('Category', `${esc(p.category)}${isApp(p.id) ? ' · Mobile app' : ''}`)}
+    ${row('Status', statusBadge(p.status))}
     ${p.chain ? row('Network', `<ul class="dt-tools"><li class="dt-tool dt-stack"><img src="${p.chain.logo}" alt="" width="18" height="18"><span>${esc(p.chain.name)}</span></li></ul>`) : ''}
     ${p.tools.length ? row('Tools', `<ul class="dt-tools">${p.tools.map(tool).join('')}</ul>`) : ''}
     ${row('Stack', `<ul class="dt-tools">${p.stack.map(stackChip).join('')}</ul>`)}

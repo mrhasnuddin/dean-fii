@@ -36,6 +36,8 @@
 .sc-well { margin: 0; border: 1.5px solid var(--ink); position: relative; height: 138px; overflow: hidden; flex: none; }
 .sc-well img { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; mix-blend-mode: multiply; }
 .sc-well figcaption { position: absolute; left: 0; bottom: 0; background: var(--ink); color: var(--paper); font-size: 11px; letter-spacing: 0.08em; padding: 3px 8px; text-transform: uppercase; }
+.sc-well .sc-status { position: absolute; right: 0; top: 0; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; padding: 3px 7px; text-transform: uppercase; background: var(--paper); color: var(--ink); border-left: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+.sc-well .sc-status[data-status='live'] { background: var(--ink); color: var(--paper); }
 .sc-rows li { padding: 5px 8px; }
 .sc-rows .fl { margin-left: 6px; }
 

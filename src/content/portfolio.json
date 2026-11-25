@@ -43,7 +43,7 @@
         "Brand Site",
         "L1 Network"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://eni.top/",
       "description": "ENI is a modular Layer 1 blockchain built for mass commercial adoption, with a hub chain, app-chains and one-click chain launch. I was a UI/UX designer and frontend developer on the early team, and designed and built part of the site's pages, including the mobile versions of several of them.",
       "flow": {
@@ -130,7 +130,7 @@
         "Landing Page",
         "Incubator"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://aseanlabs.io/",
       "description": "ASEAN Labs is a Web3 project incubator that helps teams build on ENI across Southeast Asia. I designed and built the site on my own, with custom vector illustrations drawn in Figma, a design system set up in code so every page stays consistent, and motion and micro-interactions throughout.",
       "flow": {
@@ -216,7 +216,7 @@
         "Landing Page",
         "AI Platform"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://www.kairma.ai/",
       "description": "Kairma deploys AI employees inside cross-border operations, keeping brand data local on a sealed, on-premise runtime. Kairma forward-deploys AI employees into the markets a brand enters and runs them to outcomes, so the business judges them by results instead of headcount. Each task is routed live across models such as Claude, GPT and Gemini, by task and cost, while the data stays inside a sealed runtime called the Keep. This was a solo project, so I designed the site and shipped it myself. Its model router section pulls the AI model rankings live from the OpenRouter API, ranked by daily usage.",
       "flow": {
@@ -338,7 +338,7 @@
         "Web App",
         "Library"
       ],
-      "status": "Shipped + Live",
+      "status": "Shipped",
       "link": "https://stashcube.vercel.app/",
       "description": "Stashcube is a curated library for AI-native designers and builders, in one searchable place. It gathers UI libraries, 3D tools, icons, fonts, inspiration and AI skills. I conceived, designed and built it end to end.",
       "flow": {
@@ -415,7 +415,7 @@
         "Landing Page",
         "DAO"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://www.flowfidao.com/",
       "description": "FlowFi is decentralized infrastructure for the institutional management of on-chain capital, built on ENI. It runs two treasuries: a Governance Treasury that sets the rules and consensus, and an Investor Treasury that grows capital through deployment and incubation. Its FF token launches through the Black Hole Launch, a fair-launch distribution. I designed and built the landing page that sets out the protocol, its tokenomics and its roadmap.",
       "flow": {
@@ -499,7 +499,7 @@
         "Landing Page",
         "Payments"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://www.paygo.ac/",
       "description": "PayGo is an x402 payment gateway on ENI Mainnet that lets APIs and AI agents pay per request over plain HTTP. I designed and built the developer site on my own, put together from components of a UI library, with an interactive protocol walkthrough that explains the payment flow.",
       "flow": {
@@ -665,7 +665,7 @@
         "Corporate Site",
         "Corporate"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://www.fortunahkholding.com/",
       "description": "Fortuna HK Holdings provides cross-border education, wealth management and corporate services. I designed and built the multilingual site on my own.",
       "flow": {
@@ -749,7 +749,7 @@
         "Landing Page",
         "Web4"
       ],
-      "status": "Shipped + Live",
+      "status": "Live",
       "link": "https://www.nikola.network/",
       "description": "Nikola is an AI coordination layer for projects on ENI, covering AI governance, protocol design and capital. I designed and built the site on my own, with effects and shaders from a UI component library.",
       "flow": {
@@ -809,77 +809,96 @@
       }
     },
     {
-      "id": "peaceism",
+      "id": "hevium",
       "rank": 2,
-      "title": "Peaceism",
-      "category": "Social Impact Token",
+      "title": "Hevium",
+      "category": "Multi-Chain Trading Terminal",
       "roles": [
         "UI/UX Designer",
         "Frontend Developer",
         "Creative Designer"
       ],
-      "tools": [],
-      "stack": [
-        "Astro"
+      "tools": [
+        "claude",
+        "gemini"
       ],
-      "chain": {
-        "name": "BNB Smart Chain",
-        "logo": "/media/chain-logos/bsc.svg"
-      },
+      "stack": [
+        "Next.js",
+        "React",
+        "Three.js",
+        "Rapier3D",
+        "GSAP"
+      ],
       "tags": [
         "Landing Page",
-        "Token"
+        "DEX"
       ],
-      "status": "Shipped",
-      "link": "https://peaceism.vercel.app/",
-      "description": "Peaceism is a plan to help fund seven basic needs by sharing project earnings through an open ledger. The needs are jobs, food, healthcare, education, housing, justice and safety, and its PCSM token runs on BNB Smart Chain. The site explains how value moves through the network, what is built and what is still planned, the token, the timeline, the team and a series of online conferences.",
+      "status": "Live",
+      "link": "https://hevium.xyz/",
+      "description": "Hevium is a non-custodial trading terminal and fair-launch launchpad running across six chains, pairing tokens with stocks and digital dollars. It brings stock pairs, 15-second fair launches, 24/7 AI agent orderflow over MCP and on-chain referral fees into one terminal at app.hevium.xyz. This was a solo project: I designed the system, built the 3D hero and interactive sections, and shipped the landing page at hevium.xyz.",
       "flow": {
         "steps": [
           "Ideation",
-          "Build",
-          "Iteration"
+          "Moodboard",
+          "Build"
         ]
       },
       "images": [
-        "/media/projects/peaceism-1.webp",
-        "/media/projects/peaceism-2.webp",
-        "/media/projects/peaceism-3.webp",
-        "/media/projects/peaceism-4.webp"
+        "/media/projects/hevium-1.webp",
+        "/media/projects/hevium-2.webp",
+        "/media/projects/hevium-3.webp",
+        "/media/projects/hevium-4.webp"
       ],
-      "eink": "/media/eink/peaceism.png",
+      "eink": "/media/eink/hevium.png",
+      "motion": "/media/motion/hevium",
       "story": [
         {
           "label": "The problem",
-          "text": "A Middle East project entering Southeast Asia. Peaceism is a project from the Middle East that wants to enter the Southeast Asian market. As part of a pilot agreement, it needed a website to support its marketing in the region. The site also had to explain a plan that is still partly in the future: seven basic needs, how value moves through the network, which tools exist and which are only planned, the PCSM token, a timeline and the team."
+          "text": "A DEX that needed a front door for marketing and reach. Hevium already had its trading terminal at app.hevium.xyz, but it needed a dedicated landing page to promote the DEX, build exposure and guide visitors into the app. The page had to explain four engines, six chains and on-chain guarantees in a clear order without losing people before they clicked Launch app."
         },
         {
           "label": "The idea",
-          "text": "Client direction, built on facts. The client provided the ideas, links and decks, along with the direction of the project. I built the site on the facts the client supplied, with some touch-ups from my own expertise. The page starts with the seven needs, then shows how value moves in three steps: real projects come on-chain, their earnings go on a public ledger and a share returns to holders. It goes on to the network today and what is planned, the PCSM token, the timeline, the team and the online conferences, with animated illustrations along the way."
+          "text": "Expanding a client logo into a star-pixel visual language. The client already had the Hevium logo prepared, so I built the rest of the brand outward from it, mixing a blockchain, Web3 and fintech feel with the pixel and ASCII aesthetic the client loved. I took the tilted four-point star from the Hevium mark and turned it into the page's core branding asset, texture and shader: it drives the hero floor, the interactive pixel canvases and the section visuals, shaped alongside references from across the web."
         },
         {
           "label": "Why this look",
-          "text": "A calm ground for a serious claim. Peaceism asks for trust before it asks for money, so the page is warm and open rather than neon: an off-white ground with a faint dot grid, deep navy type and one bronze accent. The hero is the PCSM coin in a ring, and the token section turns navy so the contract details read as the part to check. Funnel Display gives the headings a human voice, and IBM Plex Mono is used for the small technical labels."
+          "text": "Obsidian dark, with one mint accent that carries meaning. The canvas stays Obsidian (#07080B) with Carbon surfaces (#0E1117) so visitors move from the landing page into the DEX without a jarring shift. Hevium Mint (#97FBE3) and Deep Teal (#1CD8B3) are held back for primary actions, one highlighted phrase per headline and active states, while hairline rules replace drop shadows. Plus Jakarta Sans handles headlines and prose, paired with JetBrains Mono for tickers, addresses and technical labels."
+        },
+        {
+          "label": "How it was built",
+          "text": "Twenty AI skills across nine stages in five days. I started by planning the page structure, user flow and 3D scene before writing code, researching reference sites and the live app in a real browser, and locking in a 60-30-10 Obsidian design system with fluid typography. From there I broke the work into a twelve-task build plan and shipped section by section with tests written before the code: extruded 3D logos with physics in the hero, custom star-pixel visuals and an animated trust bento for the sections, glass navigation and motion polish. A final audit cleared out machine-made UI habits, with plain wording and minimal code changes kept in check throughout."
         }
       ],
       "look": {
         "palette": [
           {
             "name": "Ground",
-            "hex": "#faf9f5"
+            "hex": "#07080b"
+          },
+          {
+            "name": "Surface",
+            "hex": "#0e1117"
           },
           {
             "name": "Ink",
-            "hex": "#0e1f2c"
+            "hex": "#ffffff"
+          },
+          {
+            "name": "Muted",
+            "hex": "#8b8b95"
           },
           {
             "name": "Accent",
-            "hex": "#735222"
+            "hex": "#97fbe3"
+          },
+          {
+            "name": "Deep Teal",
+            "hex": "#1cd8b3"
           }
         ],
         "type": [
-          "Funnel Display",
-          "Funnel Sans",
-          "IBM Plex Mono"
+          "Plus Jakarta Sans",
+          "JetBrains Mono"
         ]
       }
     }
@@ -1144,7 +1163,7 @@
         "Dapp Redesign",
         "Dapp"
       ],
-      "status": "Testnet",
+      "status": "Shipped",
       "link": "https://naro-mu.vercel.app/",
       "description": "NARO is an AI-driven on-chain asset launchpad on BNB Smart Chain, created by UXUY and Radar DAO. This is the prototype version, built on BNB Testnet. I built the frontend mobile-first with breakpoints scaling up to desktop, covering the primary views: Swap, Mining, Data, Me and My Team. It connects to testnet wallets, and includes a test data mode for previewing every screen.",
       "flow": {

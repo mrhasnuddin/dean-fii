@@ -2,9 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.dean-fi.my/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image><image:loc>https://www.dean-fi.my/og-image.jpg</image:loc><image:title>Dean Studio</image:title></image:image>
+    <image:image><image:loc>https://www.dean-fi.my/media/dean-portrait.webp</image:loc><image:title>Dean speaking on stage</image:title></image:image>
+    <image:image><image:loc>https://www.dean-fi.my/media/projects/kairma-1.webp</image:loc><image:title>Kairma — AI Workforce Platform</image:title></image:image>
+    <image:image><image:loc>https://www.dean-fi.my/media/projects/hevium-1.webp</image:loc><image:title>Hevium — Multi-Chain Trading Terminal</image:title></image:image>
+    <image:image><image:loc>https://www.dean-fi.my/media/projects/flowfi-1.webp</image:loc><image:title>FlowFi — Treasury Protocol</image:title></image:image>
+    <image:image><image:loc>https://www.dean-fi.my/media/projects/naro-1.webp</image:loc><image:title>NARO — On-chain Asset Launchpad</image:title></image:image>
+    <image:image><image:loc>https://www.dean-fi.my/media/projects/aseanlabs-1.webp</image:loc><image:title>ASEAN Labs — Web3 Execution Layer</image:title></image:image>
   </url>
 </urlset>

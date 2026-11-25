@@ -3,8 +3,9 @@
 // keys 1–4 and deep links choose the section. The e-ink screen, ✓ and Back drive the content;
 // details open in a panel with shareable hash routes (#/work/:id, #/stage/:id, #/about; legacy
 // #/tools → About). A List view shows everything as a plain page, without 3D.
-import '@fontsource-variable/bricolage-grotesque';
-import '@fontsource-variable/hanken-grotesk';
+import '@fontsource/apfel-grotezk/400.css';
+import '@fontsource/apfel-grotezk/700.css';
+import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import './styles/site.css';
 import Lenis from 'lenis';
@@ -46,7 +47,7 @@ const announce = (msg: string) => {
   const lead = document.createElement('span');
   lead.className = 'bio-lead';
   lead.textContent = `${profile.bio[0]} `;
-  document.querySelector('[data-bio]')!.append(lead, profile.bio.slice(1).join(' '));
+  document.querySelector('[data-bio]')!.replaceChildren(lead, profile.bio.slice(1).join(' '));
 }
 document.querySelector('[data-list="works"]')!.innerHTML = works.map((p) => `<li><a href="#/work/${p.id}">${p.title}</a></li>`).join('');
 {
@@ -118,7 +119,16 @@ const loader = document.getElementById('loader')!;
 const LOADER_MIN_MS = 1350; // the mark has faded in (450 ms) and the sparkle has twinkled once (900 ms)
 // Every face the page draws, requested now. A face is otherwise fetched only when text first uses it, and
 // the screen's mono 500/700 were first used after the reveal, so its text swapped fonts in front of the visitor.
-const FACES = ['400 1em "JetBrains Mono Variable"', '500 1em "JetBrains Mono Variable"', '700 1em "JetBrains Mono Variable"', '500 1em "Bricolage Grotesque Variable"', '400 1em "Hanken Grotesk Variable"', '600 1em "Hanken Grotesk Variable"'];
+const FACES = [
+  '400 1em "JetBrains Mono Variable"',
+  '500 1em "JetBrains Mono Variable"',
+  '700 1em "JetBrains Mono Variable"',
+  '400 1em "Apfel Grotezk"',
+  '700 1em "Apfel Grotezk"',
+  '400 1em "Geist Variable"',
+  '500 1em "Geist Variable"',
+  '600 1em "Geist Variable"',
+];
 const fontsLoaded = Promise.all(FACES.map((f) => document.fonts.load(f))).then(() => document.fonts.ready);
 function liftLoader(ready: Promise<unknown>, then: () => void, cover: HTMLElement = loader) {
   const min = motion.reduced() ? 0 : Math.max(0, LOADER_MIN_MS - performance.now());

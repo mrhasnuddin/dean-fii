@@ -218,7 +218,7 @@ export function createScreen(): Screen {
             : `<li data-index="${item.n}" class="${item.n === sel ? 'sel' : ''}"><span>${esc(item.project.title)}${item.project.flagship ? `${FLAG}<span class="sr"> Flagship</span>` : ''}</span><small>${esc(item.project.tags[0])}</small></li>`;
         html = `${softkeys()}
           <section class="ek-view sc-list">
-            <figure class="sc-well"><img src="${p.eink}" alt="" draggable="false"><figcaption>${esc(p.category)}</figcaption></figure>
+            <figure class="sc-well"><img src="${p.eink}" alt="" draggable="false"><span class="sc-status" data-status="${/^live$/i.test(p.status) ? 'live' : 'shipped'}">${/^live$/i.test(p.status) ? '● LIVE' : '○ SHIPPED'}</span><figcaption>${esc(p.category)}</figcaption></figure>
             <ul class="ek-list sc-rows">${windowed(WORK_ROWS, sel < SEP_AT ? sel : sel + 1).map(rowHtml).join('')}</ul></section>
           ${footer('‹ Back', `${sel + 1} of ${works.length}`, 'Open ✓')}`;
         break;

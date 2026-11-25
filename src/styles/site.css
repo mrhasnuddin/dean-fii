@@ -9,18 +9,18 @@
   --line: #2a2c33;
   --champagne: #e4cf9f;
   --champagne-light: #f2dfb6;
-  /* Type (docs §38, docs/design-tokens.md): Bricolage Grotesque for the display lines, Hanken Grotesk for the UI and
-     body, JetBrains Mono for labels, hints and the e-ink screen. Self-hosted variable fonts (main.ts). */
-  --font-display: 'Bricolage Grotesque Variable', system-ui, 'Segoe UI', sans-serif;
-  --font-ui: 'Hanken Grotesk Variable', system-ui, 'Segoe UI', sans-serif;
+  /* Type (docs §38, §62, docs/design-tokens.md): Apfel Grotezk for the display lines, Geist for the UI and
+     body, JetBrains Mono for labels, hints and the e-ink screen. Self-hosted fonts (main.ts). */
+  --font-display: 'Apfel Grotezk', system-ui, 'Segoe UI', sans-serif;
+  --font-ui: 'Geist Variable', system-ui, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, Consolas, monospace;
   /* How the display lines and the hero lockup are set in them. Every title, the closing quote and the hero read these. */
-  --display-weight: 500;
-  --display-scale: 1.03; /* sizes the display face to the visual size the layout was drawn for (its x-height and cap height, measured) */
-  --display-leading: 0.95;
-  --display-tracking: -0.04em;
+  --display-weight: 400;
+  --display-scale: 1; /* Apfel Grotezk has a generous x-height; 1:1 matches the layout cleanly */
+  --display-leading: 0.96;
+  --display-tracking: -0.03em;
   --hero-sans-weight: 600; /* the sans line of the hero lockup ("Dean") */
-  --hero-sans-tracking: -0.04em;
+  --hero-sans-tracking: -0.035em;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --gutter: clamp(16px, 3.4vw, 56px);
   --copy-bottom: max(28px, var(--gutter)); /* level with the side gutter, so the title sits as far from the foot as from the left edge */
@@ -29,7 +29,7 @@
 html { background: var(--bg); scrollbar-gutter: stable; }
 /* A detail panel is open: the page behind stays put (Lenis is stopped too, see main.ts). */
 html:has(.detail[open]) { overflow: hidden; }
-body { margin: 0; background: var(--bg); color: var(--ink-light); font: 400 16px/1.5 var(--font-ui); -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--bg); color: var(--ink-light); font: 400 16px/1.5 var(--font-ui); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 

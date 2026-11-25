@@ -4,7 +4,7 @@ import './detail.css';
 import { FLAG_SVG } from '../brand/logo';
 import { archiveWorks, countries, events, isApp, isArchive, profile, selectedWorks, works } from '../content/portfolio';
 import { motion } from '../motion';
-import { aboutSections, bindRail, copySwatch, esc, eventSections, hasRail, pageHtml, projectSections, type Sec } from './detailSections';
+import { aboutSections, bindRail, copySwatch, esc, eventSections, hasRail, pageHtml, projectSections, statusBadge, type Sec } from './detailSections';
 import { mountWorkflowSection, workflowBody } from './workflowSection';
 
 export type DetailTarget = { kind: 'project'; id: string } | { kind: 'event'; id: string } | { kind: 'about' };
@@ -31,27 +31,29 @@ function walkthrough(src: string, alt: string) {
 const CHEVRON = { prev: 'M15 5l-7 7 7 7', next: 'M9 5l7 7-7 7' };
 
 /** Pictures: a carousel, one 16:10 picture at a time, swiped or stepped with the arrows; the dots and the count sit at the foot of the frame. */
-function gallery(images: string[], alt: string, motionSrc?: string) {
+function gallery(images: string[], alt: string, motionSrc?: string, variant: 'project' | 'event' = 'project') {
   if (motionSrc) return walkthrough(motionSrc, alt);
   const n = images.length;
+  const cls = `dt-carousel${variant === 'event' ? ' is-event' : ''}`;
   const slides = images
     .map((src, i) => `<figure class="dt-slide" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${n}"><img src="${src}" alt="${esc(alt)}, image ${i + 1} of ${n}" decoding="async"${i ? ' loading="lazy"' : ''}></figure>`)
     .join('');
-  if (n < 2) return `<div class="dt-carousel"><div class="dt-track">${slides}</div></div>`;
+  if (n < 2) return `<div class="${cls}" data-count="${n}"><div class="dt-track">${slides}</div></div>`;
   const nav = (dir: 'prev' | 'next') =>
     `<button type="button" class="dt-nav" data-dir="${dir}" aria-label="${dir === 'prev' ? 'Previous' : 'Next'} image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${CHEVRON[dir]}"/></svg></button>`;
   const dots = images.map((_, i) => `<button type="button" class="dt-dot" data-i="${i}" aria-label="Show image ${i + 1}" aria-current="${i === 0}"></button>`).join('');
-  return `<section class="dt-carousel" role="region" aria-roledescription="carousel" aria-label="${esc(alt)}, ${n} images">
+  return `<section class="${cls}" data-count="${n}" role="region" aria-roledescription="carousel" aria-label="${esc(alt)}, ${n} images">
     <div class="dt-track" tabindex="0" aria-label="Images: use the left and right arrow keys">${slides}</div>
     ${nav('prev')}${nav('next')}
     <div class="dt-pages"><span class="dt-dots">${dots}</span><span class="dt-count" aria-hidden="true">1 / ${n}</span></div>
     <p class="dt-sr" role="status">Image 1 of ${n}</p></section>`;
 }
 
-/** Wires one carousel: the arrows (which wrap round), the dots, the arrow keys and a swipe all move the same scroll-snap track;
+/** Wires one carousel: the arrows (which wrap round), the dots, the arrow keys, a peeking slide tap and a swipe all move the same scroll-snap track;
     the dots, the count and the spoken status follow wherever it comes to rest. */
 function bindCarousel(root: HTMLElement) {
   const track = root.querySelector<HTMLElement>('.dt-track')!;
+  const slides = [...root.querySelectorAll<HTMLElement>('.dt-slide')];
   const dots = [...root.querySelectorAll<HTMLButtonElement>('.dt-dot')];
   const count = root.querySelector('.dt-count');
   const status = root.querySelector('.dt-sr');
@@ -64,22 +66,53 @@ function bindCarousel(root: HTMLElement) {
     if (count) count.textContent = `${k + 1} / ${n}`;
     if (status) status.textContent = `Image ${k + 1} of ${n}`;
   };
-  const go = (k: number) => track.scrollTo({ left: ((k + n) % n) * track.clientWidth, behavior: motion.reduced() ? 'auto' : 'smooth' });
+  const targetLeft = (k: number) => {
+    const max = Math.max(0, track.scrollWidth - track.clientWidth);
+    if (max <= 1) return 0;
+    const s = slides[k];
+    if (!s || k === 0) return 0;
+    if (k === n - 1) return max;
+    return Math.min(max, Math.max(0, s.offsetLeft - (track.clientWidth - s.offsetWidth) / 2));
+  };
+  const go = (k: number) => {
+    const next = (k + n) % n;
+    const max = Math.max(0, track.scrollWidth - track.clientWidth);
+    if (max <= 1) {
+      show(next);
+      return;
+    }
+    track.scrollTo({ left: targetLeft(next), behavior: motion.reduced() ? 'auto' : 'smooth' });
+  };
   track.addEventListener(
     'scroll',
     () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        const k = Math.round(track.scrollLeft / track.clientWidth);
-        if (k !== at && k >= 0 && k < n) show(k);
+        let k = 0;
+        let best = Infinity;
+        for (let i = 0; i < n; i++) {
+          const dist = Math.abs(targetLeft(i) - track.scrollLeft);
+          if (dist < best) {
+            best = dist;
+            k = i;
+          }
+        }
+        if (k !== at) show(k);
       });
     },
     { passive: true },
   );
   root.addEventListener('click', (e) => {
     const b = (e.target as Element).closest<HTMLElement>('.dt-nav, .dt-dot');
-    if (!b) return;
-    go(b.dataset.dir ? at + (b.dataset.dir === 'next' ? 1 : -1) : Number(b.dataset.i));
+    if (b) {
+      go(b.dataset.dir ? at + (b.dataset.dir === 'next' ? 1 : -1) : Number(b.dataset.i));
+      return;
+    }
+    const slide = (e.target as Element).closest<HTMLElement>('.dt-slide');
+    if (slide) {
+      const idx = slides.indexOf(slide);
+      if (idx !== -1 && idx !== at) go(idx);
+    }
   });
   track.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
@@ -172,7 +205,7 @@ export function createDetail(): Detail {
       const group = isArchive(t.id) ? archiveWorks : selectedWorks;
       const i = group.findIndex((p) => p.id === t.id);
       const p = group[i];
-      head = `<p class="dt-eyebrow">${p.flagship ? `<span class="dt-flag">${FLAG_SVG}Flagship</span> · ` : ''}${esc(p.category)} · ${isApp(t.id) ? 'Mobile app' : 'Project'} ${String(i + 1).padStart(2, '0')}/${String(group.length).padStart(2, '0')}</p>
+      head = `<p class="dt-eyebrow">${p.flagship ? `<span class="dt-flag">${FLAG_SVG}Flagship</span> · ` : ''}${esc(p.category)} · ${isApp(t.id) ? 'Mobile app' : 'Project'} ${String(i + 1).padStart(2, '0')}/${String(group.length).padStart(2, '0')} ${statusBadge(p.status)}</p>
         <h2 id="detail-title">${esc(p.title)}</h2><p class="dt-roles">${p.roles.map(esc).join(' · ')}</p>`;
       secs = projectSections(p, gallery(p.images, p.title, p.motion), flowSection());
       actions = `<a class="dt-cta" href="${p.link}" target="_blank" rel="noopener noreferrer">Visit site <span aria-hidden="true">↗</span><span class="dt-sr"> (opens in a new tab)</span></a>`;
@@ -182,7 +215,7 @@ export function createDetail(): Detail {
       const e = events[i];
       head = `<p class="dt-eyebrow">${esc(e.place)} · <strong>${esc(countries[e.country])}</strong></p>
         <h2 id="detail-title">${esc(e.title)}</h2><p class="dt-roles">${esc(e.role)}</p>`;
-      secs = eventSections(e, gallery(e.images, e.title));
+      secs = eventSections(e, gallery(e.images, e.title, undefined, 'event'));
       actions = `<button type="button" class="dt-cta" data-invite>Invite Dean</button>`;
       pager = pagerHtml(events, i, 'event');
     } else {

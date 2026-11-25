@@ -63,8 +63,12 @@
 }
 :is(.dt-close, .dt-cta, .dt-pager button, .dt-pp, .dt-orig):focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
 
-.dt-eyebrow { margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.dt-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0; color: var(--muted); font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .dt-eyebrow strong { color: var(--ink-light); font-weight: 500; }
+.dt-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: rgb(236 232 223 / 0.04); }
+.dt-status i { width: 6px; height: 6px; border-radius: 50%; flex: none; border: 1.5px solid currentColor; }
+.dt-status[data-status='live'] { color: #7ee2a8; border-color: rgb(126 226 168 / 0.32); background: rgb(126 226 168 / 0.09); }
+.dt-status[data-status='live'] i { background: #4ade80; border-color: #4ade80; }
 .detail h2 { margin: 10px 0 6px; font: var(--display-weight) calc(clamp(40px, 5vw, 72px) * var(--display-scale))/1 var(--font-display); letter-spacing: calc(var(--display-tracking) / 2); }
 .dt-roles { margin: 0 0 24px; color: var(--champagne); font: 500 14px/1.4 var(--font-ui); }
 
@@ -76,15 +80,27 @@
 @media (pointer: coarse) { .dt-pp { min-height: 44px; padding-inline: 16px; } }
 .dt-main { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: #1b1c21; }
 .dt-portrait { aspect-ratio: 4 / 5; max-width: clamp(320px, 26vw, 440px); }
-/* Image carousel (works without a walkthrough): one 16:10 picture at a time on a scroll-snap track, so a swipe, the arrows, the
-   dots and the arrow keys all move the same thing. It is a little smaller than the column (960 px at most) so a picture never fills the
-   screen; the dots and the count sit in a pill at the foot of the frame, and the arrows at its sides. detail.ts (bindCarousel) wires it. */
-.dt-carousel { position: relative; width: min(100%, 960px); margin-bottom: 26px; border-radius: 12px; overflow: hidden; background: #1b1c21; }
+/* Image carousel (works without a walkthrough, and events): one 16:10 picture at a time on a scroll-snap track, so a swipe, the arrows, the
+   dots and the arrow keys all move the same thing. Project carousels match the walkthrough frame width; event carousels fill 100% of the column
+   and expand into a 2-up gallery (2 photos) or a full-width peek carousel (3+ photos) from 760 px up. detail.ts (bindCarousel) wires it. */
+.dt-carousel { position: relative; width: min(100%, calc((100dvh - 80px) * 1.6)); margin-bottom: 26px; border-radius: 12px; overflow: hidden; background: #1b1c21; }
+.dt-carousel.is-event { width: 100%; }
 .dt-track { display: flex; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
 .dt-track::-webkit-scrollbar { display: none; }
 .dt-track:focus-visible { outline: 2px solid var(--champagne); outline-offset: -3px; border-radius: 12px; }
 .dt-slide { flex: 0 0 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always; }
 .dt-slide img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.dt-carousel.is-event .dt-slide img { object-position: 50% 25%; }
+@media (min-width: 760px) {
+  .dt-carousel.is-event { background: none; border-radius: 0; }
+  .dt-carousel.is-event .dt-track { gap: 16px; }
+  .dt-carousel.is-event .dt-slide { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #1b1c21; }
+  .dt-carousel.is-event[data-count='2'] .dt-slide { flex: 0 0 calc(50% - 8px); }
+  .dt-carousel.is-event[data-count='2'] :is(.dt-nav, .dt-pages) { display: none; }
+  .dt-carousel.is-event:not([data-count='2']) .dt-slide { flex: 0 0 calc(62% - 8px); cursor: pointer; }
+  .dt-carousel.is-event:not([data-count='2']) .dt-slide:first-child { scroll-snap-align: start; }
+  .dt-carousel.is-event:not([data-count='2']) .dt-slide:last-child { scroll-snap-align: end; }
+}
 .dt-nav { position: absolute; top: 50%; translate: 0 -50%; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: rgb(15 16 20 / 0.72); backdrop-filter: blur(8px); color: var(--ink-light); cursor: pointer; transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out); }
 .dt-nav[data-dir='prev'] { left: 14px; }
 .dt-nav[data-dir='next'] { right: 14px; }
